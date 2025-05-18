@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "Accessibility Helper",
+  "version": "1.0.0",
+  "description": "A Chrome extension for accessibility testing and improvements",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "tabs",
+    "downloads"
+  ],
+  "host_permissions": [
+    "https://web-production-d801.up.railway.app/api/*"
+  ],
+  "background": {
+    "service_worker": "js/background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*", "css/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

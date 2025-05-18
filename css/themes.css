@@ -1,0 +1,198 @@
+/* Themes - Light and Dark mode */
+
+/* Light Theme (default) is defined in base.css */
+
+/* Dark Theme */
+.dark-theme {
+  --color-primary: #3399ff;       /* Lighter blue for dark mode */
+  --color-primary-dark: #007bff;  /* Slightly lighter blue for hover */
+  --color-primary-light: #1a2a3a; /* Dark blue for backgrounds */
+  --color-secondary: #e0e0e0;     /* Light gray for text */
+  --color-tertiary: #ff9d4d;      /* Lighter orange accent */
+  --color-background: #121212;    /* Dark background */
+  --color-surface: #1e1e1e;       /* Slightly lighter surface */
+  --color-border: #333333;        /* Darker border */
+  
+  background-color: var(--color-background);
+  color: var(--color-secondary);
+}
+
+.dark-theme .top-nav {
+  background-color: #0a0a0a;
+}
+
+.dark-theme .card,
+.dark-theme .feature {
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.dark-theme .bottom-nav {
+  background-color: #0a0a0a;
+  border-color: #333333;
+}
+
+.dark-theme .btn-secondary {
+  background-color: #333333;
+  color: var(--color-secondary);
+  border-color: #444444;
+}
+
+.dark-theme .btn-secondary:hover,
+.dark-theme .btn-secondary:focus {
+  background-color: #444444;
+}
+
+.dark-theme input[type="text"],
+.dark-theme input[type="email"],
+.dark-theme input[type="password"],
+.dark-theme input[type="number"],
+.dark-theme input[type="tel"],
+.dark-theme input[type="url"],
+.dark-theme input[type="search"],
+.dark-theme textarea,
+.dark-theme select {
+  background-color: #2a2a2a;
+  border-color: #444444;
+  color: var(--color-secondary);
+}
+
+.dark-theme input:focus,
+.dark-theme textarea:focus,
+.dark-theme select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(51, 153, 255, 0.2);
+}
+
+.dark-theme .checkmark,
+.dark-theme .radio-mark {
+  background-color: #2a2a2a;
+  border-color: #444444;
+}
+
+.dark-theme .checkmark:after,
+.dark-theme .radio-mark:after {
+  border-color: #ffffff;
+}
+
+.dark-theme .slider {
+  background-color: #444444;
+}
+
+.dark-theme .slider:before {
+  background-color: #f0f0f0;
+}
+
+.dark-theme .section-title {
+  border-bottom-color: #333333;
+}
+
+.dark-theme code {
+  background-color: #333333;
+  color: #f0f0f0;
+}
+
+/* High Contrast Theme */
+.high-contrast-theme {
+  --color-primary: #ffff00;       /* Yellow */
+  --color-primary-dark: #ffd700;  /* Gold */
+  --color-primary-light: #000000; /* Black */
+  --color-secondary: #ffffff;     /* White */
+  --color-tertiary: #00ffff;      /* Cyan */
+  --color-background: #000000;    /* Black */
+  --color-surface: #000000;       /* Black */
+  --color-border: #ffffff;        /* White */
+  
+  background-color: var(--color-background);
+  color: var(--color-secondary);
+}
+
+.high-contrast-theme .top-nav {
+  background-color: #000000;
+  border-bottom: 2px solid #ffffff;
+}
+
+.high-contrast-theme .card,
+.high-contrast-theme .feature {
+  background-color: #000000;
+  border: 2px solid #ffffff;
+  box-shadow: none;
+}
+
+.high-contrast-theme .bottom-nav {
+  background-color: #000000;
+  border-top: 2px solid #ffffff;
+}
+
+.high-contrast-theme a {
+  color: #ffff00;
+  text-decoration: underline;
+}
+
+.high-contrast-theme a:hover,
+.high-contrast-theme a:focus {
+  color: #00ffff;
+}
+
+.high-contrast-theme .btn-primary {
+  background-color: #000000;
+  color: #ffff00;
+  border: 2px solid #ffff00;
+}
+
+.high-contrast-theme .btn-primary:hover,
+.high-contrast-theme .btn-primary:focus {
+  background-color: #ffff00;
+  color: #000000;
+}
+
+.high-contrast-theme .btn-secondary {
+  background-color: #000000;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+}
+
+.high-contrast-theme .btn-secondary:hover,
+.high-contrast-theme .btn-secondary:focus {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.high-contrast-theme .bottom-nav a.active {
+  border-bottom: 4px solid #ffff00;
+  color: #ffff00;
+}
+
+/* Large Text Theme */
+.large-text-theme {
+  --font-size-xs: 0.875rem;   /* 14px */
+  --font-size-sm: 1rem;       /* 16px */
+  --font-size-base: 1.125rem; /* 18px */
+  --font-size-lg: 1.25rem;    /* 20px */
+  --font-size-xl: 1.5rem;     /* 24px */
+  
+  line-height: 1.6;
+}
+
+.large-text-theme .popup-container {
+  width: 400px;
+}
+
+.large-text-theme .bottom-nav a {
+  font-size: var(--font-size-base);
+}
+
+/* Media query to prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-delay: -1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    background-attachment: initial !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+  }
+}

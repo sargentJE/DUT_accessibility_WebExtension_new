@@ -1,0 +1,101 @@
+/* Dedicated styles for login popup */
+
+.login-wrapper {
+  min-height: calc(100vh - 60px - 32px); /* header height + safe margin */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-background);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 320px;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  background: white;
+}
+
+/* Elevation override for light shadow on white */
+.login-card.shadow-md {
+  box-shadow: var(--shadow-sm);
+}
+
+/* Inputs spacing override so they are full width */
+#login-form input {
+  width: 100%;
+}
+
+/* Focus ring consistent */
+#login-form input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(46, 78, 157, 0.25);
+}
+
+/* Hide placeholder when focused for cleanliness */
+#login-form input:focus::placeholder {
+  opacity: 0.3;
+}
+
+/* Logged-in box */
+#logged-in {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#logged-in p {
+  font-size: var(--font-size-sm);
+  color: var(--color-secondary);
+}
+
+#logout-btn {
+  margin-top: var(--spacing-sm);
+}
+
+/* Dark theme adjustments */
+.dark-theme .login-card {
+  background: #1e1e1e;
+  border-color: #444;
+}
+
+.dark-theme #login-form input {
+  background: #2a2a2a;
+  color: #ddd;
+  border-color: #444;
+}
+
+.dark-theme #login-form input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(46, 78, 157, 0.45);
+}
+
+.dark-theme .login-card.shadow-md {
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+}
+
+/* High contrast overrides */
+.high-contrast-theme .login-card {
+  background: black;
+  color: white;
+  border: 2px solid white;
+}
+
+.high-contrast-theme #login-form input {
+  background: black;
+  color: white;
+  border: 2px solid white;
+}
+
+.high-contrast-theme #login-form input:focus {
+  border-color: yellow;
+  box-shadow: 0 0 0 2px yellow;
+}
+
+/* Small screens fix */
+@media (max-height: 500px) {
+  .login-wrapper {
+    align-items: flex-start;
+    padding-top: var(--spacing-md);
+  }
+}

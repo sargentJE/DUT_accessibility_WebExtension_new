@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - My Extension</title>
+    <link rel="stylesheet" href="css/popup.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="popup-container">
+        <!-- Top Navigation Bar -->
+        <header class="top-nav">
+            <h1>About</h1>
+            <div class="nav-buttons">
+                <button id="settings-button" class="nav-button" title="Settings" aria-label="Settings">⚙️</button>
+                <button id="help-button" class="nav-button" title="Help" aria-label="Help">❓</button>
+            </div>
+        </header>
+        
+        <!-- Main Content Area -->
+        <main id="main-content">
+            <div class="content-area">
+                <div class="about-info">
+                    <img src="icons/icon-128.png" alt="Extension logo" class="logo">
+                    <h2>Accessibility Helper</h2>
+                    <p>Version 1.0.0</p>
+                    <p>Created by Jamie Sargent</p>
+                    <p> 2025 MyVision Oxfordshire</p>
+                    
+                    <div class="section mt-4">
+                        <h3>About This Extension</h3>
+                        <p>This extension collects structured feedback about website accessibility experiences, helping developers understand real-world challenges and make the web more inclusive for everyone, including those with visual impairments, motor disabilities, and other accessibility needs.</p>
+                    </div>
+                    
+                    <div class="section mt-3">
+                        <h3>Key Features</h3>
+                        <ul class="text-left">
+                            <li>Multi-page structured feedback form</li>
+                            <li>User experience documentation</li>
+                            <li>Accessibility preference collection</li>
+                            <li>Secure data submission</li>
+                            <li>JSON data export functionality</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="links mt-3">
+                        <a href="https://www.myvision.org.uk/" target="_blank" rel="noopener noreferrer">Website</a> |
+                        <a href="https://www.myvision.org.uk/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a> |
+                        <a href="https://www.myvision.org.uk/terms" target="_blank" rel="noopener noreferrer">Terms of Service</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Bottom Menu Bar (Tab Navigation) -->
+        <nav class="bottom-nav" aria-label="Main Navigation">
+            <ul>
+                <li><a href="popup.html">Home</a></li>
+                <li><a href="about.html" class="active" aria-current="page">About</a></li>
+            </ul>
+        </nav>
+    </div>
+    <script src="js/popup.js"></script>
+</body>
+</html>

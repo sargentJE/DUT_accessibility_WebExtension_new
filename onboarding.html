@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Accessibility Helper</title>
+    <link rel="stylesheet" href="css/popup.css">
+    <style>
+        body {
+            font-family: var(--font-family);
+            margin: 0;
+            padding: 0;
+            color: var(--color-secondary);
+            background-color: var(--color-background);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: var(--color-primary);
+        }
+        
+        .step {
+            margin-bottom: 40px;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: var(--color-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .step-content {
+            flex-grow: 1;
+        }
+        
+        .step h2 {
+            margin-top: 0;
+            font-size: 24px;
+            color: var(--color-primary);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .feature-card {
+            background-color: var(--color-surface);
+            border-radius: var(--border-radius-md);
+            padding: 20px;
+            border: 1px solid var(--color-border);
+        }
+        
+        .feature-card h3 {
+            margin-top: 0;
+            color: var(--color-primary);
+        }
+        
+        .cta {
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .btn-get-started {
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-get-started:hover {
+            background-color: var(--color-primary-dark);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <div class="container">
+        <header>
+            <img src="icons/icon-128.png" alt="Accessibility Helper Logo" class="logo">
+            <h1>Welcome to Accessibility Helper</h1>
+            <p>Your tool for providing feedback on website accessibility experiences</p>
+        </header>
+        
+        <main id="main-content">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h2>Getting Started</h2>
+                    <p>Accessibility Helper makes it easy to provide structured feedback about your experiences with website accessibility. Click the extension icon in your toolbar to access the feedback form.</p>
+                    <p>This extension is designed to help collect valuable insights from users about their real-world experiences with website accessibility, which helps developers improve their websites for everyone, including people with disabilities.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h2>Key Features</h2>
+                    <p>Our accessibility feedback tool offers:</p>
+                    
+                    <div class="features">
+                        <div class="feature-card">
+                            <h3>Multi-page Feedback Form</h3>
+                            <p>A structured, step-by-step approach to collecting your experiences with website accessibility.</p>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <h3>Accessibility Preferences</h3>
+                            <p>Document how you interact with websites and what challenges you commonly encounter.</p>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <h3>Website-specific Feedback</h3>
+                            <p>Provide detailed feedback about specific websites you're evaluating.</p>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <h3>Secure Data Submission</h3>
+                            <p>Your feedback is securely transmitted to our database to help improve web accessibility.</p>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <h3>Export Functionality</h3>
+                            <p>Export your feedback data in JSON format for your records or further analysis.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h2>Customize Your Experience</h2>
+                    <p>Click the settings icon (⚙️) in the extension popup to access customization options:</p>
+                    <ul>
+                        <li>Choose between light, dark, or high contrast themes</li>
+                        <li>Adjust font sizes for better readability</li>
+                        <li>Configure sync settings</li>
+                        <li>Set accessibility preferences</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="cta">
+                <button class="btn-get-started" id="get-started-btn">Get Started!</button>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Developed by MyVision Oxfordshire - Making the web accessible for everyone</p>
+            <p>&copy; 2025 MyVision Oxfordshire. All rights reserved.</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle the Get Started button click
+            const getStartedBtn = document.getElementById('get-started-btn');
+            if (getStartedBtn) {
+                getStartedBtn.addEventListener('click', function() {
+                    // Close this tab and return to the previous one
+                    if (chrome && chrome.tabs) {
+                        chrome.tabs.getCurrent(function(tab) {
+                            chrome.tabs.remove(tab.id);
+                        });
+                    } else {
+                        // Fallback for local testing
+                        window.close();
+                    }
+                });
+            }
+            
+            // Apply theme if stored in settings
+            if (chrome && chrome.storage) {
+                chrome.storage.sync.get(['theme'], function(result) {
+                    if (result.theme) {
+                        document.body.classList.add(result.theme + '-theme');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Completion - Website Experience Review</title>
+    <link rel="stylesheet" href="../css/popup.css">
+    <link rel="stylesheet" href="../css/review-modal.css" />
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="popup-container">
+        <!-- Toolbar is dynamically injected -->
+        
+        <!-- Main Content Area -->
+        <main id="main-content">
+            <div class="content-area">
+                <div class="card mb-4 text-center">
+                    <div class="card-header">
+                        <h2 class="section-title">Thank You!</h2>
+                    </div>
+                    <div class="card-content">
+                        <p class="mb-3">Your feedback has been saved. It will help make websites more accessible for everyone.</p>
+                        
+                        <div class="mb-4">
+                            <img src="../icons/myvision-logo.png" alt="Completion checkmark" class="mb-3 completion-image">
+                        </div>
+                        
+                        <p class="mb-4">Click <strong>Submit</strong> to finalize your responses.</p>
+                        
+                        <button id="submit-feedback" class="btn btn-primary">Submit</button>
+                        <div class="saved-state mt-2" id="submission-status"></div>
+                    </div>
+                </div>
+                
+                <div class="card hidden" id="submission-result">
+                    <div class="card-header">
+                        <h3 class="card-title">Submission Status</h3>
+                    </div>
+                    <div class="card-content">
+                        <p id="submission-message">Processing your feedback...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Bottom Menu Bar (Tab Navigation) -->
+        <nav class="bottom-nav" aria-label="Main Navigation">
+            <ul>
+                <li><a href="../popup.html">1</a></li>
+                <li><a href="page2.html">2</a></li>
+                <li><a href="page3.html">3</a></li>
+                <li><a href="page4.html">4</a></li>
+                <li><a href="page5.html">5</a></li>
+                <li><a href="page6.html">6</a></li>
+                <li><a href="page7.html">7</a></li>
+                <li><a href="page8.html" class="active" aria-current="page">8</a></li>
+            </ul>
+        </nav>
+    </div>
+    
+    <script src="../js/popup.js"></script>
+    <!-- Submission handled by js/popup.js -->
+</body>
+</html>

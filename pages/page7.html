@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overall Experience - Website Experience Review</title>
+    <link rel="stylesheet" href="../css/popup.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="popup-container">
+        <!-- Top Navigation Bar -->
+        <!-- Toolbar is dynamically injected -->
+        
+        <!-- Main Content Area -->
+        <main id="main-content">
+            <div class="content-area">
+                <h2 class="section-title">Overall Experience</h2>
+                
+                <p><em>Provide your overall assessment of the website's accessibility now that you've completed all tasks.</em></p>
+                
+                <p class="mb-3"><strong>Note:</strong> Fields marked with <strong>*</strong> are required.</p>
+                
+                <form id="overall-experience-form">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Rate Each Area of Accessibility:</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="form-group">
+                                <label for="navigation_structure">Navigation & Structure: *</label>
+                                <select id="navigation_structure" name="navigation_structure" required>
+                                    <option value="">Please select...</option>
+                                    <option value="very_accessible">Very accessible</option>
+                                    <option value="somewhat_accessible">Somewhat accessible</option>
+                                    <option value="difficult">Difficult</option>
+                                    <option value="very_difficult">Very difficult</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="content_information">Content & Information: *</label>
+                                <select id="content_information" name="content_information" required>
+                                    <option value="">Please select...</option>
+                                    <option value="very_accessible">Very accessible</option>
+                                    <option value="somewhat_accessible">Somewhat accessible</option>
+                                    <option value="difficult">Difficult</option>
+                                    <option value="very_difficult">Very difficult</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="interactive_elements">Interactive Elements: *</label>
+                                <select id="interactive_elements" name="interactive_elements" required>
+                                    <option value="">Please select...</option>
+                                    <option value="very_accessible">Very accessible</option>
+                                    <option value="somewhat_accessible">Somewhat accessible</option>
+                                    <option value="difficult">Difficult</option>
+                                    <option value="very_difficult">Very difficult</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="help_support">Help & Support: *</label>
+                                <select id="help_support" name="help_support" required>
+                                    <option value="">Please select...</option>
+                                    <option value="very_accessible">Very accessible</option>
+                                    <option value="somewhat_accessible">Somewhat accessible</option>
+                                    <option value="difficult">Difficult</option>
+                                    <option value="very_difficult">Very difficult</option>
+                                    <option value="not_applicable">Not applicable</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Overall Website Accessibility Rating:</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="form-group">
+                                <label for="overall_accessibility">Rate the website's overall accessibility: *</label>
+                                <select id="overall_accessibility" name="overall_accessibility" required>
+                                    <option value="">Please select...</option>
+                                    <option value="fully_accessible">Fully accessible</option>
+                                    <option value="mostly_accessible">Mostly accessible</option>
+                                    <option value="partially_accessible">Partially accessible</option>
+                                    <option value="not_accessible">Not accessible</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Accessibility Strengths:</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="form-group">
+                                <label for="accessibility_strengths">What did the website do well for accessibility?</label>
+                                <textarea id="accessibility_strengths" name="accessibility_strengths" rows="4"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Accessibility Barriers:</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="form-group">
+                                <label for="accessibility_barriers">What were the most significant barriers? How should they be fixed?</label>
+                                <textarea id="accessibility_barriers" name="accessibility_barriers" rows="4"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Improvement Suggestions:</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="form-group">
+                                <label for="design_improvements">Suggest specific design improvements:</label>
+                                <textarea id="design_improvements" name="design_improvements" rows="3"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="feature_recommendations">Recommend features to add:</label>
+                                <textarea id="feature_recommendations" name="feature_recommendations" rows="3"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="priority_changes">List the 3 most important changes in order of priority:</label>
+                                <textarea id="priority_changes" name="priority_changes" rows="4" placeholder="1. [First priority]&#10;2. [Second priority]&#10;3. [Third priority]"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Additional Feedback:</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="form-group">
+                                <label for="additional_feedback">Any other observations or suggestions?</label>
+                                <textarea id="additional_feedback" name="additional_feedback" rows="4"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+        
+        <!-- Bottom Menu Bar (Tab Navigation) -->
+        <nav class="bottom-nav" aria-label="Main Navigation">
+            <ul>
+                <li><a href="../popup.html">1</a></li>
+                <li><a href="page2.html">2</a></li>
+                <li><a href="page3.html">3</a></li>
+                <li><a href="page4.html">4</a></li>
+                <li><a href="page5.html">5</a></li>
+                <li><a href="page6.html">6</a></li>
+                <li><a href="page7.html" class="active" aria-current="page">7</a></li>
+                <li><a href="page8.html">8</a></li>
+            </ul>
+        </nav>
+    </div>
+    <script src="../js/popup.js"></script>
+</body>
+</html>

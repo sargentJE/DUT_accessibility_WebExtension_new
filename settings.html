@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - My Extension</title>
+    <link rel="stylesheet" href="css/popup.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="popup-container">
+        <!-- Top Navigation Bar -->
+        <header class="top-nav">
+            <h1>Settings</h1>
+            <div class="nav-buttons">
+                <button id="back-button" class="nav-button" title="Back to Home" aria-label="Back to Home">←</button>
+                <button id="help-button" class="nav-button" title="Help" aria-label="Help">❓</button>
+            </div>
+        </header>
+        
+        <!-- Main Content Area -->
+        <main id="main-content">
+            <div class="content-area">
+                <!-- Authentication Section -->
+                <section id="auth-section" class="mb-4">
+                    <!-- Auth status area -->
+                    <div id="auth-status" class="mb-3 text-center">
+                        <!-- Populated by auth.js -->
+                        <button id="logout-btn" class="btn btn-secondary" hidden>Logout</button>
+                    </div>
+                </section>
+                <form id="settings-form">
+                    <div class="section mb-4">
+                        <h2 class="section-title">Display Options</h2>
+                        
+                        <div class="form-group">
+                            <label class="switch-label">
+                                <span>Dark Mode</span>
+                                <div class="switch">
+                                    <input type="checkbox" id="darkMode">
+                                    <span class="slider"></span>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="theme">Theme</label>
+                            <select id="theme" name="theme" class="mb-1">
+                                <option value="light">Light</option>
+                                <option value="dark">Dark</option>
+                                <option value="high-contrast">High Contrast</option>
+                                <option value="large-text">Large Text</option>
+                            </select>
+                            <span class="field-hint">Choose a theme for the extension</span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="fontSize">Font Size</label>
+                            <select id="fontSize" name="fontSize">
+                                <option value="small">Small</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="large">Large</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="section mb-4">
+                        <h2 class="section-title">Sync Settings</h2>
+                        
+                        <div class="form-group">
+                            <label for="frequency">Update Frequency (minutes)</label>
+                            <input type="number" id="frequency" name="frequency" min="1" max="1440" value="30">
+                            <span class="field-hint">How often to check for updates</span>
+                        </div>
+                    </div>
+                    
+                    <div class="section mb-4">
+                        <h2 class="section-title">API Settings</h2>
+                        
+                        <div class="form-group">
+                            <label for="backendUrl">Backend API URL</label>
+                            <input type="url" id="backendUrl" name="backendUrl" placeholder="http://localhost:3000" required>
+                            <span class="field-hint">Leave default for local dev, or set your deployed API base URL.</span>
+                        </div>
+                    </div>
+                    
+                    <div class="section mb-4">
+                        <h2 class="section-title">Accessibility</h2>
+                        
+                        <div class="form-group">
+                            <label class="checkbox-container">
+                                High Contrast Mode
+                                <input type="checkbox" id="highContrast" name="highContrast">
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="checkbox-container">
+                                Reduce Motion
+                                <input type="checkbox" id="reduceMotion" name="reduceMotion">
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="button" id="reset-btn" class="btn btn-secondary mr-2">Reset to Defaults</button>
+                        <button type="submit" class="btn btn-primary">Save Settings</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+        
+        <!-- Bottom Menu Bar (Tab Navigation) -->
+        <nav class="bottom-nav" aria-label="Main Navigation">
+            <ul>
+                <li><a href="popup.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </nav>
+    </div>
+    <script src="js/token.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/popup.js"></script>
+    <script src="js/settings.js"></script>
+</body>
+</html>

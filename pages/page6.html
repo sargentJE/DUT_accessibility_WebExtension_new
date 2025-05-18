@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help and Support - Website Experience Review</title>
+    <link rel="stylesheet" href="../css/popup.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="popup-container">
+        <!-- Toolbar is dynamically injected -->
+        
+        <!-- Main Content Area -->
+        <main id="main-content">
+            <div class="content-area">
+                <h2 class="section-title">Help and Support</h2>
+                
+                <p><em>Complete each task below and answer the related questions.</em></p>
+                
+                <p class="mb-3"><strong>Note:</strong> Fields marked with <strong>*</strong> are required.</p>
+                
+                <form id="help-support-form">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Task 1: Find Help Resources</h3>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>What to do:</strong> Locate help content such as FAQs, knowledge base, or tutorials.</p>
+                            <ul>
+                                <li>Note number of clicks from homepage.</li>
+                                <li>Check main navigation and footers.</li>
+                                <li>Search using keywords like "help" or "support."</li>
+                            </ul>
+                            
+                            <p><strong>Tip:</strong> Help resources should be accessible from anywhere.</p>
+                            
+                            <div class="form-group">
+                                <label for="help_resources_ease">How easy was it to find help resources? *</label>
+                                <select id="help_resources_ease" name="help_resources_ease" required>
+                                    <option value="">Please select...</option>
+                                    <option value="very_easy">Very easy</option>
+                                    <option value="somewhat_easy">Somewhat easy</option>
+                                    <option value="difficult">Difficult</option>
+                                    <option value="very_difficult">Very difficult</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="help_resources_location">Where were help resources located?</label>
+                                <textarea id="help_resources_location" name="help_resources_location" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Task 2: Review Support Options</h3>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>What to do:</strong> Evaluate support channels (email, phone, chat, ticket system).</p>
+                            <ul>
+                                <li>Check support hours and response times.</li>
+                                <li>Note alternative contact methods.</li>
+                                <li>Look for self-service options (FAQs, forums).</li>
+                            </ul>
+                            
+                            <div class="form-group">
+                                <label for="support_options_adequacy">How adequate were the support options? *</label>
+                                <select id="support_options_adequacy" name="support_options_adequacy" required>
+                                    <option value="">Please select...</option>
+                                    <option value="very_adequate">Very adequate</option>
+                                    <option value="somewhat_adequate">Somewhat adequate</option>
+                                    <option value="difficult">Difficult</option>
+                                    <option value="very_difficult">Very difficult</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="missing_support_options">What support options were missing?</label>
+                                <textarea id="missing_support_options" name="missing_support_options" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Task 3: Assess Help Documentation</h3>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>What to do:</strong> Review help articles or FAQs for clarity.</p>
+                            <ul>
+                                <li>Choose 2–3 topics.</li>
+                                <li>Check language simplicity and use of visuals.</li>
+                                <li>Assess organization and scannability.</li>
+                            </ul>
+                            
+                            <div class="form-group">
+                                <label for="documentation_clarity">How clear and helpful was the documentation? *</label>
+                                <select id="documentation_clarity" name="documentation_clarity" required>
+                                    <option value="">Please select...</option>
+                                    <option value="very_clear">Very clear</option>
+                                    <option value="somewhat_clear">Somewhat clear</option>
+                                    <option value="difficult">Difficult</option>
+                                    <option value="very_difficult">Very difficult</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="help_content_improvements">How could the help content be improved?</label>
+                                <textarea id="help_content_improvements" name="help_content_improvements" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Task 4: Evaluate Support Effectiveness</h3>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>What to do:</strong> Test a support channel (submit a question or test request).</p>
+                            <ul>
+                                <li>Evaluate accessibility of the process.</li>
+                                <li>Note barriers to requesting help.</li>
+                                <li>Check for automated responses.</li>
+                            </ul>
+                            
+                            <div class="form-group">
+                                <label for="support_process_accessibility">How accessible was the support process? *</label>
+                                <select id="support_process_accessibility" name="support_process_accessibility" required>
+                                    <option value="">Please select...</option>
+                                    <option value="very_accessible">Very accessible</option>
+                                    <option value="somewhat_accessible">Somewhat accessible</option>
+                                    <option value="difficult">Difficult</option>
+                                    <option value="very_difficult">Very difficult</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="support_barriers">What barriers did you encounter?</label>
+                                <textarea id="support_barriers" name="support_barriers" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Additional Support Recommendations</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="form-group">
+                                <label for="help_positioning">Where would help resources be better positioned?</label>
+                                <textarea id="help_positioning" name="help_positioning" rows="3"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="additional_support_features">What additional support features would improve accessibility?</label>
+                                <textarea id="additional_support_features" name="additional_support_features" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+        
+        <!-- Bottom Menu Bar (Tab Navigation) -->
+        <nav class="bottom-nav" aria-label="Main Navigation">
+            <ul>
+                <li><a href="../popup.html">1</a></li>
+                <li><a href="page2.html">2</a></li>
+                <li><a href="page3.html">3</a></li>
+                <li><a href="page4.html">4</a></li>
+                <li><a href="page5.html">5</a></li>
+                <li><a href="page6.html" class="active" aria-current="page">6</a></li>
+                <li><a href="page7.html">7</a></li>
+                <li><a href="page8.html">8</a></li>
+            </ul>
+        </nav>
+    </div>
+    <script src="../js/popup.js"></script>
+</body>
+</html>

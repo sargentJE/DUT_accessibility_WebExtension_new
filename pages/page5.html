@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Features - Website Experience Review</title>
+    <link rel="stylesheet" href="../css/popup.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="popup-container">
+        <!-- Top Navigation Bar -->
+        
+        <!-- Toolbar is dynamically injected -->
+        
+        <!-- Main Content Area -->
+        <main id="main-content">
+            <div class="content-area">
+                <h2 class="section-title">Interactive Features</h2>
+                
+                <p><em>Complete each task below and answer the related questions.</em></p>
+                
+                <p class="mb-3"><strong>Note:</strong> Fields marked with <strong>*</strong> are required.</p>
+                
+                <form id="interactive-features-form">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Task 1: Complete a Form</h3>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>What to do:</strong> Find and attempt to complete a form (contact, signup, search).</p>
+                            <ul>
+                                <li>Evaluate ease of locating and understanding the form.</li>
+                                <li>Test labeling and required fields.</li>
+                                <li>Try submitting with test data.</li>
+                            </ul>
+                            
+                            <p><strong>Tip:</strong> Use only keyboard (Tab, Enter) to navigate.</p>
+                            
+                            <div class="form-group">
+                                <label for="form_usability">How usable was the form? *</label>
+                                <select id="form_usability" name="form_usability" required>
+                                    <option value="">Please select...</option>
+                                    <option value="very_usable">Very usable</option>
+                                    <option value="somewhat_usable">Somewhat usable</option>
+                                    <option value="difficult">Difficult</option>
+                                    <option value="very_difficult">Very difficult</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="form_barriers">What barriers did you encounter?</label>
+                                <textarea id="form_barriers" name="form_barriers" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Task 2: Test Customization Options</h3>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>What to do:</strong> Test options like font size, color themes, layout preferences, or language selection.</p>
+                            
+                            <p><strong>Tip:</strong> Look in headers, footers, profile settings, or accessibility menus.</p>
+                            
+                            <div class="form-group">
+                                <label for="customization_quality">How well did customization options work? *</label>
+                                <select id="customization_quality" name="customization_quality" required>
+                                    <option value="">Please select...</option>
+                                    <option value="very_well">Very well</option>
+                                    <option value="somewhat_well">Somewhat well</option>
+                                    <option value="difficult">Difficult</option>
+                                    <option value="very_difficult">Very difficult</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="missing_customization">What customization options were missing?</label>
+                                <textarea id="missing_customization" name="missing_customization" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Task 3: Test Error Handling</h3>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>What to do:</strong> Cause errors (incorrect form entries, incomplete submission, invalid search) to test responses.</p>
+                            
+                            <p><strong>Tip:</strong> Evaluate if error messages explain what went wrong, why it matters, and how to fix it.</p>
+                            
+                            <div class="form-group">
+                                <label for="error_messages_helpfulness">How helpful were the error messages? *</label>
+                                <select id="error_messages_helpfulness" name="error_messages_helpfulness" required>
+                                    <option value="">Please select...</option>
+                                    <option value="very_helpful">Very helpful</option>
+                                    <option value="somewhat_helpful">Somewhat helpful</option>
+                                    <option value="difficult">Difficult</option>
+                                    <option value="very_difficult">Very difficult</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="error_message_improvements">How could error messages be improved?</label>
+                                <textarea id="error_message_improvements" name="error_message_improvements" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Task 4: Assess Feedback Clarity</h3>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>What to do:</strong> Complete actions (form submission, add to cart, save preference) and evaluate feedback.</p>
+                            
+                            <p><strong>Tip:</strong> Feedback should be immediate, visible, and understandable without relying solely on color.</p>
+                            
+                            <div class="form-group">
+                                <label for="feedback_clarity">How clear was the website's feedback? *</label>
+                                <select id="feedback_clarity" name="feedback_clarity" required>
+                                    <option value="">Please select...</option>
+                                    <option value="very_clear">Very clear</option>
+                                    <option value="somewhat_clear">Somewhat clear</option>
+                                    <option value="difficult">Difficult</option>
+                                    <option value="very_difficult">Very difficult</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="feedback_improvements">How could the website better confirm actions?</label>
+                                <textarea id="feedback_improvements" name="feedback_improvements" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Keyboard & Device Accessibility</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="form-group">
+                                <label for="keyboard_navigation">Could you navigate interactive elements using only a keyboard? *</label>
+                                <select id="keyboard_navigation" name="keyboard_navigation" required>
+                                    <option value="">Please select...</option>
+                                    <option value="yes_completely">Yes completely</option>
+                                    <option value="yes_partially">Yes partially</option>
+                                    <option value="no">No</option>
+                                    <option value="not_tested">Not tested</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="mobile_usability">If tested on mobile, how well did interactive elements work?</label>
+                                <select id="mobile_usability" name="mobile_usability">
+                                    <option value="">Please select...</option>
+                                    <option value="worked_well">Worked well</option>
+                                    <option value="some_issues">Some issues</option>
+                                    <option value="major_problems">Major problems</option>
+                                    <option value="not_tested">Not tested</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+        
+        <!-- Bottom Menu Bar (Tab Navigation) -->
+        <nav class="bottom-nav" aria-label="Main Navigation">
+            <ul>
+                <li><a href="../popup.html">1</a></li>
+                <li><a href="page2.html">2</a></li>
+                <li><a href="page3.html">3</a></li>
+                <li><a href="page4.html">4</a></li>
+                <li><a href="page5.html" class="active" aria-current="page">5</a></li>
+                <li><a href="page6.html">6</a></li>
+                <li><a href="page7.html">7</a></li>
+                <li><a href="page8.html">8</a></li>
+            </ul>
+        </nav>
+    </div>
+    <script src="../js/popup.js"></script>
+</body>
+</html>

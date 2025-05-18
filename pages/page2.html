@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Usage Preferences - Website Experience Review</title>
+    <link rel="stylesheet" href="../css/popup.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="popup-container">
+        <!-- Top Navigation Bar -->
+        <!-- Toolbar is dynamically injected -->
+        
+        <!-- Main Content Area -->
+        <main id="main-content">
+            <div class="content-area">
+                <h2 class="section-title">Tell Us About How You Use Websites</h2>
+                
+                <p><em>This information helps us understand your unique needs and experiences.</em></p>
+                
+                <p class="mb-3"><strong>Note:</strong> Fields marked with <strong>*</strong> are required.</p>
+                
+                <form id="usage-preferences-form">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">1. How do you interact with websites? *</h3>
+                        </div>
+                        <div class="card-content">
+                            <p><em>Select all that apply.</em></p>
+                            
+                            <h4>Input Methods:</h4>
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    Keyboard/mouse
+                                    <input type="checkbox" name="input_method" value="keyboard_mouse">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    Touch
+                                    <input type="checkbox" name="input_method" value="touch">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    Voice
+                                    <input type="checkbox" name="input_method" value="voice">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    Alternative methods (e.g., eye tracking)
+                                    <input type="checkbox" name="input_method" value="alternative">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    Switch controls
+                                    <input type="checkbox" name="input_method" value="switch">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="alternative_improvements">If you use alternative methods, what specific improvements could websites make?</label>
+                                <textarea id="alternative_improvements" name="alternative_improvements" rows="3"></textarea>
+                            </div>
+                            
+                            <h4>Content Access:</h4>
+                            <p><em>Select all that apply.</em></p>
+                            
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    Visual
+                                    <input type="checkbox" name="content_access" value="visual">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    Audio
+                                    <input type="checkbox" name="content_access" value="audio">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    Enlarged content
+                                    <input type="checkbox" name="content_access" value="enlarged">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    Simplified layouts
+                                    <input type="checkbox" name="content_access" value="simplified">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    High contrast
+                                    <input type="checkbox" name="content_access" value="high_contrast">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="content_improvements">Suggest ways websites can improve these areas:</label>
+                                <textarea id="content_improvements" name="content_improvements" rows="3"></textarea>
+                            </div>
+                            
+                            <h4>Navigation Preferences:</h4>
+                            <p><em>Select all that apply.</em></p>
+                            
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    Keyboard
+                                    <input type="checkbox" name="navigation_pref" value="keyboard">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    Sequential
+                                    <input type="checkbox" name="navigation_pref" value="sequential">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    Search
+                                    <input type="checkbox" name="navigation_pref" value="search">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    Shortcuts
+                                    <input type="checkbox" name="navigation_pref" value="shortcuts">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="navigation_improvements">How could websites improve navigation for you?</label>
+                                <textarea id="navigation_improvements" name="navigation_improvements" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">2. Do you use assistive technologies?</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="form-group">
+                                <label for="assistive_tech">Please specify:</label>
+                                <textarea id="assistive_tech" name="assistive_tech" rows="3" placeholder="List any assistive technologies you used during testing."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">3. What features make websites more accessible for you?</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="form-group">
+                                <label for="accessible_features">Please describe accessible features you noticed:</label>
+                                <textarea id="accessible_features" name="accessible_features" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">4. What challenges do you typically encounter on websites? *</h3>
+                        </div>
+                        <div class="card-content">
+                            <p><em>Select all that apply.</em></p>
+                            
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    Time limits
+                                    <input type="checkbox" name="challenges" value="time_limits">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    Complex navigation
+                                    <input type="checkbox" name="challenges" value="complex_navigation">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    Inconsistent layouts
+                                    <input type="checkbox" name="challenges" value="inconsistent_layouts">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    Multimedia
+                                    <input type="checkbox" name="challenges" value="multimedia">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    Small text/controls
+                                    <input type="checkbox" name="challenges" value="small_text">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    Poor contrast
+                                    <input type="checkbox" name="challenges" value="poor_contrast">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    Unclear instructions
+                                    <input type="checkbox" name="challenges" value="unclear_instructions">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    Distractions
+                                    <input type="checkbox" name="challenges" value="distractions">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-container">
+                                    Compatibility
+                                    <input type="checkbox" name="challenges" value="compatibility">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="challenge_improvements">For each challenge, suggest one specific improvement:</label>
+                                <textarea id="challenge_improvements" name="challenge_improvements" rows="4"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">5. How do these barriers affect your website use?</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="form-group">
+                                <label for="barrier_effects">Please describe how these barriers affected your experience:</label>
+                                <textarea id="barrier_effects" name="barrier_effects" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h3 class="card-title">Technical Information (Optional)</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="form-group">
+                                <label for="browser">Browser:</label>
+                                <input type="text" id="browser" name="browser" placeholder="e.g., Chrome">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="os">Operating System:</label>
+                                <input type="text" id="os" name="os" placeholder="e.g., Windows 11">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Device Type:</label>
+                                <div class="d-flex gap-2">
+                                    <label class="radio-container mr-3">
+                                        Desktop
+                                        <input type="radio" name="device_type" value="desktop">
+                                        <span class="radio-mark"></span>
+                                    </label>
+                                    <label class="radio-container mr-3">
+                                        Laptop
+                                        <input type="radio" name="device_type" value="laptop">
+                                        <span class="radio-mark"></span>
+                                    </label>
+                                    <label class="radio-container mr-3">
+                                        Tablet
+                                        <input type="radio" name="device_type" value="tablet">
+                                        <span class="radio-mark"></span>
+                                    </label>
+                                    <label class="radio-container">
+                                        Smartphone
+                                        <input type="radio" name="device_type" value="smartphone">
+                                        <span class="radio-mark"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+        
+        <!-- Bottom Menu Bar (Tab Navigation) -->
+        <nav class="bottom-nav" aria-label="Main Navigation">
+            <ul>
+                <li><a href="../popup.html">1</a></li>
+                <li><a href="page2.html" class="active" aria-current="page">2</a></li>
+                <li><a href="page3.html">3</a></li>
+                <li><a href="page4.html">4</a></li>
+                <li><a href="page5.html">5</a></li>
+                <li><a href="page6.html">6</a></li>
+                <li><a href="page7.html">7</a></li>
+                <li><a href="page8.html">8</a></li>
+            </ul>
+        </nav>
+    </div>
+    <script src="../js/popup.js"></script>
+</body>
+</html>
