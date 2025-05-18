@@ -492,18 +492,39 @@ input:checked + .slider:before {
 .modal-close {
   position: absolute;
   right: 15px;
-  top: 10px;
-  color: var(--color-secondary);
-  font-size: 24px;
+  top: 15px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-primary);
+  color: white;
+  font-size: 18px;
   font-weight: bold;
+  border-radius: 50%;
   cursor: pointer;
-  transition: color var(--transition-speed);
+  border: none;
+  padding: 0;
+  transition: background-color var(--transition-speed), transform 0.1s ease;
+  line-height: 1;
 }
 
 .modal-close:hover,
 .modal-close:focus {
-  color: var(--color-primary);
+  background-color: var(--color-primary-dark);
+  color: white;
   text-decoration: none;
+  outline: none;
+  transform: scale(1.05);
+}
+
+/* Ensure the X is perfectly centered */
+.modal-close::before {
+  content: '×';
+  display: block;
+  position: relative;
+  top: -1px;
 }
 
 .modal-header {

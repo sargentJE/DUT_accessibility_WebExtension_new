@@ -17,11 +17,6 @@
   color: var(--color-secondary);
 }
 
-/* Theme-specific drop-shadow for dark theme */
-.dark-theme .popup-container {
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25)) !important; /* Darker shadow for dark theme */
-}
-
 .dark-theme .top-nav {
   background-color: #0a0a0a;
 }
@@ -110,12 +105,6 @@
   
   background-color: var(--color-background);
   color: var(--color-secondary);
-}
-
-/* Theme-specific drop-shadow for high contrast theme */
-.high-contrast-theme .popup-container {
-  filter: drop-shadow(0 0 0 transparent) !important; /* No shadow - using border instead */
-  outline: 2px solid #ffffff; /* High visibility outline instead of shadow */
 }
 
 .high-contrast-theme .top-nav {

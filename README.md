@@ -1,193 +1,337 @@
-# Accessibility Helper Chrome Extension
+<div align="center">
 
-A Chrome extension that guides users through a structured accessibility review process and provides feedback about website accessibility. This extension follows the MyVision Oxfordshire design patterns with a focus on accessibility.
+# MyVision Accessibility Helper
 
-## Features
+![Chrome Web Store](https://img.shields.io/badge/Platform-Chrome-4285F4)
+![Version](https://img.shields.io/badge/Version-1.0.0-brightgreen)
+![License](https://img.shields.io/badge/License-MIT-blue)
 
-- **Multi-page Review Process**: 8-step comprehensive website accessibility review
-- **Automatic Form Saving**: Responses are saved automatically as you type
-- **Centralized Data Storage**: Submit reviews to a central server for aggregation and analysis
-- **Accessibility-First Design**: Built with accessibility as a core principle
-- **Customizable Themes**: Light, dark, high contrast, and large text modes
-- **Responsive Design**: Adapts to different screen sizes and orientations
+**A Chrome Extension for Collecting Structured Accessibility Feedback**
 
-## Directory Structure
+Helping make the web more inclusive through user-driven accessibility testing and feedback collection.  
+Designed with accessibility best practices at its core.
 
-```
-accessibility-helper/
-├── css/                     # CSS files
+[Installation](#installation) • [Features](#features) • [Screenshots](#screenshots) • [Usage](#usage) • [Development](#development) • [License](#license)
+
+</div>
+
+## ✨ Features
+
+- **Multi-page Review Process**: 8-step comprehensive website accessibility review workflow
+- **Real-time Form Saving**: Responses save automatically as you type with visual confirmation
+- **Centralized Data Collection**: Submit reviews to MyVision's database for aggregation and analysis
+- **Accessibility-First Design**: Built with WCAG compliance as a core principle
+- **Multiple Theme Options**: Light, dark, high-contrast, and large text modes for diverse needs
+- **Consistent UI**: Square corners, custom scrollbars, and visual polish matching Chrome's native styling
+- **Offline Support**: Form data is cached and synchronized when connectivity returns
+- **Export Functionality**: Download review data in JSON format for personal records
+- **Keyboard Navigation**: Tab-friendly interface with focus management and keyboard shortcuts
+
+## 📸 Screenshots
+
+<div align="center">
+<img src="https://placeholder-for-screenshot.png" alt="Light Mode UI" width="300"/>
+<img src="https://placeholder-for-screenshot.png" alt="Dark Mode UI" width="300"/>
+</div>
+
+<div align="center">
+<p><em>Replace the placeholder images with actual screenshots of your extension.</em></p>
+</div>
+
+## 🏗️ Architecture
+
+The extension is built using a modular component approach with vanilla JavaScript and CSS variables for theming:
+
+```text
+chrome-extension-css/
+├── css/                     # Modular CSS architecture
 │   ├── popup.css            # Main CSS file that imports all others
 │   ├── base.css             # Base styles, design tokens, typography
-│   ├── components.css       # UI components like buttons, cards, forms
-│   ├── forms.css            # Form-specific styles
-│   ├── layout.css           # Layout structure
-│   ├── themes.css           # Light, dark, high contrast themes
-│   ├── utilities.css        # Utility classes
-│   ├── review-steps.css     # Styles for the 8-step review process
-│   └── content.css          # Content script styles
-├── js/                      # JavaScript files
-│   ├── popup.js             # Main popup functionality
-│   ├── background.js        # Background script
-│   └── content.js           # Content script
-├── pages/                   # Multi-page review process
+│   ├── components.css       # UI components (buttons, cards, inputs)
+│   ├── forms.css            # Form-specific styling and validation
+│   ├── layout.css           # Structural layout and containers
+│   ├── modal.css            # Modal and popup styling
+│   ├── themes.css           # Theme definitions (light, dark, high-contrast)
+│   ├── utilities.css        # Helper classes and utilities
+│   └── review-steps.css     # Multi-step review process styling
+├── js/                      # JavaScript modules
+│   ├── popup.js             # Main extension functionality
+│   ├── background.js        # Service worker for background operations
+│   ├── auth.js              # Authentication handling
+│   └── settings.js          # User preferences management
+├── pages/                   # Review workflow
 │   ├── page1.html           # Introduction
-│   ├── page2.html           # Website Usage Preferences
-│   ├── page3.html           # Website Navigation
-│   ├── page4.html           # Content Access
-│   ├── page5.html           # Interactive Features
-│   ├── page6.html           # Help and Support
-│   ├── page7.html           # Overall Experience
-│   └── page8.html           # Completion
-├── icons/                   # Extension icons
-│   └── README.md            # Instructions for creating icons
-├── manifest.json            # Extension configuration
-├── popup.html               # Main popup entry point
-├── about.html               # About page
-├── help.html                # Help page
-├── settings.html            # Settings page
-├── onboarding.html          # Onboarding page
-└── README.md                # This file
+│   └── page2-8.html         # Step-by-step review pages
+├── icons/                   # Extension assets
+├── manifest.json            # Chrome extension configuration (v3)
+└── various HTML pages       # Popup, settings, help, etc.
 ```
 
-## Installation
+## 🚀 Installation
 
-### For Development
+### Local Development
 
-1. Clone or download this repository to your local machine
-2. Add proper icon files to the `icons` directory (follow instructions in icons/README.md)
-3. Open Chrome and navigate to `chrome://extensions/`
-4. Enable "Developer mode" by toggling the switch in the top right
-5. Click "Load unpacked" and select the extension directory
-6. The extension should now appear in your toolbar
+```bash
+# Clone the repository
+git clone https://github.com/myvision/accessibility-helper.git
+cd accessibility-helper
 
-### For Production
+# Open Chrome Extensions page
+chrome://extensions
+```
 
-1. Create a ZIP file containing all necessary files (excluding development files)
-2. Submit to the Chrome Web Store following their developer guidelines
+1. Enable **Developer mode** in the top-right corner
+2. Click **Load unpacked** and select the extension directory
+3. The extension icon will appear in your Chrome toolbar
 
-## Backend Server Integration
+### For Users
 
-This extension is designed to work with a backend server for centralized data storage. The server code is available in a separate repository.
+1. Visit the [Chrome Web Store](https://chrome.google.com/webstore/)
+2. Search for "MyVision Accessibility Helper"
+3. Click **Add to Chrome**
 
-### Server Configuration
+### Building for Production
 
-By default, the extension is configured to communicate with a server at `http://localhost:3000`. To change this:
+```bash
+# Package the extension (excludes dev files)
+zip -r accessibility-helper-prod.zip . -x "*.git*" "*.DS_Store" "*node_modules*" "*.vscode*"
+```
 
-1. Open `js/popup.js`
-2. Find the line with `const serverUrl = 'http://localhost:3000/api/submit-review';`
-3. Update this URL to point to your server
-4. Also update the `host_permissions` in `manifest.json` to include your server domain
+## 🔌 API Integration
 
-## Usage
+### Backend Configuration
 
-### Conducting an Accessibility Review
+The extension communicates with a REST API endpoint for data storage and retrieval. The current production endpoint is:
 
-1. Navigate to the website you want to review
-2. Click the extension icon to open the popup
-3. Read the introduction page and click "Next" to start
-4. Complete each page of the review process:
-   - Website Usage Preferences
-   - Website Navigation
-   - Content Access
-   - Interactive Features
-   - Help and Support
-   - Overall Experience
-5. On the Completion page, click "Submit" to send your feedback to the server
+```
+https://web-production-d801.up.railway.app/api/
+```
 
-### Customization Options
+To modify this configuration for your own deployment:
 
-Access the settings by clicking the gear icon (⚙️) in the popup:
+1. Open `manifest.json` and update the `host_permissions` array
+2. Open `js/popup.js` and modify the `BACKEND_BASE` constant
 
-- **Dark Mode**: Toggle between light and dark themes
-- **High Contrast**: Enable high contrast mode for better visibility
-- **Font Size**: Adjust text size for better readability
-- **Reset Data**: Clear all saved review responses
+### Authentication Flow
 
-## Accessibility Features
+The extension implements a JWT-based authentication flow:
 
-- **Keyboard Navigation**: Full keyboard accessibility with focus management
-- **Screen Reader Support**: Proper ARIA attributes and semantic HTML
-- **Multiple Themes**: Support for various visual preferences
-- **Focus Indicators**: Clear visual focus indicators for keyboard users
-- **Skip Links**: Allow keyboard users to skip navigation
-- **Form Validation**: Accessible error messages and validation
-- **Automatic Saving**: Prevents data loss
+1. User logs in via the extension login page
+2. Authentication token is stored in Chrome storage
+3. Subsequent API requests include the token in Authorization headers
+4. Expired tokens trigger automatic logout
 
-## Technology Stack
+## 📋 Usage Guide
 
-- **HTML5**: Semantic markup for better accessibility
-- **CSS3**: Modular CSS architecture with variables
-- **JavaScript**: ES6+ for enhanced functionality
-- **Chrome Extension API**: For browser integration
-- **RESTful API**: For backend server communication
+### Starting a Review
 
-## Development
+1. Navigate to the website you want to evaluate
+2. Click the MyVision extension icon in your Chrome toolbar
+3. Sign in with your MyVision credentials if prompted
+4. Read the introduction and click **Next** to begin
 
-### Prerequisites
+### Step-by-Step Process
 
-- Basic knowledge of HTML, CSS, and JavaScript
-- Chrome browser for testing
-- Text editor or IDE (VS Code recommended)
+The review workflow consists of 8 progressive steps:
 
-### Modifying CSS
+1. **Introduction**: Overview and purpose
+2. **Website Usage**: How you typically use the site
+3. **Navigation**: Ease of finding information
+4. **Content Access**: Text, images, and media accessibility
+5. **Interactive Elements**: Forms, buttons, and controls
+6. **Help & Support**: Availability of assistance
+7. **Overall Experience**: General impressions and rating
+8. **Submission**: Review and submit your feedback
 
-The CSS follows a modular structure:
-- `base.css`: Edit to change colors, typography, spacing, etc.
-- `components.css`: Modify UI components
-- `themes.css`: Add or modify themes
-- `review-steps.css`: Adjust the multi-step review UI
+### Customizing Your Experience
 
-<!-- Removed obsolete 'Adding Pages' section -->
+<table>
+  <tr>
+    <td><b>Theme</b></td>
+    <td>Toggle between Light, Dark, and High Contrast modes</td>
+  </tr>
+  <tr>
+    <td><b>Font Size</b></td>
+    <td>Adjust text size for better readability</td>
+  </tr>
+  <tr>
+    <td><b>Export</b></td>
+    <td>Download your review data as JSON</td>
+  </tr>
+  <tr>
+    <td><b>Settings</b></td>
+    <td>Configure frequency and notifications</td>
+  </tr>
+</table>
 
-### Form Processing
+## ♿ Accessibility
 
-Form data is automatically saved to Chrome storage as users type. To modify the data processing:
+This extension follows WCAG 2.1 AA guidelines and includes:
 
-1. Edit the `saveFormData()` and `loadFormData()` functions in `popup.js`
-2. Update the `setupFormTracking()` function to handle new form elements if needed
-3. Modify the `submitDataToServer()` function to change what data is sent to the server
+- **Keyboard Navigation**: Full keyboard accessibility with visible focus states
+- **Screen Reader Compatibility**: Semantic HTML and proper ARIA attributes
+- **Color Contrast**: All text meets WCAG AA contrast requirements
+- **Flexible Text Sizing**: Supports browser zoom and custom text size settings
+- **Focus Management**: Proper focus handling in modals and dynamic content
+- **Reduced Motion**: Respects user preference for reduced animation
+- **Alternative Text**: All UI elements have proper text alternatives
+- **Skip Navigation**: Keyboard shortcut to bypass repetitive elements
+- **Error Identification**: Form errors are clearly identified and described
 
-## Permissions
+## 🔧 Technical Details
 
-This extension requires the following permissions:
+### Built With
 
-- `storage`: To save form responses locally
-- `activeTab`: To interact with the current tab
-- `tabs`: To get the URL of the website being reviewed
-- `host_permissions`: To communicate with the backend server
+- **Manifest V3**: Latest Chrome extension platform
+- **Vanilla JavaScript**: No frameworks or dependencies
+- **CSS Custom Properties**: For theming and consistent styling
+- **Chrome Storage API**: For persistent data across browser sessions
+- **Fetch API**: For RESTful server communication
+- **Service Worker**: For background processing and offline support
 
-## Troubleshooting
+### Browser Support
+
+- **Chrome/Chromium**: v88+
+- **Microsoft Edge**: v88+ (Chromium-based)
+- **Opera**: v74+ (Chromium-based)
+
+## 👩‍💻 Developer Guide
+
+### Environment Setup
+
+```bash
+# Recommended tools
+Chrome Browser
+Visual Studio Code with these extensions:
+- ESLint
+- Prettier
+- Chrome Debugger
+```
+
+### Key Development Areas
+
+#### CSS Customization
+
+The styling system uses a modular approach with CSS variables for consistency:
+
+```css
+/* Example from base.css */
+:root {
+  --color-primary: #0072bb;     /* MyVision blue */
+  --color-primary-dark: #005a96; /* Darker blue for hover states */
+  --font-size-base: 1rem;        /* 16px base font size */
+  /* ... */
+}
+```
+
+To modify themes, edit the class definitions in `themes.css`.
+
+#### JavaScript Patterns
+
+The extension uses modular patterns and promises for asynchronous operations:
+
+```javascript
+// Example promise-based storage access
+function loadThemeSettings() {
+  return new Promise(resolve => {
+    chrome.storage.sync.get(['theme', 'fontSize'], 
+      ({ theme = 'light', fontSize = 'medium' }) => {
+        applyTheme(theme);
+        applyFontSize(fontSize);
+        resolve();
+    });
+  });
+}
+```
+
+## 🔐 Security & Privacy
+
+### Required Permissions
+
+| Permission | Purpose |
+|------------|----------|
+| `storage` | Save user preferences and form responses |
+| `activeTab` | Access the current tab's URL for review context |
+| `tabs` | Get metadata about the website being reviewed |
+| `downloads` | Allow exporting review data as JSON |
+| `host_permissions` | Connect to the MyVision API server |
+
+### Data Handling
+
+- All user data is stored securely using Chrome's storage API
+- API communication uses HTTPS with JWT authentication
+- Sensitive data is never stored in local storage
+- Users can export or delete their data at any time
+
+## 🔍 Troubleshooting
 
 ### Common Issues
 
-1. **Extension not loading**: Check that all required files are present and manifest.json is valid
-2. **Form data not saving**: Verify Chrome storage permissions are granted
-3. **Cannot submit reviews**: Check server connection and URL configuration
-4. **Styling issues**: Verify CSS files are properly imported in popup.css
+<details>
+<summary><b>Extension doesn't appear in toolbar</b></summary>
 
-### Debugging
+- Check that the extension is enabled in Chrome Extensions page
+- Verify that manifest.json is valid and has the correct "action" configuration
+- Look for JavaScript errors in the background script
+</details>
 
-1. Right-click the extension icon and select "Inspect popup"
-2. Use Chrome DevTools to debug JavaScript and inspect elements
-3. Check the Console tab for error messages
-4. Use the Application tab to examine Chrome storage
+<details>
+<summary><b>Form data not saving</b></summary>
 
-## Contributing
+- Verify storage permissions in manifest.json
+- Check Chrome's console for error messages
+- Clear browser cache and reload extension
+</details>
 
-Contributions are welcome! Please follow these steps:
+<details>
+<summary><b>API connection failures</b></summary>
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+- Confirm your internet connection is active
+- Verify the backend URL in BACKEND_BASE is correct
+- Check that your authentication token is valid
+- Look for CORS errors in the console
+</details>
 
-## License
+### Debugging Tips
 
-This project is licensed under the MIT License.
+```bash
+# Inspect the extension popup
+Right-click extension icon → Inspect Popup
 
-## Acknowledgements
+# View background script logs
+Chrome Extensions → Find this extension → Inspect views: service worker
 
-- MyVision Oxfordshire for design patterns and accessibility guidance
-- The Chrome Extensions team for their comprehensive documentation
+# Check storage contents
+DevTools → Application → Storage → Chrome Storage
+```
+
+## 👥 Contributing
+
+Contributions are welcome! Here's how you can help:
+
+1. **Report Bugs**: Create an issue describing the bug and steps to reproduce
+2. **Suggest Features**: Submit an issue with your feature request
+3. **Submit Pull Requests**: Follow these steps:
+   - Fork the repository and clone locally
+   - Create a feature branch (`git checkout -b feature/amazing-feature`)
+   - Commit your changes with descriptive messages
+   - Push to your branch and open a Pull Request
+
+Please adhere to our code style and include appropriate tests.
+
+## 📄 License
+
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+
+## 🙏 Acknowledgements
+
+- [MyVision Oxfordshire](https://www.myvision.org.uk/) for accessibility expertise and design guidance
+- [Chrome Extensions Documentation](https://developer.chrome.com/docs/extensions/) for development resources
+- [W3C Web Accessibility Initiative](https://www.w3.org/WAI/) for accessibility standards
 - All contributors who have helped improve this extension
+
+---
+
+<div align="center">
+<p>Made with ❤️ by the MyVision Accessibility Team</p>
+</div>

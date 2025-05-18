@@ -9,9 +9,10 @@
   flex-direction: column;
   overflow: hidden;
   background-color: var(--color-background);
-  border-radius: var(--border-radius-lg);
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
-  /* Remove box-shadow in favor of filter for better border-radius compatibility */
+  /* Square corners to align with Chrome UI */
+  border-radius: 0;
+  /* Use drop-shadow so the shadow conforms to the rendered shape */
+  filter: drop-shadow(var(--shadow-md));
 }
 
 /* Top Navigation */
@@ -25,8 +26,6 @@
   box-shadow: var(--shadow-md);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
-  border-top-left-radius: var(--border-radius-lg);
-  border-top-right-radius: var(--border-radius-lg);
 }
 
 /* First row inside toolbar */
@@ -104,18 +103,55 @@
   pointer-events: none;
 }
 
-/* Main Content */
-main {
+/* Scrollable Content Areas */
+.popup-container main,
+.help-content,
+.settings-content {
   flex: 1;
   overflow-y: auto;
   padding: var(--spacing-md);
   background-color: var(--color-background);
+  /* Firefox scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-primary-light) transparent;
 }
 
+/* Restore content-area helper container */
 .content-area {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
+}
+
+/* Custom Scrollbar for WebKit (Chrome, Edge) */
+.popup-container main::-webkit-scrollbar,
+.help-content::-webkit-scrollbar,
+.settings-content::-webkit-scrollbar {
+  width: 8px;
+  height: 8px; /* In case of horizontal scroll */
+}
+
+.popup-container main::-webkit-scrollbar-track,
+.help-content::-webkit-scrollbar-track,
+.settings-content::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 8px;
+}
+
+.popup-container main::-webkit-scrollbar-thumb,
+.help-content::-webkit-scrollbar-thumb,
+.settings-content::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary-light);
+  border-radius: 8px;
+  border: 2px solid transparent; /* Creates thumb padding */
+  background-clip: content-box;
+  transition: background-color var(--transition-speed);
+}
+
+.popup-container main::-webkit-scrollbar-thumb:hover,
+.help-content::-webkit-scrollbar-thumb:hover,
+.settings-content::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-primary);
 }
 
 /* Bottom Navigation */
@@ -123,8 +159,6 @@ main {
   background-color: var(--color-surface);
   border-top: var(--border-width) solid var(--color-border);
   height: 50px;
-  border-bottom-left-radius: var(--border-radius-lg);
-  border-bottom-right-radius: var(--border-radius-lg);
 }
 
 .bottom-nav ul {
