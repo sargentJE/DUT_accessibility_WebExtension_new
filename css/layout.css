@@ -9,7 +9,7 @@
   flex-direction: column;
   overflow: hidden;
   background-color: var(--color-background);
-  border-radius: var(--border-radius-md);
+  border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-md);
 }
 
@@ -24,6 +24,8 @@
   box-shadow: var(--shadow-md);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
+  border-top-left-radius: var(--border-radius-lg);
+  border-top-right-radius: var(--border-radius-lg);
 }
 
 /* First row inside toolbar */
@@ -120,6 +122,8 @@ main {
   background-color: var(--color-surface);
   border-top: var(--border-width) solid var(--color-border);
   height: 50px;
+  border-bottom-left-radius: var(--border-radius-lg);
+  border-bottom-right-radius: var(--border-radius-lg);
 }
 
 .bottom-nav ul {
