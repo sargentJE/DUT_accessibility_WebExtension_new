@@ -797,49 +797,113 @@ function addDefaultPlaceholders(form) {
 function openModal(page) {
   const prev = document.getElementById('popup-modal');
   if (prev) prev.remove();
+
+  // Create overlay/backdrop
   const overlay = document.createElement('div');
   overlay.id = 'popup-modal';
-  Object.assign(overlay.style, {
-    position: 'fixed', top: '0', left: '0', width: '100vw', height: '100vh',
-    background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: '3000',
+  overlay.className = 'popup-overlay'; // NEW: use CSS class instead of inline styles
+
+  // Clicking backdrop closes the modal
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) closeModal();
   });
+
+  // Create modal container
   const modal = document.createElement('div');
-  Object.assign(modal.style, {
-    width: 'clamp(280px, 90vw, 600px)',
-    height: 'clamp(300px, 90vh, 800px)',
-    boxSizing: 'border-box',
-    background: '#fff', position: 'relative',
-    borderRadius: '8px', boxShadow: '0 6px 18px rgba(0,0,0,0.25)', overflow: 'hidden',
-    display: 'flex', flexDirection: 'column'
-  });
+  modal.className = 'popup-modal';
+
+  // Close button
   const closeBtn = document.createElement('button');
   closeBtn.textContent = '×';
-  Object.assign(closeBtn.style, {
-    position: 'absolute', top: '8px', right: '8px', background: 'transparent', border: 'none', fontSize: '20px', cursor: 'pointer'
-  });
-  closeBtn.addEventListener('click', () => overlay.remove());
+  closeBtn.className = 'popup-close-btn';
+  closeBtn.setAttribute('aria-label', 'Close');
+  closeBtn.addEventListener('click', closeModal);
+
+  // iFrame that hosts the page (settings.html etc.)
   const iframe = document.createElement('iframe');
   iframe.src = chrome.runtime.getURL(page);
-  Object.assign(iframe.style, { flex: '1 1 auto', width: '100%', border: 'none' });
-  // Cleanup unwanted UI in modal pages
+  Object.assign(iframe.style, { flex: '1 1 auto', width: '100%', border: 'none', overflow: 'hidden' });
+
+  // Cleanup unwanted UI + propagate theme classes
   iframe.addEventListener('load', () => {
     const doc = iframe.contentDocument;
     if (!doc) return;
+
+    // Remove nav / skip elements in modal context
     ['.nav-buttons', '.skip-link', '.bottom-nav'].forEach(sel => {
       doc.querySelectorAll(sel).forEach(el => el.remove());
     });
-    // Shrink toolbar header in modal
+
+    // NEW: Unwrap content from popup-container to prevent double-containers
+    const popupContainer = doc.querySelector('.popup-container');
+    if (popupContainer) {
+      // Move all children out of the popup-container and remove it
+      const mainContent = doc.querySelector('#main-content');
+      if (mainContent) {
+        // Take main content out of popup-container and make it the root
+        popupContainer.parentNode.insertBefore(mainContent, popupContainer);
+        popupContainer.remove();
+        // Make sure we don't have nested scrolling contexts
+        mainContent.style.overflow = 'visible';
+        mainContent.style.height = 'auto';
+        mainContent.style.flex = '1';
+        // Add proper padding to main content for better reading experience
+        mainContent.style.padding = '16px 24px';
+        
+        // Ensure content area has appropriate styling
+        const contentArea = mainContent.querySelector('.content-area');
+        if (contentArea) {
+          contentArea.style.marginTop = '8px';
+        }
+      }
+    }
+
+    // Style the top navigation header in modal context
     const header = doc.querySelector('.top-nav');
     if (header) {
-      header.style.height = '36px';
-      header.style.padding = '4px 8px';
+      // Apply a more elegant styling to the header
+      header.style.height = '50px';
+      header.style.padding = '8px 16px';
+      header.style.display = 'flex';
+      header.style.alignItems = 'center';
+      header.style.justifyContent = 'center';
+      header.style.position = 'relative';
+      header.style.borderTopLeftRadius = '12px';
+      header.style.borderTopRightRadius = '12px';
+      
+      // Make the title stand out more
       const title = header.querySelector('h1');
-      if (title) title.style.fontSize = '14px';
+      if (title) {
+        title.style.fontSize = '18px';
+        title.style.fontWeight = '600';
+        title.style.margin = '0';
+        title.style.textAlign = 'center';
+      }
     }
+
+    // Propagate theme & font-size classes so modal matches parent
+    const cls = [...THEME_CLASSES, ...FONT_SIZE_CLASSES];
+    cls.forEach(c => {
+      if (document.body.classList.contains(c)) doc.body.classList.add(c);
+    });
+
+    // Allow Esc inside iframe to close the modal
+    doc.addEventListener('keydown', evt => {
+      if (evt.key === 'Escape') closeModal();
+    });
   });
+
   modal.append(closeBtn, iframe);
   overlay.append(modal);
   document.body.append(overlay);
+
+  // Trap focus inside modal + return focus on close
+  trapFocus(overlay, document.activeElement);
+}
+
+// Global helper so iframe or other code can close the modal
+function closeModal() {
+  document.getElementById('popup-modal')?.remove();
 }
 
 function showSettings() {

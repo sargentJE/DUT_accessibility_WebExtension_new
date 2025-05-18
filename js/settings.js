@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const backendInp = document.getElementById('backendUrl');
   // keys mapping id -> storage key (sync area)
   const fieldMap = {
-    darkMode: 'darkMode',
     theme: 'theme',
     fontSize: 'fontSize',
     frequency: 'frequency',
@@ -32,23 +31,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // ---------- LIVE PREVIEW OF THEME & FONT SIZE ------------------------
+  (function attachLivePreview() {
+    const themeSel = document.querySelector('#theme');
+    const fontSel  = document.querySelector('#fontSize');
+    const callParent = (fn, arg) => {
+      if (window.top && typeof window.top[fn] === 'function') window.top[fn](arg);
+    };
+    if (themeSel) themeSel.addEventListener('change', e => callParent('applyTheme', e.target.value));
+    if (fontSel)  fontSel.addEventListener('change', e => callParent('applyFontSize', e.target.value));
+  })();
+
   // --------- save handler ----------------------------
   form.addEventListener('submit', e => {
     e.preventDefault();
     const out = {};
-    for (const [id, key] of Object.entries(fieldMap)) {
-      const el = document.getElementById(id);
-      if (!el) continue;
-      out[key] = (el.type === 'checkbox') ? el.checked : el.value;
-    }
-    chrome.storage.sync.set(out, () => {
-      // simple toast – reuse showToast from popup if available
-      if (typeof showToast === 'function') {
-        showToast('Settings saved');
-      } else {
-        alert('Settings saved');
-      }
+    const elems = form.querySelectorAll('input, select, textarea');
+    elems.forEach(el => {
+      const key = el.name || el.id;
+      if (!key) return;
+      if (el.type === 'checkbox') out[key] = el.checked;
+      else if (el.type === 'radio') {
+        if (el.checked) out[key] = el.value;
+      } else out[key] = el.value;
     });
+    chrome.storage.sync.set(out, () => {
+      if (window.top && typeof window.top.showToast === 'function') window.top.showToast('Settings saved');
+      if (window.top && typeof window.top.closeModal === 'function') window.top.closeModal();
+    });
+  });
+
+  // Esc key inside settings page closes the modal
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && window.top && typeof window.top.closeModal === 'function') window.top.closeModal();
   });
 
   // -------- reset defaults ---------------------------
