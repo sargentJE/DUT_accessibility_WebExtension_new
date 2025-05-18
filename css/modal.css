@@ -1,0 +1,117 @@
+/* ------------------------------------------------------------------
+ * modal.css – Styles for pop-up modals opened inside the extension
+ * ------------------------------------------------------------------ */
+
+/* Full-screen backdrop */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 3000;
+  overflow-x: hidden; /* prevent horiz scroll caused by modal margins */
+  animation: fadeIn 0.2s ease forwards;
+}
+
+/* Dark & high-contrast variants */
+.dark-theme .popup-overlay {
+  background: rgba(0, 0, 0, 0.75);
+}
+.high-contrast-theme .popup-overlay {
+  background: #000;
+}
+
+/* Modal box */
+.popup-modal {
+  /* Create floating effect by not filling full width */
+  width: 92%;            
+  max-width: 500px;
+  height: clamp(300px, 88vh, 600px);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;      /* allow vertical scroll inside modal */
+  overflow-x: hidden;    /* suppress horizontal scroll */
+  position: relative;
+  padding: 0;            /* main content has own padding */
+  animation: slideUpFade 0.25s ease-out forwards;
+  transform-origin: center;
+}
+
+.dark-theme .popup-modal {
+  background: #1e1e1e;
+  color: #fff;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+.high-contrast-theme .popup-modal {
+  background: #000;
+  color: #fff;
+  border: 2px solid #fff;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+}
+
+/* Close button */
+.popup-close-btn {
+  position: absolute;
+  top: 12px;
+  left: 12px;              /* move to left, away from scroll bar */
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-background-btn, rgba(0,0,0,0.06));
+  border: none;
+  border-radius: 50%;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--color-text-btn, currentColor);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.popup-close-btn:focus {
+  outline: 2px solid var(--color-primary, #1976d2);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+.popup-close-btn:hover {
+  background: var(--color-background-btn-hover, rgba(0,0,0,0.15));
+  transform: scale(1.05);
+}
+
+.dark-theme .popup-close-btn {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.9);
+}
+
+.dark-theme .popup-close-btn:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* Add the animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUpFade {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px) scale(0.98);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
