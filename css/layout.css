@@ -10,7 +10,8 @@
   overflow: hidden;
   background-color: var(--color-background);
   border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-md);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
+  /* Remove box-shadow in favor of filter for better border-radius compatibility */
 }
 
 /* Top Navigation */
