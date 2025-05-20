@@ -1,0 +1,10 @@
+# Ignore archived refactoring work
+archive/
+
+# Ignore data directory
+data/
+
+# Common ignores for web projects
+node_modules/
+.DS_Store
+*.log
