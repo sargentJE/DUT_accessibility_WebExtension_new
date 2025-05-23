@@ -32,6 +32,20 @@
   margin: 0 auto;
 }
 
+.myvision-logo {
+  width: 180px;
+  height: auto;
+  display: block;
+  margin: 1.5rem auto;
+  padding: 0.5rem;
+  border-radius: 8px;
+}
+
+/* Text color utilities */
+.text-white {
+  color: white !important;
+}
+
 .d-grid {
   display: grid !important;
 }
