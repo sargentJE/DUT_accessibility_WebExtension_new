@@ -397,3 +397,70 @@ select {
   height: 16px;
   margin: 0;
 }
+
+/* =================== Polished Input Field Styling (2025-05) =================== */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+textarea,
+select {
+  background-color: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+}
+
+input:hover,
+textarea:hover,
+select:hover {
+  border-color: var(--color-primary);
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(46, 78, 157, 0.25);
+  outline: none;
+}
+
+.dark-theme input,
+.dark-theme textarea,
+.dark-theme select {
+  background-color: #2a2a2a;
+  border-color: #444;
+  color: var(--color-secondary);
+}
+
+.dark-theme input:hover,
+.dark-theme textarea:hover,
+.dark-theme select:hover,
+.dark-theme input:focus-visible,
+.dark-theme textarea:focus-visible,
+.dark-theme select:focus-visible {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(51, 153, 255, 0.25);
+}
+
+.high-contrast-theme input,
+.high-contrast-theme textarea,
+.high-contrast-theme select {
+  background-color: black;
+  color: white;
+  border: 2px solid white;
+}
+
+.high-contrast-theme input:focus-visible,
+.high-contrast-theme textarea:focus-visible,
+.high-contrast-theme select:focus-visible {
+  outline: 2px solid yellow;
+  border-color: yellow;
+  box-shadow: none;
+}

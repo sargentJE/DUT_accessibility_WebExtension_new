@@ -14,16 +14,39 @@
         <!-- Main Content Area -->
         <main id="main-content">
             <div class="content-area">
-                <h2 class="section-title">Help and Support</h2>
+                <h2 class="section-title">Step&nbsp;6&nbsp;of&nbsp;8 · Help &amp; Support</h2>
                 
-                <p><em>Complete each task below and answer the related questions.</em></p>
+                <p class="lead"><em>Help and support resources must work for everyone. This step checks if you can get assistance when you need it. Try each task, then rate how easy it was <strong>and</strong> describe any barriers you found.</em></p>
                 
-                <p class="mb-3"><strong>Note:</strong> Fields marked with <strong>*</strong> are required.</p>
+                <div class="info-panel mb-4">
+                    <div class="info-panel-header">
+                        <span class="info-icon" aria-hidden="true">i</span>
+                        <h3 class="info-title">Helpful Information</h3>
+                    </div>
+                    <div class="info-panel-body">
+                        <div class="info-item">
+                            <span class="info-tag">Why This Matters</span>
+                            <p>When users encounter problems, accessible help resources become critical. Without them, people with disabilities may be completely blocked.</p>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-tag">Consider Your Needs</span>
+                            <p>Think about your specific disability: Can you access help using your preferred tools and methods? Is support available in formats that work for you?</p>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-tag">Testing Tip</span>
+                            <p>Check if help documentation itself is accessible. Can you navigate it with your assistive technology? Are there multiple ways to get support?</p>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-tag">Auto-save</span>
+                            <p>Your answers save automatically—you can use Back or Next buttons anytime.</p>
+                        </div>
+                    </div>
+                </div>
                 
                 <form id="help-support-form">
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h3 class="card-title">Task 1: Find Help Resources</h3>
+                            <h3 class="card-title">Task 1: Find help resources</h3>
                         </div>
                         <div class="card-content">
                             <p><strong>What to do:</strong> Locate help content such as FAQs, knowledge base, or tutorials.</p>
@@ -33,21 +56,30 @@
                                 <li>Search using keywords like "help" or "support."</li>
                             </ul>
                             
-                            <p><strong>Tip:</strong> Help resources should be accessible from anywhere.</p>
+                            <p><strong>Why this matters for different users:</strong></p>
+                            <ul>
+                                <li><strong>Screen reader users:</strong> Need properly labeled help links</li>
+                                <li><strong>Keyboard-only users:</strong> Need focusable help options</li>
+                                <li><strong>Cognitive disabilities:</strong> Need clearly visible help options</li>
+                                <li><strong>Low vision:</strong> Need help links with adequate contrast</li>
+                            </ul>
+                            <p>Many users with disabilities need detailed guidance on accessibility features or alternative workflows.</p>
+                            
+                            <p><strong>Tip:</strong> Screen-reader users can search headings (H) or landmarks (R). Help links should be reachable from any page. Check if there are dedicated accessibility help sections.</p>
                             
                             <div class="form-group">
-                                <label for="help_resources_ease">How easy was it to find help resources? *</label>
+                                <label for="help_resources_ease">How easy was it? *</label>
                                 <select id="help_resources_ease" name="help_resources_ease" required>
-                                    <option value="">Please select...</option>
+                                    <option value="">Select one…</option>
                                     <option value="very_easy">Very easy</option>
                                     <option value="somewhat_easy">Somewhat easy</option>
-                                    <option value="difficult">Difficult</option>
-                                    <option value="very_difficult">Very difficult</option>
+                                    <option value="hard">Hard</option>
+                                    <option value="could_not_find">Couldn't find</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="help_resources_location">Where were help resources located?</label>
+                                <label for="help_resources_location">Where did you finally find the help link? (Note how many clicks it took and where it was located. Was it consistent across pages?)</label>
                                 <textarea id="help_resources_location" name="help_resources_location" rows="3"></textarea>
                             </div>
                         </div>
@@ -55,7 +87,7 @@
                     
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h3 class="card-title">Task 2: Review Support Options</h3>
+                            <h3 class="card-title">Task 2: Check contact options</h3>
                         </div>
                         <div class="card-content">
                             <p><strong>What to do:</strong> Evaluate support channels (email, phone, chat, ticket system).</p>
@@ -65,19 +97,28 @@
                                 <li>Look for self-service options (FAQs, forums).</li>
                             </ul>
                             
+                            <p><strong>Why multiple contact options matter:</strong></p>
+                            <ul>
+                                <li><strong>Deaf or hard of hearing:</strong> Need text-based options (email, chat)</li>
+                                <li><strong>Speech impairments:</strong> Need alternatives to phone support</li>
+                                <li><strong>Anxiety disorders:</strong> May prefer non-real-time communication</li>
+                                <li><strong>Vision impairments:</strong> Need accessible contact forms</li>
+                            </ul>
+                            <p>Users with different disabilities need appropriate contact methods that work with their specific needs.</p>
+                            
                             <div class="form-group">
-                                <label for="support_options_adequacy">How adequate were the support options? *</label>
+                                <label for="support_options_adequacy">How adequate were the options? *</label>
                                 <select id="support_options_adequacy" name="support_options_adequacy" required>
-                                    <option value="">Please select...</option>
+                                    <option value="">Select one…</option>
                                     <option value="very_adequate">Very adequate</option>
                                     <option value="somewhat_adequate">Somewhat adequate</option>
-                                    <option value="difficult">Difficult</option>
-                                    <option value="very_difficult">Very difficult</option>
+                                    <option value="limited">Limited</option>
+                                    <option value="none_found">None found</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="missing_support_options">What support options were missing?</label>
+                                <label for="missing_support_options">Which contact options were missing or inaccessible? (Examples: text-only alternatives to phone, accessible chat interfaces, options for users who need extra time to communicate)</label>
                                 <textarea id="missing_support_options" name="missing_support_options" rows="3"></textarea>
                             </div>
                         </div>
@@ -85,7 +126,7 @@
                     
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h3 class="card-title">Task 3: Assess Help Documentation</h3>
+                            <h3 class="card-title">Task 3: Read help articles / FAQs</h3>
                         </div>
                         <div class="card-content">
                             <p><strong>What to do:</strong> Review help articles or FAQs for clarity.</p>
@@ -95,27 +136,36 @@
                                 <li>Assess organization and scannability.</li>
                             </ul>
                             
+                            <p><strong>Why accessible documentation matters:</strong></p>
+                            <ul>
+                                <li><strong>Vision impairments:</strong> Need screen reader compatible formats</li>
+                                <li><strong>Cognitive disabilities:</strong> Need clear instructions with visual aids</li>
+                                <li><strong>Learning disabilities:</strong> Need step-by-step guidance without jargon</li>
+                                <li><strong>Motor limitations:</strong> Need documentation navigable by keyboard</li>
+                            </ul>
+                            <p>Clear structure, plain language, and proper heading hierarchy are essential.</p>
+                            
                             <div class="form-group">
-                                <label for="documentation_clarity">How clear and helpful was the documentation? *</label>
-                                <select id="documentation_clarity" name="documentation_clarity" required>
-                                    <option value="">Please select...</option>
+                                <label for="faq_clarity">How clear were the articles? *</label>
+                                <select id="faq_clarity" name="faq_clarity" required>
+                                    <option value="">Select one…</option>
                                     <option value="very_clear">Very clear</option>
                                     <option value="somewhat_clear">Somewhat clear</option>
-                                    <option value="difficult">Difficult</option>
-                                    <option value="very_difficult">Very difficult</option>
+                                    <option value="hard_to_follow">Hard to follow</option>
+                                    <option value="could_not_read">Couldn't read</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="help_content_improvements">How could the help content be improved?</label>
-                                <textarea id="help_content_improvements" name="help_content_improvements" rows="3"></textarea>
+                                <label for="help_content_improvements">What would make help resources work better for your specific needs? (Examples: For vision impairment: screen reader compatible guides. For cognitive disabilities: simpler instructions with pictures. For motor disabilities: keyboard shortcuts for common tasks.)</label>
+                                <textarea id="help_content_improvements" name="help_content_improvements" rows="3" placeholder="Describe how help resources could better support your needs"></textarea>
                             </div>
                         </div>
                     </div>
                     
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h3 class="card-title">Task 4: Evaluate Support Effectiveness</h3>
+                            <h3 class="card-title">Task 4: Test a support request</h3>
                         </div>
                         <div class="card-content">
                             <p><strong>What to do:</strong> Test a support channel (submit a question or test request).</p>
@@ -125,37 +175,46 @@
                                 <li>Check for automated responses.</li>
                             </ul>
                             
+                            <p><strong>Why this matters:</strong> Support request forms and processes must be accessible to all users. Many support channels inadvertently create barriers with inaccessible forms, time limits, or CAPTCHA challenges.</p>
+                            
                             <div class="form-group">
-                                <label for="support_process_accessibility">How accessible was the support process? *</label>
+                                <label for="support_process_accessibility">How accessible was the process? *</label>
                                 <select id="support_process_accessibility" name="support_process_accessibility" required>
-                                    <option value="">Please select...</option>
+                                    <option value="">Select one…</option>
                                     <option value="very_accessible">Very accessible</option>
                                     <option value="somewhat_accessible">Somewhat accessible</option>
-                                    <option value="difficult">Difficult</option>
-                                    <option value="very_difficult">Very difficult</option>
+                                    <option value="hard">Hard</option>
+                                    <option value="could_not_submit">Couldn't submit</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="support_barriers">What barriers did you encounter?</label>
-                                <textarea id="support_barriers" name="support_barriers" rows="3"></textarea>
+                                <label for="support_barriers">What specific barriers did you encounter when trying to contact support? (Examples: inaccessible forms, CAPTCHAs you couldn't complete, only phone support available, chat widgets that didn't work with your assistive technology)</label>
+                                <textarea id="support_barriers" name="support_barriers" rows="3" placeholder="Describe any barriers you encountered when trying to get help"></textarea>
                             </div>
                         </div>
                     </div>
                     
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h3 class="card-title">Additional Support Recommendations</h3>
+                            <h3 class="card-title">Overall support feedback</h3>
                         </div>
                         <div class="card-content">
                             <div class="form-group">
-                                <label for="help_positioning">Where would help resources be better positioned?</label>
-                                <textarea id="help_positioning" name="help_positioning" rows="3"></textarea>
+                                <label for="overall_support_rating">Rate the overall support accessibility based on how well it would work for users with your specific needs (1 = poor, 5 = excellent):</label>
+                                <select id="overall_support_rating" name="overall_support_rating">
+                                    <option value="">Select one…</option>
+                                    <option value="5">5 – Excellent</option>
+                                    <option value="4">4 – Good</option>
+                                    <option value="3">3 – Fair</option>
+                                    <option value="2">2 – Poor</option>
+                                    <option value="1">1 – Very poor</option>
+                                </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="additional_support_features">What additional support features would improve accessibility?</label>
-                                <textarea id="additional_support_features" name="additional_support_features" rows="3"></textarea>
+                                <label for="overall_support_comment">What single change would most improve support accessibility for users with your specific needs?</label>
+                                <textarea id="overall_support_comment" name="overall_support_comment" rows="3"></textarea>
                             </div>
                         </div>
                     </div>

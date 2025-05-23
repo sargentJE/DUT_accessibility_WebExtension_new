@@ -1046,3 +1046,392 @@ input:checked + .slider:before {
   max-width: 360px;
   margin-inline: auto;
 }
+
+/* =================== Enhanced Card Depth Effects (2025-05) =================== */
+.card {
+  /* Ensure a neutral surface colour inherited from theme */
+  background-color: var(--color-surface, #ffffff);
+  /* Elevate by default slightly */
+  box-shadow: var(--shadow-sm);
+  position: relative; /* for pseudo */
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  overflow: hidden; /* clip pseudo shine */
+}
+
+/* Interactive elevation */
+.card:hover,
+.card:focus-within {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Subtle highlight sheen */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top left, rgba(255,255,255,0.15), transparent 70%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.card:hover::before,
+.card:focus-within::before {
+  opacity: 1;
+}
+
+/* Dark theme card tuning */
+.dark-theme .card {
+  background-color: var(--color-surface);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
+
+.dark-theme .card:hover,
+.dark-theme .card:focus-within {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+}
+
+/* High contrast styles are now handled in themes.css */
+
+/* =================== Informational Banners (2025-05) =================== */
+.banner {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+  box-shadow: var(--shadow-sm);
+}
+
+.banner svg {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.banner-info {
+  background-color: var(--color-primary-light);
+  color: var(--color-secondary);
+  border-left: 4px solid var(--color-primary);
+}
+
+.banner-success {
+  background-color: #e6f7ec;
+  color: var(--color-success);
+  border-left: 4px solid var(--color-success);
+}
+
+.banner-warning {
+  background-color: #fff8e1;
+  color: var(--color-warning);
+  border-left: 4px solid var(--color-warning);
+}
+
+/* Dark theme banner tweaks */
+.dark-theme .banner-info {
+  background-color: rgba(51, 153, 255, 0.12);
+  color: var(--color-secondary);
+}
+
+.dark-theme .banner-success {
+  background-color: rgba(40, 167, 69, 0.12);
+  color: var(--color-success);
+}
+
+.dark-theme .banner-warning {
+  background-color: rgba(255, 193, 7, 0.12);
+  color: var(--color-warning);
+}
+
+/* Banner styles for high contrast are now handled in themes.css */
+
+/* =================== Info Panel Component (2025-05) =================== */
+.info-panel {
+  background-color: #f5f9ff;
+  background-image: linear-gradient(to bottom right, rgba(255,255,255,0.95), rgba(245,249,255,0.95));
+  border-radius: var(--border-radius-md);
+  border-left: 4px solid var(--color-primary);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  margin-bottom: var(--spacing-md);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  position: relative;
+}
+
+.info-panel:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* Subtle pattern overlay */
+.info-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%230072bb' fill-opacity='0.03' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='1'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.5;
+  z-index: 0;
+}
+
+.info-panel-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: rgba(0, 114, 187, 0.08);
+  border-bottom: 1px solid rgba(0, 114, 187, 0.15);
+  position: relative;
+  z-index: 1;
+}
+
+.info-icon {
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-primary);
+  color: white;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.info-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  letter-spacing: 0.01em;
+}
+
+.info-panel-body {
+  padding: var(--spacing-md);
+  position: relative;
+  z-index: 1;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--spacing-md);
+  position: relative;
+  padding-left: 1.5rem;
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.info-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Add a vertical connecting line between items */
+.info-item::before {
+  content: '';
+  position: absolute;
+  top: 1.5rem;
+  bottom: -0.5rem;
+  left: 0.35rem;
+  width: 2px;
+  background-color: rgba(0, 114, 187, 0.15);
+}
+
+.info-item:last-child::before {
+  display: none;
+}
+
+/* Add a dot for each item */
+.info-item::after {
+  content: '';
+  position: absolute;
+  top: 0.35rem;
+  left: 0;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  opacity: 0.7;
+}
+
+.info-tag {
+  display: inline-block;
+  background-color: var(--color-primary);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 1rem;
+  margin-bottom: 0.3rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.03em;
+  align-self: flex-start;
+}
+
+.info-item p {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--color-text);
+  max-width: 95%;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Dark theme styling */
+.dark-theme .info-panel {
+  background-color: rgba(0, 114, 187, 0.08);
+  background-image: linear-gradient(to bottom right, rgba(0, 20, 40, 0.8), rgba(0, 30, 60, 0.8));
+  border-color: var(--color-primary);
+}
+
+.dark-theme .info-panel-header {
+  background-color: rgba(0, 114, 187, 0.15);
+}
+
+.dark-theme .info-item::before {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark-theme .info-item p {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* High contrast theme styling */
+.high-contrast-theme .info-panel {
+  background-color: #000;
+  background-image: none;
+  border: 2px solid var(--color-primary);
+  border-left-width: 6px;
+}
+
+.high-contrast-theme .info-panel::before {
+  display: none;
+}
+
+.high-contrast-theme .info-panel-header {
+  background-color: var(--color-primary);
+  border-bottom: none;
+}
+
+.high-contrast-theme .info-title {
+  color: #fff;
+}
+
+.high-contrast-theme .info-icon {
+  background-color: #fff;
+  color: var(--color-primary);
+}
+
+.high-contrast-theme .info-tag {
+  border: 1px solid white;
+  box-shadow: none;
+}
+
+.high-contrast-theme .info-item::before,
+.high-contrast-theme .info-item::after {
+  background-color: #fff;
+}
+
+.high-contrast-theme .info-item p {
+  color: #fff;
+}
+
+/* Reduce animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .info-panel,
+  .info-panel:hover {
+    transition: none;
+    transform: none;
+  }
+  
+  .info-item {
+    animation: none;
+  }
+  
+  .scroll-top-button {
+    transition: none;
+  }
+}
+
+/* Scroll to top button */
+.scroll-top-button {
+  position: fixed;
+  bottom: 5rem; /* Moved higher to avoid pagination overlap */
+  right: 1.5rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  transition: all var(--transition-speed);
+  opacity: 0;
+  transform: translateY(1rem);
+  pointer-events: none;
+}
+
+.scroll-top-button.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.scroll-top-button:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-0.25rem);
+  box-shadow: var(--shadow-lg);
+}
+
+.scroll-top-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 114, 187, 0.3), var(--shadow-md);
+}
+
+/* Theme variations */
+.dark-theme .scroll-top-button {
+  background: var(--color-primary-dark);
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dark-theme .scroll-top-button:hover {
+  background: var(--color-primary);
+}
+
+.high-contrast-theme .scroll-top-button {
+  background: #000;
+  color: #fff;
+  border: 2px solid #fff;
+  box-shadow: none;
+}
+
+.high-contrast-theme .scroll-top-button:hover,
+.high-contrast-theme .scroll-top-button:focus {
+  background: #fff;
+  color: #000;
+  border-color: #000;
+}

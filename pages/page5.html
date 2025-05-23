@@ -16,40 +16,70 @@
         <!-- Main Content Area -->
         <main id="main-content">
             <div class="content-area">
-                <h2 class="section-title">Interactive Features</h2>
+                <h2 class="section-title">Step&nbsp;5&nbsp;of&nbsp;8 · Interactive Elements</h2>
                 
-                <p><em>Complete each task below and answer the related questions.</em></p>
+                <p class="lead"><em>Buttons, forms, menus and other interactive elements create major barriers for many users. This step checks if these elements work with your preferred way of using websites. Try each task, then rate the experience.</em></p>
                 
-                <p class="mb-3"><strong>Note:</strong> Fields marked with <strong>*</strong> are required.</p>
+                <div class="info-panel mb-4">
+                    <div class="info-panel-header">
+                        <span class="info-icon" aria-hidden="true">i</span>
+                        <h3 class="info-title">Helpful Information</h3>
+                    </div>
+                    <div class="info-panel-body">
+                        <div class="info-item">
+                            <span class="info-tag">Why This Matters</span>
+                            <p>Interactive elements are often the biggest accessibility barriers. Many users can't use forms, buttons or menus due to disability-specific challenges.</p>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-tag">Time Limits</span>
+                            <p>Pay special attention to anything that disappears or times out (slideshows, notifications, session timeouts). These create barriers for many users.</p>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-tag">Testing Tip</span>
+                            <p>Try using forms and buttons with your specific assistive technology or input method. Can you complete tasks without frustration?</p>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-tag">Auto-save</span>
+                            <p>Your answers save automatically—you can use Back or Next buttons anytime.</p>
+                        </div>
+                    </div>
+                </div>
                 
                 <form id="interactive-features-form">
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h3 class="card-title">Task 1: Complete a Form</h3>
+                            <h3 class="card-title">Task 1: Submit a form</h3>
                         </div>
                         <div class="card-content">
-                            <p><strong>What to do:</strong> Find and attempt to complete a form (contact, signup, search).</p>
+                            <p><strong>What to do:</strong> Find a form (contact form, newsletter signup, product search, login) and submit test information.</p>
                             <ul>
                                 <li>Evaluate ease of locating and understanding the form.</li>
                                 <li>Test labeling and required fields.</li>
                                 <li>Try submitting with test data.</li>
                             </ul>
                             
-                            <p><strong>Tip:</strong> Use only keyboard (Tab, Enter) to navigate.</p>
+                            <p><strong>Why forms matter for different users:</strong></p>
+                            <ul>
+                                <li><strong>Vision impairments:</strong> Screen readers need proper field labels</li>
+                                <li><strong>Motor disabilities:</strong> Forms need keyboard access and forgiving input</li>
+                                <li><strong>Cognitive disabilities:</strong> Clear instructions and error messages are essential</li>
+                            </ul>
+                            
+                            <p><strong>Tip:</strong> Can you tell what each field is for? Can you complete the form using only your preferred method (keyboard, screen reader, etc.)? Is the <strong>focus order</strong> logical (moving through fields in a sensible sequence)?</p>
                             
                             <div class="form-group">
-                                <label for="form_usability">How usable was the form? *</label>
+                                <label for="form_usability">How easy was it? *</label>
                                 <select id="form_usability" name="form_usability" required>
-                                    <option value="">Please select...</option>
-                                    <option value="very_usable">Very usable</option>
-                                    <option value="somewhat_usable">Somewhat usable</option>
-                                    <option value="difficult">Difficult</option>
-                                    <option value="very_difficult">Very difficult</option>
+                                    <option value="">Select one…</option>
+                                    <option value="very_easy">Very easy</option>
+                                    <option value="somewhat_easy">Somewhat easy</option>
+                                    <option value="hard">Hard</option>
+                                    <option value="could_not_complete">Couldn't complete</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="form_barriers">What barriers did you encounter?</label>
+                                <label for="form_barriers">What specific barriers did you encounter? (Examples: missing field labels, no indication of required fields, error messages not linked to fields, CAPTCHA without audio alternative, confusing instructions)</label>
                                 <textarea id="form_barriers" name="form_barriers" rows="3"></textarea>
                             </div>
                         </div>
@@ -57,26 +87,33 @@
                     
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h3 class="card-title">Task 2: Test Customization Options</h3>
+                            <h3 class="card-title">Task 2: Adjust page settings</h3>
                         </div>
                         <div class="card-content">
-                            <p><strong>What to do:</strong> Test options like font size, color themes, layout preferences, or language selection.</p>
+                            <p><strong>What to do:</strong> Change font size, theme, language, or other preferences.</p>
                             
-                            <p><strong>Tip:</strong> Look in headers, footers, profile settings, or accessibility menus.</p>
+                            <p><strong>Why this matters for different users:</strong></p>
+                            <ul>
+                                <li><strong>Low vision:</strong> May need larger text or high contrast</li>
+                                <li><strong>Light sensitivity:</strong> May need dark mode</li>
+                                <li><strong>Reading difficulties:</strong> May need simpler layouts or different fonts</li>
+                            </ul>
+                            
+                            <p><strong>Tip:</strong> Look in headers, footers, profile settings, or dedicated accessibility menus. Can you operate these controls with keyboard only? Do the changes persist between pages?</p>
                             
                             <div class="form-group">
-                                <label for="customization_quality">How well did customization options work? *</label>
+                                <label for="customization_quality">How well did it work? *</label>
                                 <select id="customization_quality" name="customization_quality" required>
-                                    <option value="">Please select...</option>
+                                    <option value="">Select one…</option>
                                     <option value="very_well">Very well</option>
                                     <option value="somewhat_well">Somewhat well</option>
-                                    <option value="difficult">Difficult</option>
-                                    <option value="very_difficult">Very difficult</option>
+                                    <option value="hard_to_use">Hard to use</option>
+                                    <option value="no_effect">No effect</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="missing_customization">What customization options were missing?</label>
+                                <label for="missing_customization">What settings were missing or hard to use? (Examples: no text size options, contrast settings hidden in submenus, settings that reset between pages, controls that require mouse hovering)</label>
                                 <textarea id="missing_customization" name="missing_customization" rows="3"></textarea>
                             </div>
                         </div>
@@ -84,26 +121,33 @@
                     
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h3 class="card-title">Task 3: Test Error Handling</h3>
+                            <h3 class="card-title">Task 3: Trigger an error</h3>
                         </div>
                         <div class="card-content">
-                            <p><strong>What to do:</strong> Cause errors (incorrect form entries, incomplete submission, invalid search) to test responses.</p>
+                            <p><strong>What to do:</strong> Enter wrong data (e.g., invalid email) or skip required fields to see error handling.</p>
                             
-                            <p><strong>Tip:</strong> Evaluate if error messages explain what went wrong, why it matters, and how to fix it.</p>
+                            <p><strong>Why error messages matter for different users:</strong></p>
+                            <ul>
+                                <li><strong>Visually Im users:</strong> Need screen readers to announce errors</li>
+                                <li><strong>Color blind users:</strong> Can't detect errors shown only in red</li>
+                                <li><strong>Cognitive disabilities:</strong> Need clear explanations of what went wrong</li>
+                            </ul>
+                            
+                            <p><strong>Tip:</strong> Evaluate if error messages clearly explain: what went wrong, why it matters, and how to fix it. Are errors announced to screen readers? Can you navigate directly to the field with the error?</p>
                             
                             <div class="form-group">
-                                <label for="error_messages_helpfulness">How helpful were the error messages? *</label>
-                                <select id="error_messages_helpfulness" name="error_messages_helpfulness" required>
-                                    <option value="">Please select...</option>
-                                    <option value="very_helpful">Very helpful</option>
-                                    <option value="somewhat_helpful">Somewhat helpful</option>
-                                    <option value="difficult">Difficult</option>
-                                    <option value="very_difficult">Very difficult</option>
+                                <label for="error_message_clarity">How clear were the error messages? *</label>
+                                <select id="error_message_clarity" name="error_message_clarity" required>
+                                    <option value="">Select one…</option>
+                                    <option value="very_clear">Very clear</option>
+                                    <option value="somewhat_clear">Somewhat clear</option>
+                                    <option value="unclear">Unclear</option>
+                                    <option value="no_error_message">No error message</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="error_message_improvements">How could error messages be improved?</label>
+                                <label for="error_message_improvements">How could error messaging be more accessible? (Examples: adding error text next to fields, not just color changes; announcing errors to screen readers; providing specific correction guidance)</label>
                                 <textarea id="error_message_improvements" name="error_message_improvements" rows="3"></textarea>
                             </div>
                         </div>
@@ -111,26 +155,33 @@
                     
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h3 class="card-title">Task 4: Assess Feedback Clarity</h3>
+                            <h3 class="card-title">Task 4: Check confirmation messages</h3>
                         </div>
                         <div class="card-content">
-                            <p><strong>What to do:</strong> Complete actions (form submission, add to cart, save preference) and evaluate feedback.</p>
+                            <p><strong>What to do:</strong> Complete an action (e.g., form submit, adding to cart) and observe feedback.</p>
                             
-                            <p><strong>Tip:</strong> Feedback should be immediate, visible, and understandable without relying solely on color.</p>
+                            <p><strong>Why confirmations matter for different users:</strong></p>
+                            <ul>
+                                <li><strong>Visual impairments:</strong> Need non-visual confirmation through screen readers</li>
+                                <li><strong>Cognitive disabilities:</strong> Need clear confirmation their action worked</li>
+                                <li><strong>Attention disorders:</strong> Need feedback that persists long enough to notice</li>
+                            </ul>
+                            
+                            <p><strong>Tip:</strong> Feedback should be immediate, visible, and understandable without relying solely on color. Is it announced to screen readers? Does it persist long enough to read? Is it clearly associated with your action?</p>
                             
                             <div class="form-group">
-                                <label for="feedback_clarity">How clear was the website's feedback? *</label>
+                                <label for="feedback_clarity">How clear was the feedback? *</label>
                                 <select id="feedback_clarity" name="feedback_clarity" required>
-                                    <option value="">Please select...</option>
+                                    <option value="">Select one…</option>
                                     <option value="very_clear">Very clear</option>
                                     <option value="somewhat_clear">Somewhat clear</option>
-                                    <option value="difficult">Difficult</option>
-                                    <option value="very_difficult">Very difficult</option>
+                                    <option value="hard_to_understand">Hard to understand</option>
+                                    <option value="no_feedback">No feedback</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="feedback_improvements">How could the website better confirm actions?</label>
+                                <label for="feedback_improvements">What specific improvement would make confirmations more accessible? (Examples: making messages persist longer, ensuring screen readers announce confirmations, providing both visual and text-based indicators)</label>
                                 <textarea id="feedback_improvements" name="feedback_improvements" rows="3"></textarea>
                             </div>
                         </div>
@@ -141,21 +192,30 @@
                             <h3 class="card-title">Keyboard & Device Accessibility</h3>
                         </div>
                         <div class="card-content">
+                            <p><strong>Did you notice any time limits?</strong> Were there slideshows, notifications, or session timeouts that moved too quickly for you? Time pressure creates barriers for many users.</p>
+                            <p><strong>Why keyboard access matters:</strong> Many users can't use a mouse or touchscreen:</p>
+                            <ul>
+                                <li>People with tremors or limited motor control</li>
+                                <li>Screen reader users who navigate by keyboard</li>
+                                <li>People using mouth sticks, head pointers, or other assistive devices</li>
+                                <li>People with temporary injuries (broken arm, etc.)</li>
+                            </ul>
+                            
                             <div class="form-group">
-                                <label for="keyboard_navigation">Could you navigate interactive elements using only a keyboard? *</label>
+                                <label for="keyboard_navigation">Could you use only the keyboard to complete tasks? *</label>
                                 <select id="keyboard_navigation" name="keyboard_navigation" required>
-                                    <option value="">Please select...</option>
-                                    <option value="yes_completely">Yes completely</option>
-                                    <option value="yes_partially">Yes partially</option>
+                                    <option value="">Select one…</option>
+                                    <option value="yes_fully">Yes, fully</option>
+                                    <option value="yes_partially">Yes, partially</option>
                                     <option value="no">No</option>
                                     <option value="not_tested">Not tested</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="mobile_usability">If tested on mobile, how well did interactive elements work?</label>
+                                <label for="mobile_usability">If you tested on mobile, how accessible was it? (Consider touch targets, gestures, screen orientation)</label>
                                 <select id="mobile_usability" name="mobile_usability">
-                                    <option value="">Please select...</option>
+                                    <option value="">Select one…</option>
                                     <option value="worked_well">Worked well</option>
                                     <option value="some_issues">Some issues</option>
                                     <option value="major_problems">Major problems</option>

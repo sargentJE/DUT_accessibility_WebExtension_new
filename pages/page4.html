@@ -14,11 +14,34 @@
         <!-- Main Content Area -->
         <main id="main-content">
             <div class="content-area">
-                <h2 class="section-title">Content Access</h2>
+                <h2 class="section-title">Step&nbsp;4&nbsp;of&nbsp;8 · Accessing Content</h2>
                 
-                <p><em>Complete each task below and answer the related questions before moving on.</em></p>
+                <p class="lead"><em>Accessible content is readable, understandable, and well-organized. This step checks if information is clear and usable for everyone. Try each task, then rate the experience <strong>and</strong> describe specific issues.</em></p>
                 
-                <p class="mb-3"><strong>Note:</strong> Fields marked with <strong>*</strong> are required.</p>
+                <div class="info-panel mb-4">
+                    <div class="info-panel-header">
+                        <span class="info-icon" aria-hidden="true">i</span>
+                        <h3 class="info-title">Helpful Information</h3>
+                    </div>
+                    <div class="info-panel-body">
+                        <div class="info-item">
+                            <span class="info-tag">Why This Matters</span>
+                            <p>Content accessibility affects everyone differently. Testing real reading tasks reveals barriers automated tests miss.</p>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-tag">Display Settings Tip</span>
+                            <p>Try changing text size, zoom level, or switching to dark mode if available. Do all content elements resize properly?</p>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-tag">Screen Reader Tip</span>
+                            <p>Check if images have alternative text and if headings form a logical outline. Can you understand the content without seeing it?</p>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-tag">Auto-save</span>
+                            <p>Your answers save automatically—you can use Back or Next buttons anytime.</p>
+                        </div>
+                    </div>
+                </div>
                 
                 <form id="content-access-form">
                     <div class="card mb-3">
@@ -28,21 +51,28 @@
                         <div class="card-content">
                             <p><strong>What to do:</strong> Review text for readability, headings, logical structure, and clear language.</p>
                             
-                            <p><strong>Tip:</strong> Read a few pages of content and assess how easy it is to understand.</p>
+                            <p><strong>Why this matters:</strong> Clear content is essential for many users:</p>
+                            <ul>
+                                <li><strong>Cognitive disabilities:</strong> Need simple language and clear organization</li>
+                                <li><strong>Vision impairments:</strong> Rely on logical structure with screen readers</li>
+                                <li><strong>Learning difficulties:</strong> Benefit from consistent formatting and plain language</li>
+                            </ul>
+                            
+                            <p><strong>Tip:</strong> Read a few pages of content and assess: Are sentences concise? Is specialized vocabulary explained? Are headings descriptive and properly structured? Is information presented in a logical order?</p>
                             
                             <div class="form-group">
-                                <label for="content_clarity">How clear and well-organized is the content? *</label>
+                                <label for="content_clarity">How clear and well-organized was what you read? *</label>
                                 <select id="content_clarity" name="content_clarity" required>
-                                    <option value="">Please select...</option>
+                                    <option value="">Select one…</option>
                                     <option value="very_clear">Very clear</option>
                                     <option value="mostly_clear">Mostly clear</option>
-                                    <option value="poor">Poor</option>
-                                    <option value="confusing">Confusing</option>
+                                    <option value="hard_to_follow">Hard to follow</option>
+                                    <option value="could_not_understand">Couldn't understand</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="clarity_barriers">What barriers to clarity did you encounter?</label>
+                                <label for="clarity_barriers">What made the content difficult for you personally? (Examples: technical jargon you didn't understand, text too small to read comfortably, long paragraphs without breaks, confusing instructions, colors that were hard to see)</label>
                                 <textarea id="clarity_barriers" name="clarity_barriers" rows="3"></textarea>
                             </div>
                         </div>
@@ -55,22 +85,24 @@
                         <div class="card-content">
                             <p><strong>What to do:</strong> Look for news sections, updates, alerts, or announcements.</p>
                             
-                            <p><strong>Tip:</strong> Check the homepage or sections labeled "News" or "Announcements."</p>
+                            <p><strong>Why this matters:</strong> Important information should be prominently displayed and accessible to all users. Alerts and updates often contain time-sensitive information users need to know.</p>
+                            
+                            <p><strong>Tip:</strong> Check the homepage or sections labeled "News" or "Announcements." Are updates clearly marked? Can you access them with a keyboard? Are they announced to screen reader users?</p>
                             
                             <div class="form-group">
-                                <label for="updates_ease">How easily could you find important updates? *</label>
+                                <label for="updates_ease">How easy was it to find updates? *</label>
                                 <select id="updates_ease" name="updates_ease" required>
-                                    <option value="">Please select...</option>
+                                    <option value="">Select one…</option>
                                     <option value="very_easy">Very easy</option>
                                     <option value="somewhat_easy">Somewhat easy</option>
-                                    <option value="difficult">Difficult</option>
-                                    <option value="could_not_find">Could not find</option>
+                                    <option value="hard">Hard</option>
+                                    <option value="could_not_find">Couldn't find</option>
                                     <option value="not_applicable">Not applicable</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="updates_barriers">What barriers did you encounter?</label>
+                                <label for="updates_barriers">What specific barriers did you encounter? (Examples: updates shown only as images without alt text, notifications that disappear too quickly, important updates hidden in sliders/carousels, color-only indicators)</label>
                                 <textarea id="updates_barriers" name="updates_barriers" rows="3"></textarea>
                             </div>
                         </div>
@@ -83,22 +115,24 @@
                         <div class="card-content">
                             <p><strong>What to do:</strong> Locate and open documents like terms of service, policies, or downloadable resources.</p>
                             
-                            <p><strong>Tip:</strong> Look for PDF files or links to "Terms," "Privacy Policy," etc.</p>
+                            <p><strong>Why this matters:</strong> Important documents must be accessible in multiple formats. PDFs and other downloadable resources should be properly structured for screen readers and other assistive technologies.</p>
+                            
+                            <p><strong>Tip:</strong> Look for PDF files or links to "Terms," "Privacy Policy," etc. Check if alternative formats are available. Can you navigate the document with a keyboard or screen reader?</p>
                             
                             <div class="form-group">
-                                <label for="documents_ease">How easily could you access essential documents? *</label>
+                                <label for="documents_ease">How easy was it to open documents? *</label>
                                 <select id="documents_ease" name="documents_ease" required>
-                                    <option value="">Please select...</option>
+                                    <option value="">Select one…</option>
                                     <option value="very_easy">Very easy</option>
                                     <option value="somewhat_easy">Somewhat easy</option>
-                                    <option value="difficult">Difficult</option>
-                                    <option value="could_not_find">Could not find</option>
+                                    <option value="hard">Hard</option>
+                                    <option value="could_not_open">Couldn't open</option>
                                     <option value="not_applicable">Not applicable</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="documents_barriers">What barriers did you encounter?</label>
+                                <label for="documents_barriers">What specific barriers did you encounter? (Examples: scanned PDFs without text recognition, documents without headings or bookmarks, no alternative HTML versions, excessive file sizes without warning)</label>
                                 <textarea id="documents_barriers" name="documents_barriers" rows="3"></textarea>
                             </div>
                         </div>
@@ -111,12 +145,14 @@
                         <div class="card-content">
                             <p><strong>What to do:</strong> Check for logical sequence, appropriate headings (H1, H2), and meaningful organization.</p>
                             
-                            <p><strong>Tip:</strong> Use a screen reader or examine the visual hierarchy.</p>
+                            <p><strong>Why this matters:</strong> Good structure helps everyone. Screen reader users need proper headings to navigate. People with cognitive disabilities need clear organization. Everyone benefits from a logical information flow.</p>
+                            
+                            <p><strong>Tip:</strong> Check if headings make sense in order. Main heading should describe the page, followed by clear section headings. Is important information easy to find?</p>
                             
                             <div class="form-group">
-                                <label for="structure_quality">How well is the information structured? *</label>
+                                <label for="structure_quality">How well was information structured? *</label>
                                 <select id="structure_quality" name="structure_quality" required>
-                                    <option value="">Please select...</option>
+                                    <option value="">Select one…</option>
                                     <option value="very_well">Very well</option>
                                     <option value="mostly_well">Mostly well</option>
                                     <option value="poorly">Poorly</option>
@@ -125,7 +161,7 @@
                             </div>
                             
                             <div class="form-group">
-                                <label for="structural_issues">What structural issues did you notice?</label>
+                                <label for="structural_issues">What specific structural issues did you notice? (Examples: missing main headings, confusing heading order, related content scattered across different areas, important information hard to find)</label>
                                 <textarea id="structural_issues" name="structural_issues" rows="3"></textarea>
                             </div>
                         </div>
@@ -133,21 +169,21 @@
                     
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h3 class="card-title">Content Improvement Suggestions</h3>
+                            <h3 class="card-title">How Content Could Be More Accessible</h3>
                         </div>
                         <div class="card-content">
                             <div class="form-group">
-                                <label for="alt_text_suggestions">If images lacked descriptions, suggest better alt text:</label>
+                                <label for="alt_text_suggestions">If images lacked descriptions, suggest better alt text (Examples: 'Woman using screen reader' is better than 'Image 001', 'Graph showing 30% increase in sales' instead of just 'Sales graph'):</label>
                                 <textarea id="alt_text_suggestions" name="alt_text_suggestions" rows="3"></textarea>
                             </div>
                             
                             <div class="form-group">
-                                <label for="content_simplification">How could content be simplified?</label>
+                                <label for="content_simplification">How could the content be easier to understand? (Think about your specific needs - do you need simpler language, bullet points instead of paragraphs, clearer instructions, more headings?)</label>
                                 <textarea id="content_simplification" name="content_simplification" rows="3"></textarea>
                             </div>
                             
                             <div class="form-group">
-                                <label for="multimedia_accessibility">How could multimedia (videos, audio) be more accessible?</label>
+                                <label for="multimedia_accessibility">How could multimedia (videos, audio) be more accessible? (Examples: captions for videos, transcripts for audio, audio descriptions of visual content, controls that work with keyboard)</label>
                                 <textarea id="multimedia_accessibility" name="multimedia_accessibility" rows="3"></textarea>
                             </div>
                         </div>

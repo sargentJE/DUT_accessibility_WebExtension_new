@@ -23,9 +23,14 @@ const LAST_PAGE_KEY = 'lastPage';
 const BACKEND_BASE  = 'https://web-production-d801.up.railway.app/api';
 const SESSION_KEY   = 'currentSessionId';
 const SITE_URL_KEY  = 'lastSiteUrl';
+const NO_SESSION_KEY = 'noSessionYet'; // Track if session creation is pending
 let   currentSessionId = null;
 let   currentSiteUrl   = '';
 let   currentOrigin    = ''; // Added for origin-based keying
+
+// Session creation lock to prevent race conditions
+let sessionCreationInProgress = false;
+let sessionCreationPromise = null; // For waiting on in-progress creation
 
 // Extension version injected from manifest
 const EXT_VERSION = chrome.runtime.getManifest().version;
@@ -45,6 +50,15 @@ const ICONS = {
 // Only run popup initialization in top-level popup (not in modals)
 if (window.self === window.top) {
   document.addEventListener('DOMContentLoaded', initExtension);
+  
+  // Activate popup scroll containment immediately
+  document.body.classList.add('popup-active');
+  
+  // Ensure proper scroll containment
+  initScrollContainment();
+  
+  // Add scroll-to-top button
+  addScrollToTopButton();
 }
 
 async function initExtension() {
@@ -108,28 +122,28 @@ async function initExtension() {
   currentSessionId = stored[sessionIdKey()] || null; // Session ID for this origin
   const lastVisitedPage = stored[lastPageKey()] || 1; // Last page visited for this origin
 
-  // If no session exists for this origin, start a new one.
+  // Check if we already have a session or have marked that no session exists yet
+  const noSessionYet = stored[noSessionKey()] || false;
+  
   if (!currentSessionId) {
-    // Clear any potentially stale page data for this origin before starting fresh
-    const keysToClear = [lastPageKey(), sessionIdKey(), siteUrlKey()]; // Clear session info too
-    for (let i = 1; i <= TOTAL_PAGES; i++) keysToClear.push(pageKey(i));
-    await new Promise(r => sRemove(keysToClear, r)); // Ensure clearing finishes
-
-    currentSessionId = await createSession(currentSiteUrl);
-
-    // Check if session creation failed
-    if (!currentSessionId) {
-      showToast('Failed to start review session. Please check connection and try reloading.', 'error');
-      // Optionally disable UI or show persistent error
-      document.body.innerHTML = '<div class="centered-message error">Could not connect to the server to start the review session. Please check your internet connection and try again.</div>';
-      return; // Stop initialization
+    if (!noSessionYet) {
+      // First time seeing this origin - clear any stale data
+      const keysToClear = [lastPageKey(), sessionIdKey(), siteUrlKey()]; 
+      for (let i = 1; i <= TOTAL_PAGES; i++) keysToClear.push(pageKey(i));
+      await new Promise(r => sRemove(keysToClear, r)); // Ensure clearing finishes
+      
+      // Mark that we don't have a session yet, but we've initialized
+      sSet({ 
+        [siteUrlKey()]: currentSiteUrl, 
+        [noSessionKey()]: true, 
+        [lastPageKey()]: 1 
+      });
+    } else {
+      // We've already marked this as having no session, but update URL if needed
+      sSet({ [siteUrlKey()]: currentSiteUrl });
     }
-
-    // Store the new session ID and the full URL, keyed by the origin
-    sSet({ [siteUrlKey()]: currentSiteUrl, [sessionIdKey()]: currentSessionId, [lastPageKey()]: 1 });
   } else {
-    // If session exists, update the stored full URL in case it changed slightly (e.g. hash)
-    // but preserve the session ID and last page.
+    // Session exists, update the stored URL in case it changed slightly
     sSet({ [siteUrlKey()]: currentSiteUrl });
   }
 
@@ -418,6 +432,141 @@ function cycleFontSize() {
 function createDarkModeToggle() {/* handled in enhanceTopNavigation */}
 function createFontSizeToggle() {/* handled in enhanceTopNavigation */}
 
+// ------------------ SCROLL CONTAINMENT & NAVIGATION ------------------------------
+// Prevent scroll events from leaking through to the underlying webpage
+function initScrollContainment() {
+  // Get the main scrollable container
+  const main = document.querySelector('.popup-container main');
+  if (!main) return;
+  
+  // Create a passive wheel event handler for performance
+  main.addEventListener('wheel', (event) => {
+    // Only handle wheel events when they occur inside the popup
+    const rect = main.getBoundingClientRect();
+    const isInBounds = 
+      event.clientX >= rect.left &&
+      event.clientX <= rect.right &&
+      event.clientY >= rect.top &&
+      event.clientY <= rect.bottom;
+      
+    if (isInBounds) {
+      // Check if we're at the boundary of the scrollable area
+      const scrollTop = main.scrollTop;
+      const scrollHeight = main.scrollHeight;
+      const clientHeight = main.clientHeight;
+      
+      const isAtTop = scrollTop <= 0;
+      const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
+      
+      // Prevent scrolling beyond boundaries
+      if ((isAtTop && event.deltaY < 0) || (isAtBottom && event.deltaY > 0)) {
+        event.preventDefault();
+      }
+    }
+  }, { passive: false });
+  
+  // Handle touch events for mobile devices
+  let touchStartY = 0;
+  
+  main.addEventListener('touchstart', (event) => {
+    touchStartY = event.touches[0].clientY;
+  }, { passive: true });
+  
+  main.addEventListener('touchmove', (event) => {
+    const touchY = event.touches[0].clientY;
+    const scrollTop = main.scrollTop;
+    const scrollHeight = main.scrollHeight;
+    const clientHeight = main.clientHeight;
+    
+    // Detect scroll direction
+    const isScrollingUp = touchY > touchStartY;
+    const isScrollingDown = touchY < touchStartY;
+    
+    // Check boundaries
+    const isAtTop = scrollTop <= 0;
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
+    
+    // Prevent scroll at boundaries
+    if ((isAtTop && isScrollingUp) || (isAtBottom && isScrollingDown)) {
+      event.preventDefault();
+    }
+    
+    touchStartY = touchY;
+  }, { passive: false });
+  
+  // Ensure info panels also prevent event propagation
+  document.querySelectorAll('.info-panel').forEach(panel => {
+    panel.addEventListener('wheel', (event) => {
+      event.stopPropagation();
+    }, { passive: true });
+  });
+}
+
+// Adds a scroll-to-top button that appears when scrolling down
+function addScrollToTopButton() {
+  // Get the main scrollable container
+  const main = document.querySelector('.popup-container main') || document.body;
+  if (!main) return;
+  
+  // Create the button if it doesn't exist
+  let scrollTopBtn = document.getElementById('scrollTopBtn');
+  if (!scrollTopBtn) {
+    scrollTopBtn = document.createElement('button');
+    scrollTopBtn.id = 'scrollTopBtn';
+    scrollTopBtn.className = 'scroll-top-button';
+    scrollTopBtn.setAttribute('aria-label', 'Scroll to top');
+    scrollTopBtn.setAttribute('title', 'Scroll to top');
+    
+    // Add arrow icon using accessible SVG
+    scrollTopBtn.innerHTML = `
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 14l5-5 5 5"/>
+      </svg>
+    `;
+    
+    // Add click handler to scroll to top
+    scrollTopBtn.addEventListener('click', () => {
+      // Scroll to top with smooth behavior
+      main.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+      
+      // Focus the page heading for better accessibility
+      setTimeout(() => {
+        focusPageHeading();
+      }, 500);
+    });
+    
+    // Add the button to the document
+    document.body.appendChild(scrollTopBtn);
+  }
+  
+  // Track scroll position and toggle button visibility
+  const toggleButtonVisibility = () => {
+    // Show button when scrolled down more than 300px
+    const scrollThreshold = 300;
+    const shouldShow = main.scrollTop > scrollThreshold;
+    
+    // Toggle the visible class
+    scrollTopBtn.classList.toggle('visible', shouldShow);
+  };
+  
+  // Initial check
+  toggleButtonVisibility();
+  
+  // Listen for scroll events
+  main.addEventListener('scroll', toggleButtonVisibility, { passive: true });
+  
+  // Add keyboard shortcut (Alt+Home) for accessibility
+  document.addEventListener('keydown', (e) => {
+    if (e.altKey && e.key === 'Home') {
+      e.preventDefault();
+      scrollTopBtn.click();
+    }
+  });
+}
+
 // ------------------ ACCESSIBILITY HELPERS ---------------------------
 function focusPageHeading() {
   const h1 = document.querySelector('.top-nav h1');
@@ -467,25 +616,121 @@ function hydratePageForm(values = {}) {
   });
 }
 
-// Debounced saveFormData to avoid excessive writes
-const debouncedSave = debounce(saveFormData, 600);
+// Debounced saveFormData versions - both sync and async compatible
+const debouncedSave = debounce(() => {
+  // This version is for backward compatibility with existing code
+  // that doesn't expect saveFormData to be async
+  saveFormData().catch(err => console.error('Error in debounced saveFormData:', err));
+}, 600);
 
-function saveFormData() {
-  const page = getCurrentPageIndex();
-  const data = serializePageForm();
-  const key = pageKey(page);
+// Async version that returns a promise for code that can handle async
+const debouncedSaveAsync = debounce(async () => {
+  return await saveFormData();
+}, 600);
 
-  // Store list of required fields for this page (auto-derived schema)
-  const required = Array.from(document.querySelectorAll('[required]')).map(el => {
-    const name = el.name || el.id;
-    let labelTxt = '';
-    const labelEl = document.querySelector(`label[for="${el.id}"]`);
-    if (labelEl) labelTxt = labelEl.textContent.trim();
-    return { name, label: labelTxt };
-  });
+// Create a session if needed before saving form data with locking mechanism
+async function createSessionIfNeeded() {
+  // If we already have a session ID, no need to create one
+  if (currentSessionId) return true;
+  
+  // If session creation is already in progress, wait for it to complete
+  if (sessionCreationInProgress) {
+    console.log('Session creation already in progress, waiting...');
+    if (sessionCreationPromise) {
+      const result = await sessionCreationPromise;
+      return result;
+    }
+    return false; // Fallback if promise is somehow missing
+  }
+  
+  // Check if we're marked as needing a session
+  const stored = await new Promise(r => sGet([noSessionKey()], r));
+  const needsSession = stored[noSessionKey()] || false;
+  
+  if (needsSession) {
+    // Acquire lock and store promise
+    sessionCreationInProgress = true;
+    sessionCreationPromise = (async () => {
+      console.log('Creating session on form interaction');
+      try {
+        // Try creating session with retry logic
+        let attempts = 0;
+        const maxAttempts = 3;
+        let backoffDelay = 1000; // Start with 1 second
+        
+        while (attempts < maxAttempts) {
+          // Create a new session
+          currentSessionId = await createSession(currentSiteUrl);
+          
+          // Check if session creation succeeded
+          if (currentSessionId) {
+            // Store the new session ID and remove the no-session flag
+            sSet({ 
+              [sessionIdKey()]: currentSessionId,
+              [noSessionKey()]: false
+            });
+            console.log(`Session created successfully: ${currentSessionId}`);
+            return true;
+          }
+          
+          // If we reach here, session creation failed
+          attempts++;
+          if (attempts < maxAttempts) {
+            console.warn(`Session creation attempt ${attempts} failed, retrying in ${backoffDelay/1000}s...`);
+            await new Promise(resolve => setTimeout(resolve, backoffDelay));
+            backoffDelay *= 2; // Exponential backoff
+          }
+        }
+        
+        // All attempts failed
+        console.error(`Failed to create session after ${maxAttempts} attempts`);
+        showToast('Failed to connect to server. Your progress will be saved locally until connection is restored.', 'warning');
+        return false;
+      } finally {
+        // Release lock regardless of outcome
+        sessionCreationInProgress = false;
+        sessionCreationPromise = null;
+      }
+    })();
+    
+    return await sessionCreationPromise;
+  }
+  
+  return false;
+}
 
-  const reqKeyName = reqKey(page);
-  sSet({ [key]: data, [reqKeyName]: required }, showSaveIndicator); // save answers + schema
+async function saveFormData() {
+  try {
+    // Ensure we have a session before saving if needed
+    // Note: we don't need to block saving if session creation fails
+    // as the data can still be saved locally
+    await createSessionIfNeeded();
+    
+    const page = getCurrentPageIndex();
+    const data = serializePageForm();
+    const key = pageKey(page);
+
+    // Store list of required fields for this page (auto-derived schema)
+    const required = Array.from(document.querySelectorAll('[required]')).map(el => {
+      const name = el.name || el.id;
+      let labelTxt = '';
+      const labelEl = document.querySelector(`label[for="${el.id}"]`);
+      if (labelEl) labelTxt = labelEl.textContent.trim();
+      return { name, label: labelTxt };
+    });
+
+    const reqKeyName = reqKey(page);
+    return new Promise(resolve => {
+      sSet({ [key]: data, [reqKeyName]: required }, () => {
+        showSaveIndicator();
+        resolve(true);
+      });
+    });
+  } catch (error) {
+    console.error('Error saving form data:', error);
+    showToast('Error saving your progress. Please try again.', 'error');
+    return false;
+  }
 }
 
 function loadFormData() {
@@ -566,10 +811,15 @@ async function finalizeSubmission() {
     return;
   }
 
+  // Ensure we have a session before trying to submit
   if (!currentSessionId) {
-    console.error('finalizeSubmission: No currentSessionId found!');
-    alert('Error: No active session found. Cannot submit.');
-    return;
+    console.log('No session yet, creating one before submission');
+    const created = await createSessionIfNeeded();
+    if (!created || !currentSessionId) {
+      console.error('finalizeSubmission: Failed to create session!');
+      alert('Error: Could not create a session. Please check your connection and try again.');
+      return;
+    }
   }
   showLoading(true, 'Preparing submission…', 10);
   
@@ -692,6 +942,58 @@ function initPageSpecificFunctionality() {
   const form = document.querySelector('form');
   const validatePage = () => (form ? form.checkValidity() : true);
   const pageIndex = getCurrentPageIndex(); // Get page index once
+  
+  // Add listener for first interaction with form to create session
+  if (form) {
+    const createSessionOnFirstInteraction = async function(e) {
+      try {
+        // Remove this event listener to ensure it only runs once
+        form.removeEventListener('input', createSessionOnFirstInteraction);
+        
+        // Show subtle indicator that we're creating a session
+        const saveIndicator = document.querySelector('.save-indicator');
+        if (saveIndicator) {
+          saveIndicator.textContent = 'Starting session...';
+          saveIndicator.classList.add('active');
+        }
+        
+        // Try to create a session if we don't have one yet
+        const result = await createSessionIfNeeded();
+        
+        // Update indicator
+        if (saveIndicator) {
+          saveIndicator.textContent = result ? 'Connected' : 'Offline mode';
+          setTimeout(() => {
+            saveIndicator.classList.remove('active');
+          }, 2000);
+        }
+      } catch (error) {
+        console.error('Error in form interaction handler:', error);
+      }
+    };
+    
+    // Check if we need to add the listener - using cached key if possible
+    const checkAndAddListener = () => {
+      sGet([noSessionKey()], res => {
+        if (res[noSessionKey()]) {
+          // Add listener for all common form interaction events
+          form.addEventListener('input', createSessionOnFirstInteraction);
+          form.addEventListener('change', createSessionOnFirstInteraction);
+          // For accessibility, also capture keyboard events on focusable elements
+          const interactiveElements = form.querySelectorAll('input, select, textarea, button');
+          interactiveElements.forEach(el => {
+            el.addEventListener('keydown', e => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                createSessionOnFirstInteraction(e);
+              }
+            });
+          });
+        }
+      });
+    };
+    
+    checkAndAddListener();
+  }
 
   const updateNextState = () => {
     const nextBtnRef = document.getElementById('next-button');
@@ -947,18 +1249,33 @@ function queueSubmission(requestMsg) {
   });
 }
 
-function flushPending() {
-  sGet([pendingKey()], items => {
+async function flushPending() {
+  try {
+    // First check if there are any pending items before trying to create a session
+    const items = await new Promise(resolve => sGet([pendingKey()], resolve));
     const pending = items[pendingKey()];
     if (!pending) return;
+    
+    // Only create a session if we actually have pending items to flush
+    const sessionNeeded = await createSessionIfNeeded();
+    
     showToast('Attempting to send queued submission…');
-    sendWithRetry(pending, resp => {
-      if (resp && resp.status >= 200 && resp.status < 300) {
-        sRemove([pendingKey()]);
-        showToast('Offline submission sent!', 'success');
-      }
+    return new Promise(resolve => {
+      sendWithRetry(pending, resp => {
+        if (resp && resp.status >= 200 && resp.status < 300) {
+          sRemove([pendingKey()]);
+          showToast('Offline submission sent!', 'success');
+          resolve(true);
+        } else {
+          console.warn('Failed to flush pending data:', resp);
+          resolve(false);
+        }
+      });
     });
-  });
+  } catch (error) {
+    console.error('Error in flushPending:', error);
+    return false;
+  }
 }
 
 window.addEventListener('online', flushPending);
@@ -970,6 +1287,7 @@ let TAB_PREFIX = '';
 function pageKey(n)        { return `${currentOrigin}_page_${n}`; }
 function lastPageKey()     { return `${currentOrigin}_${LAST_PAGE_KEY}`; }
 function sessionIdKey()    { return `${currentOrigin}_${SESSION_KEY}`; }
+function noSessionKey()    { return `${currentOrigin}_${NO_SESSION_KEY}`; }
 function siteUrlKey()      { return `${currentOrigin}_${SITE_URL_KEY}`; }
 function reqKey(n)         { return `${currentOrigin}_req_${n}`; }
 function sGet(keys, cb)    { storageArea.get(keys, cb); }

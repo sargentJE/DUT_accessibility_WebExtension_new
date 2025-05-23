@@ -15,35 +15,64 @@
         <!-- Main Content Area -->
         <main id="main-content">
             <div class="content-area">
-                <h2 class="section-title">Website Navigation</h2>
+                <h2 class="section-title">Step&nbsp;3&nbsp;of&nbsp;8 · Test Site Navigation</h2>
                 
-                <p><em>Complete each task below and answer the related questions before moving on.</em></p>
+                <p class="lead"><em>Navigation is often the first barrier users with disabilities encounter. For each task below, try it on the website you're reviewing, then rate how easy it was <strong>and</strong> describe any specific barriers.</em></p>
                 
-                <p class="mb-3"><strong>Note:</strong> Fields marked with <strong>*</strong> are required.</p>
+                <div class="info-panel mb-4">
+                    <div class="info-panel-header">
+                        <span class="info-icon" aria-hidden="true">i</span>
+                        <h3 class="info-title">Helpful Information</h3>
+                    </div>
+                    <div class="info-panel-body">
+                        <div class="info-item">
+                            <span class="info-tag">Why This Matters</span>
+                            <p>Good navigation is essential for all users, but critical for those with disabilities. Testing real navigation tasks reveals barriers automated tests miss.</p>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-tag">Screen Reader Tip</span>
+                            <p>Test navigation using headings (H), landmarks (R), links lists (K), and search (Ctrl+F). Check if elements are properly labeled.</p>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-tag">Keyboard Tip</span>
+                            <p>Check if you can see where the focus is as you tab through the page. Is the focus order logical? Can you access all features?</p>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-tag">Important</span>
+                            <p>Check if navigation is <em>consistent</em> across different pages. Inconsistent navigation is a common barrier.</p>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-tag">Auto-save</span>
+                            <p>Your answers save as you type—feel free to revisit tasks in any order.</p>
+                        </div>
+                    </div>
+                </div>
                 
                 <form id="navigation-form">
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h3 class="card-title">Task 1: Find Main Features or Services</h3>
+                            <h3 class="card-title">Task 1: Find the main product / service area</h3>
                         </div>
                         <div class="card-content">
-                            <p><strong>What to do:</strong> Look for navigation menus, search functionality, or prominent links to key sections of the website (e.g., products, services).</p>
+                            <p><strong>What to do:</strong> Locate the key features, products, or services offered.</p>
                             
-                            <p><strong>Tip:</strong> Try using both mouse and keyboard (Tab key) navigation.</p>
+                            <p><strong>Why this matters:</strong> Main content must be findable by everyone. For screen reader users, poor structure can hide important information. For mobility-impaired users, excessive tabbing creates fatigue. For users with cognitive disabilities, complex navigation can be confusing.</p>
+                            
+                            <p><strong>Tip:</strong> Try using both mouse and keyboard (Tab key) navigation. Screen reader users can try using headings list (H key) or landmarks.</p>
                             
                             <div class="form-group">
-                                <label for="main_features_ease">How easy was it to find the main features? *</label>
+                                <label for="main_features_ease">How easy was it? *</label>
                                 <select id="main_features_ease" name="main_features_ease" required>
-                                    <option value="">Please select...</option>
+                                    <option value="">Select one…</option>
                                     <option value="very_easy">Very easy</option>
                                     <option value="somewhat_easy">Somewhat easy</option>
-                                    <option value="difficult">Difficult</option>
-                                    <option value="very_difficult">Very difficult</option>
+                                    <option value="hard">Hard</option>
+                                    <option value="could_not_do">Couldn’t do</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="main_features_barriers">What barriers, if any, did you encounter?</label>
+                                <label for="main_features_barriers">What specific barriers did you encounter? (Examples: keyboard focus not visible, hidden menus requiring mouse hover, headings not properly structured)</label>
                                 <textarea id="main_features_barriers" name="main_features_barriers" rows="3"></textarea>
                             </div>
                         </div>
@@ -51,26 +80,28 @@
                     
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h3 class="card-title">Task 2: Locate Contact Information</h3>
+                            <h3 class="card-title">Task 2: Locate contact details</h3>
                         </div>
                         <div class="card-content">
                             <p><strong>What to do:</strong> Find phone numbers, email addresses, contact forms, or office locations.</p>
                             
-                            <p><strong>Tip:</strong> Check the header, footer, and "Contact" pages.</p>
+                            <p><strong>Why this matters:</strong> Contact details must be accessible to everyone. For deaf users, non-phone options are essential. For users with cognitive disabilities, clear contact options reduce anxiety. For blind users, contact forms must work with screen readers.</p>
+                            
+                            <p><strong>Tip:</strong> Check the header, footer, and "Contact" pages. Screen reader users can search for terms like "contact" or "email".</p>
                             
                             <div class="form-group">
-                                <label for="contact_info_ease">How easy was it to find contact information? *</label>
+                                <label for="contact_info_ease">How easy was it? *</label>
                                 <select id="contact_info_ease" name="contact_info_ease" required>
-                                    <option value="">Please select...</option>
+                                    <option value="">Select one…</option>
                                     <option value="very_easy">Very easy</option>
                                     <option value="somewhat_easy">Somewhat easy</option>
-                                    <option value="difficult">Difficult</option>
-                                    <option value="very_difficult">Very difficult</option>
+                                    <option value="hard">Hard</option>
+                                    <option value="could_not_do">Couldn’t do</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="contact_info_barriers">What barriers, if any, did you encounter?</label>
+                                <label for="contact_info_barriers">What specific barriers did you encounter? (Examples: phone numbers as images without alt text, contact forms with unlabeled fields, information only accessible via mouse clicks)</label>
                                 <textarea id="contact_info_barriers" name="contact_info_barriers" rows="3"></textarea>
                             </div>
                         </div>
@@ -78,26 +109,28 @@
                     
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h3 class="card-title">Task 3: Find Support Resources</h3>
+                            <h3 class="card-title">Task 3: Find help or support</h3>
                         </div>
                         <div class="card-content">
                             <p><strong>What to do:</strong> Identify where FAQs, help documentation, or customer support options are located.</p>
                             
-                            <p><strong>Tip:</strong> Look for "Help," "Support," or "FAQs" in the main navigation or footer.</p>
+                            <p><strong>Why this matters:</strong> Help resources are especially important for users with disabilities. Visually Impaired users may need to learn keyboard shortcuts. Users with cognitive disabilities may need simplified instructions. Users with motor limitations may need alternative ways to complete tasks.</p>
+                            
+                            <p><strong>Tip:</strong> Look for "Help," "Support," or "FAQs" in the main navigation or footer. Search functionality can also help locate these resources.</p>
                             
                             <div class="form-group">
-                                <label for="support_resources_ease">How easy was it to find support resources? *</label>
+                                <label for="support_resources_ease">How easy was it? *</label>
                                 <select id="support_resources_ease" name="support_resources_ease" required>
-                                    <option value="">Please select...</option>
+                                    <option value="">Select one…</option>
                                     <option value="very_easy">Very easy</option>
                                     <option value="somewhat_easy">Somewhat easy</option>
-                                    <option value="difficult">Difficult</option>
-                                    <option value="very_difficult">Very difficult</option>
+                                    <option value="hard">Hard</option>
+                                    <option value="could_not_do">Couldn’t do</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="support_resources_barriers">What barriers, if any, did you encounter?</label>
+                                <label for="support_resources_barriers">What specific barriers did you encounter? (Examples: help content in inaccessible formats, support options requiring phone calls only, confusing organization of help topics)</label>
                                 <textarea id="support_resources_barriers" name="support_resources_barriers" rows="3"></textarea>
                             </div>
                         </div>
@@ -105,26 +138,28 @@
                     
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h3 class="card-title">Task 4: Return to Homepage</h3>
+                            <h3 class="card-title">Task 4: Return to the home page</h3>
                         </div>
                         <div class="card-content">
                             <p><strong>What to do:</strong> Test different ways to get back to the homepage (e.g., logo, home link, breadcrumbs).</p>
                             
-                            <p><strong>Tip:</strong> Try both the website logo and explicit "Home" links.</p>
+                            <p><strong>Why this matters:</strong> Getting back to the homepage is essential when users get lost. Users with memory or attention difficulties need consistent navigation patterns. Screen reader users need properly labeled home links. Keyboard users need focusable navigation elements.</p>
+                            
+                            <p><strong>Tip:</strong> Try the website logo (is it keyboard accessible?), explicit "Home" links, and breadcrumb navigation if available. Screen reader users can check if the logo is properly labeled.</p>
                             
                             <div class="form-group">
-                                <label for="return_homepage_ease">How easy was it to return to the homepage? *</label>
+                                <label for="return_homepage_ease">How easy was it? *</label>
                                 <select id="return_homepage_ease" name="return_homepage_ease" required>
-                                    <option value="">Please select...</option>
+                                    <option value="">Select one…</option>
                                     <option value="very_easy">Very easy</option>
                                     <option value="somewhat_easy">Somewhat easy</option>
-                                    <option value="difficult">Difficult</option>
-                                    <option value="very_difficult">Very difficult</option>
+                                    <option value="hard">Hard</option>
+                                    <option value="could_not_do">Couldn’t do</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="return_homepage_barriers">What barriers, if any, did you encounter?</label>
+                                <label for="return_homepage_barriers">What specific barriers did you encounter? (Examples: logo not keyboard-focusable, no visible "Home" link, breadcrumbs missing, inconsistent navigation across pages)</label>
                                 <textarea id="return_homepage_barriers" name="return_homepage_barriers" rows="3"></textarea>
                             </div>
                         </div>
@@ -132,16 +167,16 @@
                     
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h3 class="card-title">Overall Navigation Feedback</h3>
+                            <h3 class="card-title">Overall navigation feedback</h3>
                         </div>
                         <div class="card-content">
                             <div class="form-group">
-                                <label for="navigation_improvement">What would improve the website's navigation?</label>
+                                <label for="navigation_improvement">What single change would most improve navigation accessibility for your specific needs?</label>
                                 <textarea id="navigation_improvement" name="navigation_improvement" rows="3"></textarea>
                             </div>
                             
                             <div class="form-group">
-                                <label for="alternative_navigation">Suggest alternative navigation methods:</label>
+                                <label for="alternative_navigation">What navigation methods would help users with your specific disability? (Examples: For vision impairment: keyboard shortcuts, screen reader landmarks. For motor disability: voice control, larger click targets. For cognitive disability: simple menus, consistent layout)</label>
                                 <textarea id="alternative_navigation" name="alternative_navigation" rows="3"></textarea>
                             </div>
                         </div>

@@ -94,6 +94,7 @@
 
 /* High Contrast Theme */
 .high-contrast-theme {
+  /* Core Colors */
   --color-primary: #ffff00;       /* Yellow */
   --color-primary-dark: #ffd700;  /* Gold */
   --color-primary-light: #000000; /* Black */
@@ -103,9 +104,23 @@
   --color-surface: #000000;       /* Black */
   --color-border: #ffffff;        /* White */
   --color-text-on-primary: #000000; /* Black text on yellow */
+  --color-focus: #00ffff;         /* Cyan for focus indicators */
+  
+  /* Disable animations for reduced motion */
+  --transition-speed: 0s;
+  
+  /* Shadows - Remove for high contrast */
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
   
   background-color: var(--color-background);
   color: var(--color-secondary);
+  
+  /* Force high contrast text */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -webkit-text-stroke: 0.5px;
 }
 
 .high-contrast-theme .top-nav {
@@ -124,15 +139,43 @@
 
 .high-contrast-theme .card,
 .high-contrast-theme .feature {
-  background-color: #000000;
-  border: 2px solid #ffffff;
-  box-shadow: none;
+  background-color: var(--color-surface);
+  border: 2px solid var(--color-border);
+  box-shadow: none !important; /* Important to override any other shadow rules */
+  position: relative;
+  overflow: visible; /* Ensure focus outlines are visible */
+}
+
+/* Ensure all interactive elements have visible focus styles */
+.high-contrast-theme :focus-visible {
+  outline: 3px solid var(--color-focus) !important;
+  outline-offset: 2px;
+  z-index: 1;
+}
+
+/* Remove any outline resets that might interfere */
+.high-contrast-theme *:focus {
+  outline: none !important; /* Remove default focus */
+}
+
+.high-contrast-theme *:focus-visible {
+  outline: 3px solid var(--color-focus) !important;
+  outline-offset: 2px;
+  z-index: 1;
 }
 
 .high-contrast-theme .nav-button {
-  color: var(--color-text-on-primary); /* Black text */
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(0, 0, 0, 0.25);
+  color: var(--color-text-on-primary);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  position: relative;
+}
+
+/* Add focus indicator for keyboard navigation */
+.high-contrast-theme .nav-button:focus-visible {
+  outline: 3px solid var(--color-focus) !important;
+  outline-offset: 2px;
+  z-index: 2;
 }
 
 .high-contrast-theme .nav-button svg {
@@ -172,10 +215,123 @@
   color: #000000;
 }
 
-.high-contrast-theme .card-header {
-  background: var(--color-primary);
-  color: var(--color-text-on-primary); /* Black text on yellow background */
-  border: 2px solid #ffffff;
+.high-contrast-theme .card-header,
+.high-contrast-theme .notification,
+.high-contrast-theme .alert,
+.high-contrast-theme .info-box,
+.high-contrast-theme .banner-info,
+.high-contrast-theme .banner-success,
+.high-contrast-theme .banner-warning {
+  background: var(--color-primary) !important;
+  color: var(--color-text-on-primary) !important;
+  border: 2px solid var(--color-border) !important;
+  position: relative;
+}
+
+/* Ensure text is black in yellow containers and info sections */
+.high-contrast-theme .card-header *,
+.high-contrast-theme .notification *,
+.high-contrast-theme .alert *,
+.high-contrast-theme .info-box *,
+.high-contrast-theme .banner-info *,
+.high-contrast-theme .banner-success *,
+.high-contrast-theme .banner-warning *,
+.high-contrast-theme .info-panel *,
+.high-contrast-theme .info-panel-header,
+.high-contrast-theme .info-title,
+.high-contrast-theme .info-item,
+.high-contrast-theme .info-tag,
+.high-contrast-theme .info-panel-body,
+.high-contrast-theme .info-panel-body p {
+  color: #000000 !important;
+}
+
+/* Ensure info panel has proper contrast */
+.high-contrast-theme .info-panel {
+  background: var(--color-primary) !important;
+  border: 2px solid var(--color-border) !important;
+}
+
+.high-contrast-theme .info-panel-header {
+  background: var(--color-primary) !important;
+  color: #000000 !important;
+}
+
+.high-contrast-theme .info-tag {
+  background: #000000 !important;
+  color: var(--color-primary) !important;
+  border: 1px solid var(--color-border) !important;
+}
+
+/* Ensure links in containers are visible */
+.high-contrast-theme [class*="banner"] a,
+.high-contrast-theme .card-header a,
+.high-contrast-theme .notification a,
+.high-contrast-theme .alert a,
+.high-contrast-theme .info-box a {
+  color: #0000EE !important; /* Standard link blue */
+  text-decoration: underline !important;
+}
+
+/* Fix SVG icons in high contrast mode */
+.high-contrast-theme svg:not([fill="none"]) {
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+/* Ensure toolbar icons are visible in high contrast */
+.high-contrast-theme .toolbar-actions .nav-button svg {
+  fill: transparent !important; /* Force transparent fill for icons that use stroke */
+  stroke: #000000 !important; /* Force black stroke for visibility */
+  stroke-width: 1.5px; /* Slightly thicker stroke for better visibility */
+}
+
+/* Ensure the toolbar itself has proper contrast */
+.high-contrast-theme .top-nav {
+  background: var(--color-primary) !important; /* Yellow background */
+  border-bottom: 2px solid #000000 !important;
+}
+
+/* Ensure toolbar buttons have proper contrast */
+.high-contrast-theme .toolbar-actions .nav-button {
+  color: #000000 !important; /* Black icons */
+  background: transparent !important;
+  border: 1px solid transparent !important;
+}
+
+.high-contrast-theme .toolbar-actions .nav-button:hover,
+.high-contrast-theme .toolbar-actions .nav-button:focus {
+  background: rgba(0, 0, 0, 0.1) !important;
+  border-color: #000000 !important;
+}
+
+/* Ensure info icon is visible */
+.high-contrast-theme .info-icon {
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+/* Ensure progress bar text is visible */
+.high-contrast-theme #progress-label {
+  color: #000000 !important;
+}
+
+/* Ensure buttons in yellow containers have proper contrast */
+.high-contrast-theme .card-header .btn,
+.high-contrast-theme .notification .btn,
+.high-contrast-theme .alert .btn,
+.high-contrast-theme .info-box .btn {
+  background-color: #000000;
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
+.high-contrast-theme .card-header .btn:hover,
+.high-contrast-theme .notification .btn:hover,
+.high-contrast-theme .alert .btn:hover,
+.high-contrast-theme .info-box .btn:hover {
+  background-color: #ffffff;
+  color: #000000;
 }
 
 .high-contrast-theme .btn-secondary {

@@ -15,60 +15,98 @@
         <!-- Main Content Area -->
         <main id="main-content">
             <div class="content-area">
-                <h2 class="section-title">Overall Experience</h2>
+                <h2 class="section-title">Step&nbsp;7&nbsp;of&nbsp;8 · Overall Experience</h2>
                 
-                <p><em>Provide your overall assessment of the website's accessibility now that you've completed all tasks.</em></p>
+                <p class="lead"><em>Now that you've completed all testing tasks, share your overall assessment of the website's accessibility from your personal perspective as a user with disabilities.</em></p>
                 
-                <p class="mb-3"><strong>Note:</strong> Fields marked with <strong>*</strong> are required.</p>
+                <div class="info-panel mb-4">
+                    <div class="info-panel-header">
+                        <span class="info-icon" aria-hidden="true">i</span>
+                        <h3 class="info-title">Why Your Feedback Matters</h3>
+                    </div>
+                    <div class="info-panel-body">
+                        <div class="info-item">
+                            <span class="info-tag">Lived Experience</span>
+                            <p>Your feedback is especially valuable because it comes from real-world testing with your specific accessibility needs.</p>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-tag">Rating Guidance</span>
+                            <p>Rate each category based on how well the website works for <strong>your specific needs</strong>. What works for one person may not work for another, even with the same needs.</p>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-tag">Specific Examples Help</span>
+                            <p>When describing barriers, specific examples help developers understand exactly what needs fixing and why it matters.</p>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-tag">Auto-save</span>
+                            <p>Your answers save automatically—you can use Back or Next buttons anytime.</p>
+                        </div>
+                    </div>
+                </div>
                 
                 <form id="overall-experience-form">
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h3 class="card-title">Rate Each Area of Accessibility:</h3>
+                            <h3 class="card-title">Rate each area of accessibility from your perspective</h3>
                         </div>
                         <div class="card-content">
                             <div class="form-group">
-                                <label for="navigation_structure">Navigation & Structure: *</label>
-                                <select id="navigation_structure" name="navigation_structure" required>
-                                    <option value="">Please select...</option>
-                                    <option value="very_accessible">Very accessible</option>
-                                    <option value="somewhat_accessible">Somewhat accessible</option>
-                                    <option value="difficult">Difficult</option>
-                                    <option value="very_difficult">Very difficult</option>
+                                <label for="navigation_rating">Website Navigation (menus, links, finding content)</label>
+                                <select id="navigation_rating" name="navigation_rating" required>
+                                    <option value="" disabled selected>Please select</option>
+                                    <option value="1">Very Poor - Couldn't complete basic navigation tasks</option>
+                                    <option value="2">Poor - Completed tasks with significant difficulty</option>
+                                    <option value="3">Adequate - Usable but with some barriers</option>
+                                    <option value="4">Good - Mostly accessible with minor issues</option>
+                                    <option value="5">Excellent - Fully accessible for my needs</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="content_information">Content & Information: *</label>
-                                <select id="content_information" name="content_information" required>
-                                    <option value="">Please select...</option>
-                                    <option value="very_accessible">Very accessible</option>
-                                    <option value="somewhat_accessible">Somewhat accessible</option>
-                                    <option value="difficult">Difficult</option>
-                                    <option value="very_difficult">Very difficult</option>
+                                <label for="content_rating">Content Accessibility (readability, structure, media)</label>
+                                <select id="content_rating" name="content_rating" required>
+                                    <option value="" disabled selected>Please select</option>
+                                    <option value="1">Very Poor - Content unusable with my disability</option>
+                                    <option value="2">Poor - Content difficult to use/understand</option>
+                                    <option value="3">Adequate - Basic content accessible but not optimal</option>
+                                    <option value="4">Good - Most content works well with my needs</option>
+                                    <option value="5">Excellent - All content fully accessible</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="interactive_elements">Interactive Elements: *</label>
-                                <select id="interactive_elements" name="interactive_elements" required>
-                                    <option value="">Please select...</option>
-                                    <option value="very_accessible">Very accessible</option>
-                                    <option value="somewhat_accessible">Somewhat accessible</option>
-                                    <option value="difficult">Difficult</option>
-                                    <option value="very_difficult">Very difficult</option>
+                                <label for="interaction_rating">Interactive Elements (forms, buttons, controls)</label>
+                                <select id="interaction_rating" name="interaction_rating" required>
+                                    <option value="" disabled selected>Please select</option>
+                                    <option value="1">Very Poor - Couldn't use essential functions</option>
+                                    <option value="2">Poor - Used with significant effort/assistance</option>
+                                    <option value="3">Adequate - Usable but with frustrations</option>
+                                    <option value="4">Good - Minor issues but generally works</option>
+                                    <option value="5">Excellent - Works seamlessly with my needs</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="help_support">Help & Support: *</label>
-                                <select id="help_support" name="help_support" required>
-                                    <option value="">Please select...</option>
-                                    <option value="very_accessible">Very accessible</option>
-                                    <option value="somewhat_accessible">Somewhat accessible</option>
-                                    <option value="difficult">Difficult</option>
-                                    <option value="very_difficult">Very difficult</option>
-                                    <option value="not_applicable">Not applicable</option>
+                                <label for="help_rating">Help &amp; Support Resources</label>
+                                <select id="help_rating" name="help_rating" required>
+                                    <option value="" disabled selected>Please select</option>
+                                    <option value="1">Very Poor - Couldn't access help with my disability</option>
+                                    <option value="2">Poor - Limited help options for my needs</option>
+                                    <option value="3">Adequate - Basic help available but not ideal</option>
+                                    <option value="4">Good - Multiple accessible help options</option>
+                                    <option value="5">Excellent - Help resources work perfectly for me</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="overall_rating">Overall Accessibility Rating</label>
+                                <select id="overall_rating" name="overall_rating" required>
+                                    <option value="" disabled selected>Please select</option>
+                                    <option value="1">Very Poor - Unusable with my disability</option>
+                                    <option value="2">Poor - Usable only with significant effort</option>
+                                    <option value="3">Adequate - Usable but needs improvement</option>
+                                    <option value="4">Good - Works well with minor barriers</option>
+                                    <option value="5">Excellent - Fully accessible for my needs</option>
                                 </select>
                             </div>
                         </div>
@@ -76,17 +114,18 @@
                     
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h3 class="card-title">Overall Website Accessibility Rating:</h3>
+                            <h3 class="card-title">Overall accessibility score based on your experience</h3>
                         </div>
                         <div class="card-content">
                             <div class="form-group">
-                                <label for="overall_accessibility">Rate the website's overall accessibility: *</label>
+                                <label for="overall_accessibility">Overall accessibility score for users with needs similar to yours: *</label>
                                 <select id="overall_accessibility" name="overall_accessibility" required>
-                                    <option value="">Please select...</option>
-                                    <option value="fully_accessible">Fully accessible</option>
-                                    <option value="mostly_accessible">Mostly accessible</option>
-                                    <option value="partially_accessible">Partially accessible</option>
-                                    <option value="not_accessible">Not accessible</option>
+                                    <option value="">Select one…</option>
+                                    <option value="excellent">Excellent (fully usable, no significant barriers)</option>
+                                    <option value="good">Good (usable with minor barriers that don't prevent task completion)</option>
+                                    <option value="moderate">Moderate (usable but with barriers that slow or complicate tasks)</option>
+                                    <option value="poor">Poor (difficult to use with barriers that prevent some task completion)</option>
+                                    <option value="not_accessible">Not accessible (unable to complete critical tasks)</option>
                                 </select>
                             </div>
                         </div>
@@ -94,57 +133,47 @@
                     
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h3 class="card-title">Accessibility Strengths:</h3>
+                            <h3 class="card-title">Top accessibility strengths that worked well for you (max 3)</h3>
                         </div>
                         <div class="card-content">
                             <div class="form-group">
-                                <label for="accessibility_strengths">What did the website do well for accessibility?</label>
-                                <textarea id="accessibility_strengths" name="accessibility_strengths" rows="4"></textarea>
+                                <label for="accessibility_strengths">List specific features or aspects that worked well for your needs (be specific about which pages or features):</label>
+                                <textarea id="accessibility_strengths" name="accessibility_strengths" rows="4" placeholder="1. …&#10;2. …&#10;3. …"></textarea>
                             </div>
                         </div>
                     </div>
                     
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h3 class="card-title">Accessibility Barriers:</h3>
+                            <h3 class="card-title">Top barriers that affected you most (max 3)</h3>
                         </div>
                         <div class="card-content">
                             <div class="form-group">
-                                <label for="accessibility_barriers">What were the most significant barriers? How should they be fixed?</label>
-                                <textarea id="accessibility_barriers" name="accessibility_barriers" rows="4"></textarea>
+                                <label for="positive_features">What accessibility features worked especially well for your specific disability?</label>
+                                <textarea id="positive_features" name="positive_features" rows="3" placeholder="Example: As someone with motor limitations, I appreciated the large click targets and keyboard shortcuts. OR As a screen reader user, I found the proper heading structure made navigation easy."></textarea>
                             </div>
                         </div>
                     </div>
                     
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h3 class="card-title">Improvement Suggestions:</h3>
+                            <h3 class="card-title">Priority improvements for users with your needs</h3>
                         </div>
                         <div class="card-content">
                             <div class="form-group">
-                                <label for="design_improvements">Suggest specific design improvements:</label>
-                                <textarea id="design_improvements" name="design_improvements" rows="3"></textarea>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="feature_recommendations">Recommend features to add:</label>
-                                <textarea id="feature_recommendations" name="feature_recommendations" rows="3"></textarea>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="priority_changes">List the 3 most important changes in order of priority:</label>
-                                <textarea id="priority_changes" name="priority_changes" rows="4" placeholder="1. [First priority]&#10;2. [Second priority]&#10;3. [Third priority]"></textarea>
+                                <label for="priority_improvements">If the site owner could make only 1-3 accessibility improvements, what would help you and others with similar needs the most?</label>
+                                <textarea id="priority_improvements" name="priority_improvements" rows="3" placeholder="Example: For my vision impairment: Add proper form labels for screen readers, improve color contrast on buttons, make error messages more noticeable"></textarea>
                             </div>
                         </div>
                     </div>
                     
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h3 class="card-title">Additional Feedback:</h3>
+                            <h3 class="card-title">Additional notes</h3>
                         </div>
                         <div class="card-content">
                             <div class="form-group">
-                                <label for="additional_feedback">Any other observations or suggestions?</label>
+                                <label for="additional_feedback">Any other comments or suggestions about accessibility improvements that would help users with your specific needs?</label>
                                 <textarea id="additional_feedback" name="additional_feedback" rows="4"></textarea>
                             </div>
                         </div>

@@ -3,7 +3,9 @@
 /* Popup Container */
 .popup-container {
   /* Slightly larger for improved readability */
-  width: 420px;
+  width: 360px; /* default target width for Chrome popup */
+  max-width: 100%; /* allow shrink if host forces smaller */
+  min-width: 320px; /* avoid ultra-narrow collapse */
   height: 600px;
   display: flex;
   flex-direction: column;
@@ -109,11 +111,18 @@
 .settings-content {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden; /* Prevent horizontal scroll */
   padding: var(--spacing-md);
   background-color: var(--color-background);
   /* Firefox scrollbar styling */
   scrollbar-width: thin;
   scrollbar-color: var(--color-primary-light) transparent;
+  /* Ensure the element has its own stacking context to properly contain scroll events */
+  isolation: isolate;
+  position: relative;
+  z-index: 1;
+  /* Ensure touch events are properly captured */
+  touch-action: pan-y;
 }
 
 /* Restore content-area helper container */
@@ -154,11 +163,93 @@
   background-color: var(--color-primary);
 }
 
+/* Prevent scroll chaining to the underlying webpage - comprehensive approach */
+/* Apply a multi-layered approach for cross-browser compatibility */
+html, body, .popup-container, .popup-container main {
+  /* Modern browsers */
+  overscroll-behavior: contain;
+  /* Equivalent for Safari iOS < 16 */
+  -webkit-overflow-scrolling: touch; /* iOS momentum scrolling */
+  /* These properties help regardless of overscroll-behavior support */
+  scroll-behavior: smooth;
+  /* Standard scrolling mechanics that all browsers support */
+  overflow: auto;
+}
+
+/* Fallback for browsers that don't support overscroll-behavior */
+.popup-container {
+  /* Create containing block */
+  position: relative;
+  /* Ensure content stays within bounds */
+  overflow: hidden;
+  /* Create stacking context to ensure proper event containment */
+  isolation: isolate;
+  z-index: 1;
+}
+
+/* Ensure info panels don't cause scroll leakage */
+.info-panel {
+  position: relative;
+  z-index: 5; /* Higher than main content but below modal elements */
+  /* Modern browsers */
+  overscroll-behavior: contain;
+  /* Cross-browser event handling */
+  touch-action: pan-y;
+  /* Ensure pointer events stay within the panel */
+  pointer-events: auto;
+  /* Additional isolation for older browsers */
+  transform: translateZ(0); /* Creates a stacking context */
+}
+
+/* Smooth scrolling with better event handling for all browsers */
+html, body, .popup-container, .popup-container main {
+  /* Standard smooth scrolling - well supported */
+  scroll-behavior: smooth;
+  /* Legacy iOS momentum scrolling - keeping for iOS 12 support */
+  -webkit-overflow-scrolling: touch; 
+  /* Modern browsers scroll containment */
+  overscroll-behavior: contain;
+  /* Legacy IE/Edge */
+  -ms-scroll-chaining: none;
+  /* Standard touch behavior control */
+  touch-action: pan-y;
+  /* Additional isolation technique */
+  will-change: transform; /* Creates a compositing layer */
+}
+
+/* Add a global event isolation layer */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none; /* Allow clicks through to content */
+  z-index: -1; /* Behind everything */
+  touch-action: none; /* Block touch events at boundary */
+  /* Only enable this when popup is active */
+  display: none; 
+}
+
+body.popup-active::after {
+  display: block;
+}
+
+/* Stabilise scrollbar to avoid layout shift (progressive) */
+@supports (scrollbar-gutter: stable) {
+  .popup-container main {
+    scrollbar-gutter: stable;
+  }
+}
+
 /* Bottom Navigation */
 .bottom-nav {
+  position: relative;
   background-color: var(--color-surface);
   border-top: var(--border-width) solid var(--color-border);
   height: 50px;
+  box-shadow: 0 -1px 4px rgba(0,0,0,0.06);
 }
 
 .bottom-nav ul {
@@ -261,4 +352,12 @@
 
 #message-container.show {
   opacity: 1;
+}
+
+/* Responsive: narrow width devices */
+@media (max-width: 360px) {
+  .bottom-nav a {
+    font-size: 0.75rem;
+    padding-inline: var(--spacing-xs);
+  }
 }

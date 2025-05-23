@@ -1,19 +1,56 @@
 /* Dedicated styles for login popup */
 
+/*  BLUE BACKGROUND STYLES - PRIORITY OVERRIDE */
+/* These must come first to ensure they take precedence */
+:root {
+  --myvision-blue: #2e4e9d;
+  --myvision-dark-blue: #1a3980;
+}
+
+/* Target ALL possible container elements */
+html, body {
+  background: var(--myvision-blue) !important;
+}
+
+/* Chrome extension specific container */
+.popup-container, main, .login-wrapper {
+  background: var(--myvision-blue) !important;
+  min-height: 100vh;
+}
+
 .login-wrapper {
   min-height: calc(100vh - 60px - 32px); /* header height + safe margin */
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-background);
+  background-color: #2e4e9d !important; /* Hardcoded MyVision blue */
+}
+
+/* Fix any white backgrounds that might be appearing in Chrome */
+.login-card {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Dark theme adjustments */
+html.dark-theme,
+body.dark-theme,
+.dark-theme .popup-container,
+.dark-theme .login-wrapper {
+  background-color: #1a3980 !important; /* Darker MyVision blue */
 }
 
 .login-card {
   width: 100%;
   max-width: 320px;
-  border: var(--border-width) solid var(--color-border);
+  background: rgba(255, 255, 255, 0.25);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: var(--border-radius-md);
-  background: white;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+  transform: translateZ(0); /* enables GPU accel */
 }
 
 /* Elevation override for light shadow on white */
@@ -53,10 +90,29 @@
   margin-top: var(--spacing-sm);
 }
 
+/* Logo styling */
+.login-logo {
+  display: block;
+  height: auto;
+  max-width: 160px;  /* cap at lg breakpoint */
+  width: 100%;       /* full width inside card padding */
+  margin-inline: auto; /* centers in both LTR & RTL */
+}
+
+/* On very small screens tighten the cap so it doesn't overwhelm */
+@media (max-width: 400px) {
+  .login-logo {
+    max-width: 120px;
+  }
+}
+
 /* Dark theme adjustments */
 .dark-theme .login-card {
-  background: #1e1e1e;
-  border-color: #444;
+  background: rgba(30, 30, 30, 0.4);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
 }
 
 .dark-theme #login-form input {
@@ -74,11 +130,22 @@
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
 }
 
+/* Preserve dark solid background; overlay adds tint/blur */
+.dark-theme .login-wrapper {
+  background: linear-gradient(135deg, #181818 0%, #222 100%);
+}
+
+/* Ensure login popup always blue background override */
+html.login-page, body.login-page,
+.login-page .popup-container, .login-wrapper {
+  background-color: var(--myvision-blue) !important;
+}
+
 /* High contrast overrides */
 .high-contrast-theme .login-card {
-  background: black;
-  color: white;
+  background: rgba(0, 0, 0, 0.85);
   border: 2px solid white;
+  box-shadow: none; /* clarity over depth in HC */
 }
 
 .high-contrast-theme #login-form input {
