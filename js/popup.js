@@ -12,6 +12,269 @@
  *   • Minimal dependencies: Chrome MV3 APIs, ES2019
  * ------------------------------------------------------------------ */
 
+// ----------------------------- PLATFORM DETECTION & SHORTCUTS ----------------------------
+
+/**
+ * Platform detection utility for cross-platform keyboard shortcuts
+ */
+const Platform = {
+  detect() {
+    // Use modern API if available, fall back to legacy detection
+    if (navigator.userAgentData?.platform) {
+      return navigator.userAgentData.platform.toLowerCase();
+    }
+    
+    // Legacy detection for older browsers
+    const platform = navigator.platform.toLowerCase();
+    if (platform.includes('mac')) return 'macos';
+    if (platform.includes('win')) return 'windows';
+    if (platform.includes('linux')) return 'linux';
+    return 'unknown';
+  },
+  
+  isMac() {
+    return this.detect() === 'macos';
+  },
+  
+  isWindows() {
+    return this.detect() === 'windows';
+  },
+  
+  isLinux() {
+    return this.detect() === 'linux';
+  }
+};
+
+/**
+ * Cross-platform keyboard shortcuts configuration
+ * Automatically adapts to user's operating system
+ */
+const KeyboardShortcuts = {
+  // Cache platform detection for performance
+  _platform: Platform.detect(),
+  _isMac: Platform.isMac(),
+  
+  // Platform-specific modifier keys
+  get modifiers() {
+    if (this._isMac) {
+      return {
+        primary: { key: 'meta', symbol: '⌘', label: 'Cmd' },      // Command key on Mac
+        secondary: { key: 'alt', symbol: '⌥', label: 'Option' },   // Option key on Mac
+        shift: { key: 'shift', symbol: '⇧', label: 'Shift' },
+        control: { key: 'ctrl', symbol: '⌃', label: 'Control' }    // Control on Mac (rarely used)
+      };
+    } else {
+      return {
+        primary: { key: 'ctrl', symbol: 'Ctrl', label: 'Ctrl' },     // Ctrl on Windows/Linux
+        secondary: { key: 'alt', symbol: 'Alt', label: 'Alt' },      // Alt on Windows/Linux
+        shift: { key: 'shift', symbol: 'Shift', label: 'Shift' },
+        control: { key: 'ctrl', symbol: 'Ctrl', label: 'Ctrl' }
+      };
+    }
+  },
+  
+  // Define all keyboard shortcuts with platform-specific variants
+  shortcuts: {
+    // Opening & Closing
+    openExtension: {
+      keys: ['secondary', 'shift', 'KeyA'],
+      description: 'Open extension popup (global shortcut)',
+      global: true,
+      category: 'Opening & Closing'
+    },
+    closePopup: {
+      keys: ['Escape'],
+      description: 'Close popup or modal',
+      category: 'Opening & Closing'
+    },
+    
+    // Page Navigation  
+    previousPage: {
+      keys: ['primary', 'ArrowLeft'],
+      description: 'Previous page',
+      category: 'Page Navigation'
+    },
+    nextPage: {
+      keys: ['primary', 'ArrowRight'], 
+      description: 'Next page',
+      category: 'Page Navigation'
+    },
+    jumpToPage: {
+      keys: ['primary', 'Digit1-8'],
+      description: 'Jump to specific page',
+      category: 'Page Navigation'
+    },
+    scrollToTop: {
+      keys: ['secondary', 'Home'],
+      description: 'Scroll to top of current page',
+      category: 'Page Navigation'
+    },
+    
+    // Quick Actions
+    saveProgress: {
+      keys: ['primary', 'KeyS'],
+      description: this._isMac ? 'Save current progress' : 'Save current progress',
+      category: 'Quick Actions'
+    },
+    exportData: {
+      keys: ['primary', 'KeyE'],
+      description: 'Export review data',
+      category: 'Quick Actions'
+    },
+    openHelp: {
+      keys: ['F1'],
+      description: 'Open help documentation',
+      category: 'Quick Actions'
+    },
+    openSettings: {
+      keys: ['primary', 'Comma'],
+      description: 'Open settings panel',
+      category: 'Quick Actions'
+    },
+    toggleTheme: {
+      keys: ['primary', 'shift', 'KeyT'],
+      description: 'Toggle theme',
+      category: 'Quick Actions'
+    },
+    
+    // Form Navigation (standard across platforms)
+    tabNavigation: {
+      keys: ['Tab'],
+      description: 'Navigate between form fields',
+      category: 'Form Navigation',
+      platformIndependent: true
+    },
+    reverseTabNavigation: {
+      keys: ['shift', 'Tab'],
+      description: 'Navigate backwards between form fields',
+      category: 'Form Navigation',
+      platformIndependent: true
+    },
+    activateButton: {
+      keys: ['Space'],
+      description: 'Toggle checkboxes and activate buttons',
+      category: 'Form Navigation',
+      platformIndependent: true
+    },
+    submitForm: {
+      keys: ['Enter'],
+      description: 'Activate buttons and submit forms',
+      category: 'Form Navigation',
+      platformIndependent: true
+    },
+    navigateOptions: {
+      keys: ['ArrowUp', 'ArrowDown'],
+      description: 'Navigate radio buttons and select dropdowns',
+      category: 'Form Navigation',
+      platformIndependent: true
+    }
+  },
+  
+  /**
+   * Get human-readable key combination for a shortcut
+   */
+  getKeyDisplay(shortcutId) {
+    const shortcut = this.shortcuts[shortcutId];
+    if (!shortcut) return '';
+    
+    const modifiers = this.modifiers;
+    const keys = shortcut.keys.map(keyName => {
+      // Handle modifier keys
+      if (modifiers[keyName]) {
+        return modifiers[keyName].symbol;
+      }
+      
+      // Handle special keys
+      const specialKeys = {
+        'Escape': 'Esc',
+        'ArrowLeft': '←',
+        'ArrowRight': '→', 
+        'ArrowUp': '↑',
+        'ArrowDown': '↓',
+        'Home': 'Home',
+        'Tab': 'Tab',
+        'Enter': 'Enter',
+        'Space': 'Space',
+        'F1': 'F1',
+        'Comma': ',',
+        'Digit1-8': '1-8'
+      };
+      
+      if (specialKeys[keyName]) {
+        return specialKeys[keyName];
+      }
+      
+      // Handle letter keys (KeyA -> A)
+      if (keyName.startsWith('Key')) {
+        return keyName.replace('Key', '');
+      }
+      
+      // Handle digit keys (Digit1 -> 1)
+      if (keyName.startsWith('Digit')) {
+        return keyName.replace('Digit', '');
+      }
+      
+      return keyName;
+    });
+    
+    return keys;
+  },
+  
+  /**
+   * Get shortcuts grouped by category
+   */
+  getShortcutsByCategory() {
+    const categories = {};
+    Object.entries(this.shortcuts).forEach(([id, shortcut]) => {
+      if (!categories[shortcut.category]) {
+        categories[shortcut.category] = [];
+      }
+      categories[shortcut.category].push({
+        id,
+        ...shortcut,
+        keyDisplay: this.getKeyDisplay(id)
+      });
+    });
+    return categories;
+  },
+  
+  /**
+   * Check if a keyboard event matches a shortcut
+   */
+  matchesShortcut(event, shortcutId) {
+    const shortcut = this.shortcuts[shortcutId];
+    if (!shortcut) return false;
+    
+    const modifiers = this.modifiers;
+    const keys = shortcut.keys;
+    
+    // Check each required key/modifier
+    for (const keyName of keys) {
+      if (modifiers[keyName]) {
+        // Check modifier key
+        const modKey = modifiers[keyName].key;
+        if (modKey === 'meta' && !event.metaKey) return false;
+        if (modKey === 'ctrl' && !event.ctrlKey) return false;
+        if (modKey === 'alt' && !event.altKey) return false;
+        if (modKey === 'shift' && !event.shiftKey) return false;
+      } else {
+        // Check regular key
+        if (event.code !== keyName && event.key !== keyName.replace('Key', '').replace('Digit', '')) {
+          // Special handling for digit ranges
+          if (keyName === 'Digit1-8') {
+            const digit = parseInt(event.key);
+            if (isNaN(digit) || digit < 1 || digit > 8) return false;
+          } else {
+            return false;
+          }
+        }
+      }
+    }
+    
+    return true;
+  }
+};
+
 // ----------------------------- CONSTANTS ----------------------------
 const TOTAL_PAGES = 8;         
 const STORAGE_KEY_PREFIX = 'page_';
@@ -167,6 +430,8 @@ async function initExtension() {
   createFontSizeToggle();
   focusPageHeading();
   initPageSpecificFunctionality();
+  initKeyboardShortcuts();
+  updateMainPageKeyboardShortcuts();
   flushPending();
 }
 
@@ -1124,7 +1389,13 @@ function openModal(page) {
   // iFrame that hosts the page (settings.html etc.)
   const iframe = document.createElement('iframe');
   iframe.src = chrome.runtime.getURL(page);
-  Object.assign(iframe.style, { flex: '1 1 auto', width: '100%', border: 'none', overflow: 'hidden' });
+  Object.assign(iframe.style, { 
+    flex: '1 1 auto', 
+    width: '100%', 
+    border: 'none', 
+    overflow: 'hidden',
+    height: '100%'
+  });
 
   // Cleanup unwanted UI + propagate theme classes
   iframe.addEventListener('load', () => {
@@ -1145,18 +1416,36 @@ function openModal(page) {
         // Take main content out of popup-container and make it the root
         popupContainer.parentNode.insertBefore(mainContent, popupContainer);
         popupContainer.remove();
-        // Make sure we don't have nested scrolling contexts
-        mainContent.style.overflow = 'visible';
-        mainContent.style.height = 'auto';
+        // Configure proper scrolling for modal content
+        mainContent.style.overflow = 'auto';
+        mainContent.style.height = '100vh';
         mainContent.style.flex = '1';
-        // Add proper padding to main content for better reading experience
         mainContent.style.padding = '16px 24px';
+        mainContent.style.boxSizing = 'border-box';
         
         // Ensure content area has appropriate styling
         const contentArea = mainContent.querySelector('.content-area');
         if (contentArea) {
           contentArea.style.marginTop = '8px';
+          contentArea.style.maxWidth = 'none';
         }
+
+        // Add scroll containment within the iframe
+        mainContent.addEventListener('wheel', (e) => {
+          e.stopPropagation();
+          // Prevent scroll from bubbling to parent window
+          const atTop = mainContent.scrollTop === 0;
+          const atBottom = mainContent.scrollTop >= mainContent.scrollHeight - mainContent.clientHeight;
+          
+          if ((atTop && e.deltaY < 0) || (atBottom && e.deltaY > 0)) {
+            e.preventDefault();
+          }
+        }, { passive: false });
+
+        // Prevent touch scrolling from bubbling
+        mainContent.addEventListener('touchmove', (e) => {
+          e.stopPropagation();
+        }, { passive: false });
       }
     }
 
@@ -1169,7 +1458,9 @@ function openModal(page) {
       header.style.display = 'flex';
       header.style.alignItems = 'center';
       header.style.justifyContent = 'center';
-      header.style.position = 'relative';
+      header.style.position = 'sticky';
+      header.style.top = '0';
+      header.style.zIndex = '10';
       header.style.borderTopLeftRadius = '12px';
       header.style.borderTopRightRadius = '12px';
       
@@ -1182,6 +1473,9 @@ function openModal(page) {
         title.style.textAlign = 'center';
       }
     }
+
+    // Update keyboard shortcuts with platform-specific content
+    updateModalKeyboardShortcuts(iframe);
 
     // Propagate theme & font-size classes so modal matches parent
     const cls = [...THEME_CLASSES, ...FONT_SIZE_CLASSES];
@@ -1198,6 +1492,16 @@ function openModal(page) {
   modal.append(closeBtn, iframe);
   overlay.append(modal);
   document.body.append(overlay);
+
+  // Prevent background page scrolling when modal is open
+  document.body.style.overflow = 'hidden';
+  
+  // Store original close function to restore scroll
+  const originalClose = closeModal;
+  window.closeModal = () => {
+    document.body.style.overflow = '';
+    originalClose();
+  };
 
   // Trap focus inside modal + return focus on close
   trapFocus(overlay, document.activeElement);
@@ -1473,4 +1777,286 @@ function trapFocus(overlay, returnEl) {
 
   overlay.addEventListener('keydown', keyHandler);
   first.focus();
+}
+
+function initKeyboardShortcuts() {
+  // Only initialize keyboard shortcuts in top-level popup, not in iframes/modals
+  if (window.self !== window.top) return;
+
+  // Enhanced keyboard shortcut handler with platform detection
+  const handleKeyboardShortcuts = (event) => {
+    // Don't interfere with form inputs when user is typing
+    const activeElement = document.activeElement;
+    const isTyping = activeElement && 
+                     (activeElement.tagName === 'INPUT' || 
+                      activeElement.tagName === 'TEXTAREA' || 
+                      activeElement.isContentEditable);
+
+    // Handle ESC key universally (close modals/popup)
+    if (KeyboardShortcuts.matchesShortcut(event, 'closePopup')) {
+      event.preventDefault();
+      
+      // Check for open modals first (priority: close modal before popup)
+      const openModal = document.getElementById('popup-modal') || 
+                       document.getElementById('review-summary-modal');
+      
+      if (openModal) {
+        // Let existing modal handlers deal with ESC
+        return;
+      } else {
+        // Close the main popup
+        try {
+          window.close();
+        } catch (e) {
+          // Fallback: blur the popup to signal browser to close it
+          window.blur();
+        }
+      }
+      return;
+    }
+
+    // Don't process other shortcuts while typing in form fields
+    if (isTyping) return;
+
+    // Platform-aware shortcut handling
+    const currentPage = getCurrentPageIndex();
+    
+    // Page Navigation
+    if (KeyboardShortcuts.matchesShortcut(event, 'previousPage') && currentPage > 1) {
+      event.preventDefault();
+      const prevBtn = document.getElementById('prev-button');
+      if (prevBtn && !prevBtn.disabled) {
+        prevBtn.click();
+      }
+      return;
+    }
+
+    if (KeyboardShortcuts.matchesShortcut(event, 'nextPage') && currentPage < TOTAL_PAGES) {
+      event.preventDefault();
+      const nextBtn = document.getElementById('next-button');
+      if (nextBtn && !nextBtn.disabled) {
+        nextBtn.click();
+      }
+      return;
+    }
+
+    // Scroll to top
+    if (KeyboardShortcuts.matchesShortcut(event, 'scrollToTop')) {
+      event.preventDefault();
+      const scrollTopBtn = document.getElementById('scrollTopBtn');
+      if (scrollTopBtn) {
+        scrollTopBtn.click();
+      }
+      return;
+    }
+
+    // Quick Actions
+    if (KeyboardShortcuts.matchesShortcut(event, 'saveProgress')) {
+      event.preventDefault();
+      saveFormData();
+      showToast('Progress saved', 'success');
+      return;
+    }
+
+    if (KeyboardShortcuts.matchesShortcut(event, 'exportData')) {
+      event.preventDefault();
+      const exportBtn = document.getElementById('export-json');
+      if (exportBtn) {
+        exportBtn.click();
+      }
+      return;
+    }
+
+    if (KeyboardShortcuts.matchesShortcut(event, 'openHelp')) {
+      event.preventDefault();
+      const helpBtn = document.getElementById('help-button');
+      if (helpBtn) {
+        helpBtn.click();
+      }
+      return;
+    }
+
+    if (KeyboardShortcuts.matchesShortcut(event, 'openSettings')) {
+      event.preventDefault();
+      const settingsBtn = document.getElementById('settings-button');
+      if (settingsBtn) {
+        settingsBtn.click();
+      }
+      return;
+    }
+
+    if (KeyboardShortcuts.matchesShortcut(event, 'toggleTheme')) {
+      event.preventDefault();
+      toggleTheme();
+      return;
+    }
+
+    // Page jumping shortcuts (Ctrl/Cmd+1 through Ctrl/Cmd+8)
+    if (KeyboardShortcuts.matchesShortcut(event, 'jumpToPage')) {
+      event.preventDefault();
+      const targetPage = parseInt(event.key);
+      if (targetPage >= 1 && targetPage <= TOTAL_PAGES) {
+        // Save current page before navigating
+        saveFormData();
+        window.location.href = buildPageUrl(targetPage);
+      }
+      return;
+    }
+  };
+
+  // Add the event listener with proper cleanup
+  document.addEventListener('keydown', handleKeyboardShortcuts, {
+    capture: true, // Use capture phase for better control
+    passive: false // Need to preventDefault
+  });
+
+  // Store reference for cleanup if needed
+  initKeyboardShortcuts.cleanup = () => {
+    document.removeEventListener('keydown', handleKeyboardShortcuts, {
+      capture: true
+    });
+  };
+
+  // Update button tooltips with platform-specific shortcuts
+  updateButtonTooltips();
+}
+
+/**
+ * Update button tooltips to show platform-appropriate shortcuts
+ */
+function updateButtonTooltips() {
+  const buttonMappings = {
+    'help-button': 'openHelp',
+    'settings-button': 'openSettings', 
+    'export-json': 'exportData',
+    'theme-toggle': 'toggleTheme'
+  };
+
+  Object.entries(buttonMappings).forEach(([buttonId, shortcutId]) => {
+    const button = document.getElementById(buttonId);
+    if (button) {
+      const keyDisplay = KeyboardShortcuts.getKeyDisplay(shortcutId);
+      const shortcut = KeyboardShortcuts.shortcuts[shortcutId];
+      if (keyDisplay.length && shortcut) {
+        const keyString = keyDisplay.join(' ');
+        button.title = `${shortcut.description} (${keyString})`;
+        button.setAttribute('aria-label', `${shortcut.description} (${keyString})`);
+      }
+    }
+  });
+}
+
+/**
+ * Generate platform-specific keyboard shortcuts documentation HTML
+ * This creates the shortcuts table dynamically based on user's OS
+ */
+function generateKeyboardShortcutsHTML() {
+  const categories = KeyboardShortcuts.getShortcutsByCategory();
+  const platform = Platform.detect();
+  const platformName = Platform.isMac() ? 'macOS' : Platform.isWindows() ? 'Windows' : 'Linux';
+  
+  let html = `
+    <div class="shortcuts-table">
+      <div class="platform-indicator">
+        <p><strong>🖥️ Platform:</strong> Shortcuts optimized for ${platformName}</p>
+      </div>
+  `;
+  
+  // Generate each category
+  Object.entries(categories).forEach(([categoryName, shortcuts]) => {
+    html += `
+      <div class="shortcuts-category">
+        <h4>${categoryName}</h4>
+        <ul>
+    `;
+    
+    shortcuts.forEach(shortcut => {
+      const keyElements = shortcut.keyDisplay.map(key => `<kbd>${key}</kbd>`).join(' ');
+      html += `
+        <li>
+          <div class="shortcut-keys">
+            ${keyElements}
+          </div>
+          <div class="shortcut-description">${shortcut.description}</div>
+        </li>
+      `;
+    });
+    
+    html += `
+        </ul>
+      </div>
+    `;
+  });
+  
+  // Add platform-specific notes
+  const platformNotes = Platform.isMac() ? 
+    `
+      <div class="keyboard-notes">
+        <p><strong>💡 macOS Shortcuts:</strong> Uses Command (⌘) and Option (⌥) keys for most shortcuts, following macOS conventions.</p>
+        <p><strong>⚙️ Global Shortcut:</strong> You can customize the global shortcut by visiting <code>chrome://extensions/shortcuts</code> in your browser.</p>
+        <p><strong>♿ Smart Context:</strong> Most shortcuts are disabled while typing in form fields to prevent interference with your input.</p>
+      </div>
+    ` :
+    `
+      <div class="keyboard-notes">
+        <p><strong>💡 Smart Context:</strong> Most shortcuts are disabled while typing in form fields to prevent interference with your input.</p>
+        <p><strong>⚙️ Customization:</strong> You can customize the global shortcut by visiting <code>chrome://extensions/shortcuts</code> in your browser.</p>
+        <p><strong>♿ Accessibility:</strong> All shortcuts work with screen readers and follow WCAG guidelines.</p>
+      </div>
+    `;
+  
+  html += platformNotes + '</div>';
+  
+  return html;
+}
+
+/**
+ * Update keyboard shortcuts documentation in modal iframes
+ * Called when settings or help modals are opened
+ */
+function updateModalKeyboardShortcuts(iframe) {
+  if (!iframe || !iframe.contentDocument) return;
+  
+  const doc = iframe.contentDocument;
+  const shortcutsContainer = doc.querySelector('.shortcuts-table');
+  
+  if (shortcutsContainer) {
+    // Replace static content with dynamic platform-specific content
+    shortcutsContainer.outerHTML = generateKeyboardShortcutsHTML();
+  }
+}
+
+/**
+ * Update keyboard shortcuts display for the current platform on main popup page
+ */
+function updateMainPageKeyboardShortcuts() {
+  // Only update if we're on the main popup page and elements exist
+  if (window.location.pathname.endsWith('popup.html') || window.location.pathname === '/') {
+    const modifiers = KeyboardShortcuts.modifiers;
+    const platformName = Platform.isMac() ? 'macOS' : Platform.isWindows() ? 'Windows' : 'Linux';
+    
+    // Update platform name
+    const platformNameElement = document.getElementById('platform-name');
+    if (platformNameElement) {
+      platformNameElement.textContent = platformName;
+    }
+    
+    // Update global shortcut (Alt/Option)
+    const globalKey = document.getElementById('global-shortcut-key');
+    if (globalKey) {
+      globalKey.textContent = modifiers.secondary.symbol;
+    }
+    
+    // Update navigation key (Ctrl/Cmd)
+    const navKey = document.getElementById('nav-key');
+    if (navKey) {
+      navKey.textContent = modifiers.primary.symbol;
+    }
+    
+    // Update settings key (Ctrl/Cmd)
+    const settingsKey = document.getElementById('settings-key');
+    if (settingsKey) {
+      settingsKey.textContent = modifiers.primary.symbol;
+    }
+  }
 }
