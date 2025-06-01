@@ -29,17 +29,16 @@
 /* Modal box */
 .popup-modal {
   /* Create floating effect by not filling full width */
-  width: 92%;            
-  max-width: 500px;
-  height: clamp(300px, 88vh, 600px);
+  width: 95%;            
+  max-width: 650px;  /* Increased from 500px to accommodate shortcuts better */
+  height: clamp(400px, 85vh, 700px);  /* Increased height range */
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  overflow-y: auto;      /* allow vertical scroll inside modal */
-  overflow-x: hidden;    /* suppress horizontal scroll */
+  overflow: hidden;     /* Changed from overflow-y: auto to prevent iframe scroll issues */
   position: relative;
   padding: 0;            /* main content has own padding */
   animation: slideUpFade 0.25s ease-out forwards;
