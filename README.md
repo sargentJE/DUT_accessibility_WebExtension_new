@@ -25,7 +25,9 @@ Designed with accessibility best practices at its core.
 - **Consistent UI**: Square corners, custom scrollbars, and visual polish matching Chrome's native styling
 - **Offline Support**: Form data is cached and synchronized when connectivity returns
 - **Export Functionality**: Download review data in JSON format for personal records
-- **Keyboard Navigation**: Tab-friendly interface with focus management and keyboard shortcuts
+- **Cross-Platform Keyboard Shortcuts**: Comprehensive keyboard navigation with platform-specific shortcuts (macOS ⌘/⌥, Windows/Linux Ctrl/Alt)
+- **Smart Context Detection**: Keyboard shortcuts intelligently disabled while typing in form fields
+- **Global Extension Access**: Open extension from any webpage with customizable global shortcut
 
 ## 📸 Screenshots
 
@@ -63,7 +65,7 @@ chrome-extension-css/
 │   ├── page1.html           # Introduction
 │   └── page2-8.html         # Step-by-step review pages
 ├── icons/                   # Extension assets
-├── manifest.json            # Chrome extension configuration (v3)
+├── manifest.json            # Chrome extension configuration (v3) with commands API
 └── various HTML pages       # Popup, settings, help, etc.
 ```
 
@@ -164,30 +166,191 @@ The review workflow consists of 8 progressive steps:
   </tr>
 </table>
 
+## ⌨️ Keyboard Shortcuts
+
+The extension includes a comprehensive cross-platform keyboard shortcut system that adapts to your operating system for a native experience.
+
+### Platform Detection
+
+The extension automatically detects your operating system and displays the appropriate shortcuts:
+
+- **macOS**: Uses Command (⌘) and Option (⌥) keys following macOS conventions
+- **Windows/Linux**: Uses Ctrl and Alt keys following Windows/Linux conventions
+
+### Essential Shortcuts (Always Available)
+
+<table>
+  <tr>
+    <th>Action</th>
+    <th>macOS</th>
+    <th>Windows/Linux</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><b>Open Extension</b></td>
+    <td><kbd>⌥</kbd> <kbd>⇧</kbd> <kbd>A</kbd></td>
+    <td><kbd>Alt</kbd> <kbd>Shift</kbd> <kbd>A</kbd></td>
+    <td>Open extension popup from any webpage (global shortcut)</td>
+  </tr>
+  <tr>
+    <td><b>Close Popup</b></td>
+    <td colspan="2"><kbd>Esc</kbd></td>
+    <td>Close the extension popup or any open modal</td>
+  </tr>
+</table>
+
+### Navigation Shortcuts
+
+<table>
+  <tr>
+    <th>Action</th>
+    <th>macOS</th>
+    <th>Windows/Linux</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><b>Previous Page</b></td>
+    <td><kbd>⌘</kbd> <kbd>←</kbd></td>
+    <td><kbd>Ctrl</kbd> <kbd>←</kbd></td>
+    <td>Navigate to the previous review page</td>
+  </tr>
+  <tr>
+    <td><b>Next Page</b></td>
+    <td><kbd>⌘</kbd> <kbd>→</kbd></td>
+    <td><kbd>Ctrl</kbd> <kbd>→</kbd></td>
+    <td>Navigate to the next review page</td>
+  </tr>
+  <tr>
+    <td><b>Jump to Page</b></td>
+    <td><kbd>⌘</kbd> <kbd>1-8</kbd></td>
+    <td><kbd>Ctrl</kbd> <kbd>1-8</kbd></td>
+    <td>Jump directly to any specific page (1-8)</td>
+  </tr>
+  <tr>
+    <td><b>Scroll to Top</b></td>
+    <td><kbd>⌥</kbd> <kbd>Home</kbd></td>
+    <td><kbd>Alt</kbd> <kbd>Home</kbd></td>
+    <td>Scroll to the top of the current page</td>
+  </tr>
+</table>
+
+### Quick Actions
+
+<table>
+  <tr>
+    <th>Action</th>
+    <th>macOS</th>
+    <th>Windows/Linux</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><b>Save Progress</b></td>
+    <td><kbd>⌘</kbd> <kbd>S</kbd></td>
+    <td><kbd>Ctrl</kbd> <kbd>S</kbd></td>
+    <td>Manually save current form progress</td>
+  </tr>
+  <tr>
+    <td><b>Export Data</b></td>
+    <td><kbd>⌘</kbd> <kbd>E</kbd></td>
+    <td><kbd>Ctrl</kbd> <kbd>E</kbd></td>
+    <td>Export review data to JSON file</td>
+  </tr>
+  <tr>
+    <td><b>Open Help</b></td>
+    <td colspan="2"><kbd>F1</kbd></td>
+    <td>Open help documentation</td>
+  </tr>
+  <tr>
+    <td><b>Open Settings</b></td>
+    <td><kbd>⌘</kbd> <kbd>,</kbd></td>
+    <td><kbd>Ctrl</kbd> <kbd>,</kbd></td>
+    <td>Open settings panel</td>
+  </tr>
+  <tr>
+    <td><b>Toggle Theme</b></td>
+    <td><kbd>⌘</kbd> <kbd>⇧</kbd> <kbd>T</kbd></td>
+    <td><kbd>Ctrl</kbd> <kbd>Shift</kbd> <kbd>T</kbd></td>
+    <td>Cycle through light, dark, and high contrast themes</td>
+  </tr>
+</table>
+
+### Form Navigation (Universal)
+
+These shortcuts work the same across all platforms:
+
+<table>
+  <tr>
+    <th>Action</th>
+    <th>Shortcut</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><b>Next Field</b></td>
+    <td><kbd>Tab</kbd></td>
+    <td>Move to the next form field or interactive element</td>
+  </tr>
+  <tr>
+    <td><b>Previous Field</b></td>
+    <td><kbd>Shift</kbd> <kbd>Tab</kbd></td>
+    <td>Move to the previous form field or interactive element</td>
+  </tr>
+  <tr>
+    <td><b>Activate Button</b></td>
+    <td><kbd>Space</kbd> or <kbd>Enter</kbd></td>
+    <td>Activate buttons and submit forms</td>
+  </tr>
+  <tr>
+    <td><b>Toggle Checkbox</b></td>
+    <td><kbd>Space</kbd></td>
+    <td>Toggle checkboxes and radio buttons</td>
+  </tr>
+  <tr>
+    <td><b>Navigate Options</b></td>
+    <td><kbd>↑</kbd> <kbd>↓</kbd></td>
+    <td>Navigate through radio button groups and select dropdowns</td>
+  </tr>
+</table>
+
+### Smart Context Detection
+
+- **Form Field Protection**: Shortcuts are automatically disabled while typing in text inputs, textareas, or contenteditable elements
+- **Modal Awareness**: ESC key prioritizes closing modals before closing the main popup
+- **Focus Management**: Shortcuts respect current focus state and don't interfere with screen reader navigation
+
+### Customization
+
+- **Global Shortcut**: Customize the global extension shortcut by visiting `chrome://extensions/shortcuts`
+- **Button Tooltips**: All toolbar buttons show their shortcuts in tooltips
+- **Documentation**: Complete shortcut reference available in Settings and Help sections
+- **Visual Indicators**: Shortcuts are displayed with platform-appropriate symbols in the UI
+
 ## ♿ Accessibility
 
 This extension follows WCAG 2.1 AA guidelines and includes:
 
-- **Keyboard Navigation**: Full keyboard accessibility with visible focus states
+- **Comprehensive Keyboard Navigation**: Cross-platform keyboard shortcuts with smart context detection and platform-specific conventions
 - **Screen Reader Compatibility**: Semantic HTML and proper ARIA attributes
 - **Color Contrast**: All text meets WCAG AA contrast requirements
 - **Flexible Text Sizing**: Supports browser zoom and custom text size settings
-- **Focus Management**: Proper focus handling in modals and dynamic content
+- **Focus Management**: Proper focus handling in modals and dynamic content with keyboard trap patterns
 - **Reduced Motion**: Respects user preference for reduced animation
 - **Alternative Text**: All UI elements have proper text alternatives
-- **Skip Navigation**: Keyboard shortcut to bypass repetitive elements
+- **Skip Navigation**: Keyboard shortcuts to bypass repetitive elements and jump between sections
 - **Error Identification**: Form errors are clearly identified and described
+- **Platform-Native Experience**: Keyboard shortcuts adapt to macOS (⌘/⌥) and Windows/Linux (Ctrl/Alt) conventions
 
 ## 🔧 Technical Details
 
 ### Built With
 
-- **Manifest V3**: Latest Chrome extension platform
-- **Vanilla JavaScript**: No frameworks or dependencies
-- **CSS Custom Properties**: For theming and consistent styling
+- **Manifest V3**: Latest Chrome extension platform with commands API for global shortcuts
+- **Vanilla JavaScript**: No frameworks or dependencies, with modern ES2019+ features
+- **CSS Custom Properties**: For theming and consistent styling across all components
 - **Chrome Storage API**: For persistent data across browser sessions
 - **Fetch API**: For RESTful server communication
 - **Service Worker**: For background processing and offline support
+- **Platform Detection**: Cross-platform keyboard shortcut system with automatic OS detection
+- **Dynamic UI Generation**: Runtime platform-adaptive documentation and shortcut display
 
 ### Browser Support
 
@@ -244,6 +407,50 @@ function loadThemeSettings() {
 }
 ```
 
+#### Keyboard Shortcuts Architecture
+
+The keyboard shortcuts system uses a centralized configuration approach with platform detection:
+
+```javascript
+// Platform detection utility
+const Platform = {
+  detect() {
+    if (navigator.userAgentData?.platform) {
+      return navigator.userAgentData.platform.toLowerCase();
+    }
+    // Fallback for older browsers
+    const platform = navigator.platform.toLowerCase();
+    if (platform.includes('mac')) return 'macos';
+    if (platform.includes('win')) return 'windows';
+    return 'linux';
+  }
+};
+
+// Cross-platform shortcut configuration
+const KeyboardShortcuts = {
+  shortcuts: {
+    openExtension: {
+      keys: ['secondary', 'shift', 'KeyA'],
+      description: 'Open extension popup',
+      category: 'Opening & Closing'
+    }
+    // ... more shortcuts
+  },
+  
+  matchesShortcut(event, shortcutId) {
+    // Smart matching logic with platform awareness
+  }
+};
+```
+
+Key features of the implementation:
+
+- **Platform Detection**: Automatic detection using modern and legacy APIs
+- **Centralized Configuration**: Single source of truth for all shortcuts  
+- **Dynamic Documentation**: Runtime generation of platform-specific help content
+- **Smart Context Detection**: Automatic disabling during form input
+- **Event Capture**: Uses capture phase for reliable shortcut handling
+
 ## 🔐 Security & Privacy
 
 ### Required Permissions
@@ -290,6 +497,16 @@ function loadThemeSettings() {
 - Verify the backend URL in BACKEND_BASE is correct
 - Check that your authentication token is valid
 - Look for CORS errors in the console
+</details>
+
+<details>
+<summary><b>Keyboard shortcuts not working</b></summary>
+
+- Check if the global shortcut conflicts with existing browser or system shortcuts
+- Visit `chrome://extensions/shortcuts` to verify and customize the global shortcut
+- Ensure you're not typing in a form field (shortcuts are disabled during text input)
+- Verify the extension has focus or the global shortcut is properly configured
+- Check browser console for JavaScript errors that might prevent shortcut initialization
 </details>
 
 ### Debugging Tips
