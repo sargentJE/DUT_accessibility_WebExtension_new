@@ -325,114 +325,132 @@ if (window.self === window.top) {
 }
 
 async function initExtension() {
-  // --- Check Authentication First ---
-  // Check for authentication token directly via Chrome Storage
-  // This replaces reliance on token.js which isn't available in popup.html
-  const TOKEN_KEY = 'token';
-  const token = await new Promise(resolve => {
-    chrome.storage.local.get([TOKEN_KEY], res => resolve(res[TOKEN_KEY] || null));
-  });
-  if (!token) {
-    // If no token, redirect to login page and stop initialization
-    window.location.replace(chrome.runtime.getURL('login.html'));
-    return;
-  }
-  // --- Proceed only if authenticated ---
-
-  // Bail out in iframe modals
-  if (window.self !== window.top) return;
-  const path = window.location.pathname;
-  const current = getCurrentPageIndex();
-  const isPopupRoot = path.endsWith('popup.html');
-  const isFormPage = isPopupRoot || /\/pages\/page\d+\.html$/.test(path);
-
-  // ---------------- SITE / SESSION HANDLING -------------------------
-  // Fetch current tab URL first so we know if we're on a new website before
-  // deciding whether to restore any previous progress.
   try {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (tab?.url) {
-      currentSiteUrl = tab.url; // Assign the full URL
-      try {
-        currentOrigin = new URL(tab.url).origin;
-      } catch (e) {
-        console.warn("Could not parse current URL origin:", e);
-        currentOrigin = 'invalid_url'; // Fallback for invalid URLs
-        currentSiteUrl = ''; // Ensure URL is cleared if origin parsing fails
+    // Apply any stored theme and font size settings
+    await loadThemeSettings();
+    
+    // Load any existing session ID from storage for robustness
+    const sessionData = await new Promise(resolve => sGet([sessionIdKey()], resolve));
+    if (sessionData[sessionIdKey()]) {
+      currentSessionId = sessionData[sessionIdKey()];
+      console.log(`Restored session ID from storage: ${currentSessionId}`);
+    }
+    
+    // Initialize scroll containment after theme is loaded
+    initScrollContainment();
+    
+    // --- Check Authentication First ---
+    // Check for authentication token directly via Chrome Storage
+    // This replaces reliance on token.js which isn't available in popup.html
+    const TOKEN_KEY = 'token';
+    const token = await new Promise(resolve => {
+      chrome.storage.local.get([TOKEN_KEY], res => resolve(res[TOKEN_KEY] || null));
+    });
+    if (!token) {
+      // If no token, redirect to login page and stop initialization
+      window.location.replace(chrome.runtime.getURL('login.html'));
+      return;
+    }
+    // --- Proceed only if authenticated ---
+
+    // Bail out in iframe modals
+    if (window.self !== window.top) return;
+    const path = window.location.pathname;
+    const current = getCurrentPageIndex();
+    const isPopupRoot = path.endsWith('popup.html');
+    const isFormPage = isPopupRoot || /\/pages\/page\d+\.html$/.test(path);
+
+    // ---------------- SITE / SESSION HANDLING -------------------------
+    // Fetch current tab URL first so we know if we're on a new website before
+    // deciding whether to restore any previous progress.
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tab?.url) {
+        currentSiteUrl = tab.url; // Assign the full URL
+        try {
+          currentOrigin = new URL(tab.url).origin;
+        } catch (e) {
+          console.warn("Could not parse current URL origin:", e);
+          currentOrigin = 'invalid_url'; // Fallback for invalid URLs
+          currentSiteUrl = ''; // Ensure URL is cleared if origin parsing fails
+        }
+      } else {
+        currentSiteUrl = ''; // Ensure URL is empty if tab.url is missing
+        currentOrigin = 'no_active_tab'; // Fallback if no active tab URL
+      }
+    } catch (_) {
+      currentSiteUrl = '';
+      currentOrigin = 'error_getting_tab'; // Fallback on error
+    }
+
+    // Check if we have a valid origin before proceeding
+    const invalidOrigin = ['invalid_url', 'no_active_tab', 'error_getting_tab'].includes(currentOrigin);
+    if (invalidOrigin || !currentOrigin.startsWith('http')) { // Also check it starts with http/https
+      showToast('Cannot start review: Not on a valid web page.', 'error');
+      // Optionally disable UI elements or show a persistent message
+      document.body.innerHTML = '<div class="centered-message error">Accessibility Helper cannot run on this page. Please navigate to a website (http or https).</div>';
+      return; // Stop initialization
+    }
+
+    // Get session data scoped to the current website origin
+    const originKeys = [siteUrlKey(), sessionIdKey(), lastPageKey()];
+    const stored = await new Promise(r => sGet(originKeys, r));
+    const lastSiteUrlForOrigin = stored[siteUrlKey()]; // Full URL stored previously for this origin
+    currentSessionId = stored[sessionIdKey()] || null; // Session ID for this origin
+    const lastVisitedPage = stored[lastPageKey()] || 1; // Last page visited for this origin
+
+    // Check if we already have a session or have marked that no session exists yet
+    const noSessionYet = stored[noSessionKey()] || false;
+    
+    if (!currentSessionId) {
+      if (!noSessionYet) {
+        // First time seeing this origin - clear any stale data
+        const keysToClear = [lastPageKey(), sessionIdKey(), siteUrlKey()]; 
+        for (let i = 1; i <= TOTAL_PAGES; i++) keysToClear.push(pageKey(i));
+        await new Promise(r => sRemove(keysToClear, r)); // Ensure clearing finishes
+        
+        // Mark that we don't have a session yet, but we've initialized
+        sSet({ 
+          [siteUrlKey()]: currentSiteUrl, 
+          [noSessionKey()]: true, 
+          [lastPageKey()]: 1 
+        });
+      } else {
+        // We've already marked this as having no session, but update URL if needed
+        sSet({ [siteUrlKey()]: currentSiteUrl });
       }
     } else {
-      currentSiteUrl = ''; // Ensure URL is empty if tab.url is missing
-      currentOrigin = 'no_active_tab'; // Fallback if no active tab URL
-    }
-  } catch (_) {
-    currentSiteUrl = '';
-    currentOrigin = 'error_getting_tab'; // Fallback on error
-  }
-
-  // Check if we have a valid origin before proceeding
-  const invalidOrigin = ['invalid_url', 'no_active_tab', 'error_getting_tab'].includes(currentOrigin);
-  if (invalidOrigin || !currentOrigin.startsWith('http')) { // Also check it starts with http/https
-    showToast('Cannot start review: Not on a valid web page.', 'error');
-    // Optionally disable UI elements or show a persistent message
-    document.body.innerHTML = '<div class="centered-message error">Accessibility Helper cannot run on this page. Please navigate to a website (http or https).</div>';
-    return; // Stop initialization
-  }
-
-  // Get session data scoped to the current website origin
-  const originKeys = [siteUrlKey(), sessionIdKey(), lastPageKey()];
-  const stored = await new Promise(r => sGet(originKeys, r));
-  const lastSiteUrlForOrigin = stored[siteUrlKey()]; // Full URL stored previously for this origin
-  currentSessionId = stored[sessionIdKey()] || null; // Session ID for this origin
-  const lastVisitedPage = stored[lastPageKey()] || 1; // Last page visited for this origin
-
-  // Check if we already have a session or have marked that no session exists yet
-  const noSessionYet = stored[noSessionKey()] || false;
-  
-  if (!currentSessionId) {
-    if (!noSessionYet) {
-      // First time seeing this origin - clear any stale data
-      const keysToClear = [lastPageKey(), sessionIdKey(), siteUrlKey()]; 
-      for (let i = 1; i <= TOTAL_PAGES; i++) keysToClear.push(pageKey(i));
-      await new Promise(r => sRemove(keysToClear, r)); // Ensure clearing finishes
-      
-      // Mark that we don't have a session yet, but we've initialized
-      sSet({ 
-        [siteUrlKey()]: currentSiteUrl, 
-        [noSessionKey()]: true, 
-        [lastPageKey()]: 1 
-      });
-    } else {
-      // We've already marked this as having no session, but update URL if needed
+      // Session exists, update the stored URL in case it changed slightly
       sSet({ [siteUrlKey()]: currentSiteUrl });
     }
-  } else {
-    // Session exists, update the stored URL in case it changed slightly
-    sSet({ [siteUrlKey()]: currentSiteUrl });
-  }
 
-  // -------- PAGE RESTORE / PERSIST ----------------------------------
-  // Restore the last visited page for this origin if opening the popup root
-  if (isPopupRoot && currentSessionId && lastVisitedPage > 1 && lastVisitedPage <= TOTAL_PAGES) {
-    window.location.replace(buildPageUrl(lastVisitedPage));
-    return;
-  }
+    // -------- PAGE RESTORE / PERSIST ----------------------------------
+    // Restore the last visited page for this origin if opening the popup root
+    if (isPopupRoot && currentSessionId && lastVisitedPage > 1 && lastVisitedPage <= TOTAL_PAGES) {
+      window.location.replace(buildPageUrl(lastVisitedPage));
+      return;
+    }
 
-  // Persist current page when navigating within the form pages.
-  if (isFormPage) {
-    sSet({ [lastPageKey()]: current });
-  }
+    // Persist current page when navigating within the form pages.
+    if (isFormPage) {
+      sSet({ [lastPageKey()]: current });
+    }
 
-  await injectSharedToolbar();
-  enhanceTopNavigation();
-  createDynamicUI();
-  await loadThemeSettings();
-  createDarkModeToggle();
-  createFontSizeToggle();
-  focusPageHeading();
-  initPageSpecificFunctionality();
-  initKeyboardShortcuts();
-  updateMainPageKeyboardShortcuts();
-  flushPending();
+    await injectSharedToolbar();
+    enhanceTopNavigation();
+    createDynamicUI();
+    createDarkModeToggle();
+    createFontSizeToggle();
+    focusPageHeading();
+    initPageSpecificFunctionality();
+    initKeyboardShortcuts();
+    updateMainPageKeyboardShortcuts();
+    initStateCapture();
+    flushPending();
+  } catch (error) {
+    console.error('Error initializing extension:', error);
+    showToast('Error initializing extension. Please try again.', 'error');
+  }
 }
 
 // Global auth expiry listener
@@ -860,24 +878,131 @@ function buildPageUrl(idx) {
 function serializePageForm() {
   const data = {};
   const formElems = document.querySelectorAll('input, select, textarea');
+  
   formElems.forEach(el => {
-    if (el.type === 'checkbox') data[el.name || el.id] = el.checked;
-    else if (el.type === 'radio') {
-      if (el.checked) data[el.name] = el.value;
-    } else data[el.name || el.id] = el.value;
+    const key = el.name || el.id;
+    if (!key) return;
+    
+    if (el.type === 'checkbox') {
+      if (el.checked) {
+        // Get checkbox value, fallback to 'on' if no value attribute (standard HTML behavior)
+        const checkboxValue = el.value || 'on';
+        
+        // Handle checkbox groups by collecting values into arrays
+        if (data[key]) {
+          // Convert single value to array if needed
+          if (!Array.isArray(data[key])) {
+            data[key] = [data[key]];
+          }
+          data[key].push(checkboxValue);
+        } else {
+          // First checked checkbox for this name
+          data[key] = checkboxValue;
+        }
+      }
+      // Note: Unchecked checkboxes are ignored (don't set to false)
+      // This preserves the existing behavior for single checkboxes
+    } else if (el.type === 'radio') {
+      if (el.checked) data[key] = el.value;
+    } else if (el.type === 'select-multiple') {
+      // Handle multi-select elements
+      const selectedValues = Array.from(el.selectedOptions).map(opt => opt.value);
+      if (selectedValues.length > 0) {
+        data[key] = selectedValues;
+      }
+    } else {
+      // Handle regular inputs, textareas, and single selects
+      data[key] = el.value;
+    }
   });
+  
   return data;
 }
 
 function hydratePageForm(values = {}) {
   Object.entries(values).forEach(([k, v]) => {
-    const el = document.querySelector(`[name="${k}"]`) || document.getElementById(k);
-    if (!el) return;
-    if (el.type === 'checkbox') el.checked = !!v;
-    else if (el.type === 'radio') {
-      const radio = document.querySelector(`[name="${k}"][value="${v}"]`);
-      if (radio) radio.checked = true;
-    } else el.value = v;
+    try {
+      // Handle arrays (checkbox groups or multi-select elements)
+      if (Array.isArray(v)) {
+        // First, check if this is a multi-select element
+        const multiSelectEl = document.querySelector(`[name="${k}"]`);
+        if (multiSelectEl && multiSelectEl.tagName === 'SELECT' && multiSelectEl.multiple) {
+          // Handle multi-select elements
+          Array.from(multiSelectEl.options).forEach(option => {
+            option.selected = v.includes(option.value);
+          });
+        } else {
+          // This is a checkbox group - check all checkboxes with matching values
+          v.forEach(value => {
+            // Handle both explicit values and 'on' for checkboxes without value attributes
+            let selector;
+            if (value === 'on') {
+              // For checkboxes without value attribute, find by name only
+              selector = `[name="${k}"][type="checkbox"]:not([value]), [name="${k}"][value="on"]`;
+            } else {
+              selector = `[name="${k}"][value="${value}"]`;
+            }
+            
+            const checkbox = document.querySelector(selector);
+            if (checkbox && checkbox.type === 'checkbox') {
+              checkbox.checked = true;
+            }
+          });
+        }
+      } else {
+        // Handle individual form elements
+        const el = document.querySelector(`[name="${k}"]`) || document.getElementById(k);
+        if (!el) {
+          console.warn(`Form element not found for key: ${k}`);
+          return;
+        }
+        
+        if (el.type === 'checkbox') {
+          // Single checkbox or first checkbox in a group
+          if (typeof v === 'string') {
+            // This is a single value from a checkbox group
+            let checkbox;
+            if (v === 'on') {
+              // Handle checkboxes without value attribute
+              checkbox = document.querySelector(`[name="${k}"][type="checkbox"]:not([value]), [name="${k}"][value="on"]`);
+            } else {
+              checkbox = document.querySelector(`[name="${k}"][value="${v}"]`);
+            }
+            
+            if (checkbox) {
+              checkbox.checked = true;
+            } else {
+              // Fallback for single checkboxes - check the first one found
+              el.checked = !!v;
+            }
+          } else {
+            // Boolean value for single checkbox
+            el.checked = !!v;
+          }
+        } else if (el.type === 'radio') {
+          const radio = document.querySelector(`[name="${k}"][value="${v}"]`);
+          if (radio) {
+            radio.checked = true;
+          } else {
+            console.warn(`Radio button not found for ${k} with value ${v}`);
+          }
+        } else if (el.type === 'select-multiple') {
+          // Handle multi-select elements
+          if (Array.isArray(v)) {
+            Array.from(el.options).forEach(option => {
+              option.selected = v.includes(option.value);
+            });
+          } else {
+            console.warn(`Multi-select ${k} expected array but got:`, typeof v);
+          }
+        } else {
+          // Regular input, textarea, or select
+          el.value = v || '';
+        }
+      }
+    } catch (error) {
+      console.error(`Error hydrating form field ${k}:`, error);
+    }
   });
 }
 
@@ -894,9 +1019,16 @@ const debouncedSaveAsync = debounce(async () => {
 }, 600);
 
 // Create a session if needed before saving form data with locking mechanism
-async function createSessionIfNeeded() {
+/**
+ * Create session that starts as pending review immediately
+ * This is called when user clicks "Start Review" to begin the assessment
+ */
+async function createSessionAndMarkPending() {
   // If we already have a session ID, no need to create one
-  if (currentSessionId) return true;
+  if (currentSessionId) {
+    console.log('Session already exists:', currentSessionId);
+    return true;
+  }
   
   // If session creation is already in progress, wait for it to complete
   if (sessionCreationInProgress) {
@@ -905,71 +1037,86 @@ async function createSessionIfNeeded() {
       const result = await sessionCreationPromise;
       return result;
     }
-    return false; // Fallback if promise is somehow missing
+    return false;
   }
   
-  // Check if we're marked as needing a session
-  const stored = await new Promise(r => sGet([noSessionKey()], r));
-  const needsSession = stored[noSessionKey()] || false;
-  
-  if (needsSession) {
-    // Acquire lock and store promise
-    sessionCreationInProgress = true;
-    sessionCreationPromise = (async () => {
-      console.log('Creating session on form interaction');
-      try {
-        // Try creating session with retry logic
-        let attempts = 0;
-        const maxAttempts = 3;
-        let backoffDelay = 1000; // Start with 1 second
+  // Acquire lock and store promise
+  sessionCreationInProgress = true;
+  sessionCreationPromise = (async () => {
+    console.log('Creating new review session with pending status');
+    try {
+      // Try creating session with retry logic
+      let attempts = 0;
+      const maxAttempts = 3;
+      let backoffDelay = 1000; // Start with 1 second
+      
+      while (attempts < maxAttempts) {
+        // Create a new session with pending status
+        currentSessionId = await createPendingSession(currentSiteUrl);
         
-        while (attempts < maxAttempts) {
-          // Create a new session
-          currentSessionId = await createSession(currentSiteUrl);
-          
-          // Check if session creation succeeded
-          if (currentSessionId) {
-            // Store the new session ID and remove the no-session flag
-            sSet({ 
-              [sessionIdKey()]: currentSessionId,
-              [noSessionKey()]: false
-            });
-            console.log(`Session created successfully: ${currentSessionId}`);
-            return true;
-          }
-          
-          // If we reach here, session creation failed
-          attempts++;
-          if (attempts < maxAttempts) {
-            console.warn(`Session creation attempt ${attempts} failed, retrying in ${backoffDelay/1000}s...`);
-            await new Promise(resolve => setTimeout(resolve, backoffDelay));
-            backoffDelay *= 2; // Exponential backoff
-          }
+        // Check if session creation succeeded
+        if (currentSessionId) {
+          // Store the new session ID and clear the no-session flag
+          sSet({ 
+            [sessionIdKey()]: currentSessionId,
+            [noSessionKey()]: false
+          });
+          console.log(`Pending review session created successfully: ${currentSessionId}`);
+          return true;
         }
         
-        // All attempts failed
-        console.error(`Failed to create session after ${maxAttempts} attempts`);
-        showToast('Failed to connect to server. Your progress will be saved locally until connection is restored.', 'warning');
-        return false;
-      } finally {
-        // Release lock regardless of outcome
-        sessionCreationInProgress = false;
-        sessionCreationPromise = null;
+        // If we reach here, session creation failed
+        attempts++;
+        if (attempts < maxAttempts) {
+          console.warn(`Session creation attempt ${attempts} failed, retrying in ${backoffDelay/1000}s...`);
+          await new Promise(resolve => setTimeout(resolve, backoffDelay));
+          backoffDelay *= 2; // Exponential backoff
+        }
       }
-    })();
-    
-    return await sessionCreationPromise;
-  }
+      
+      // All attempts failed
+      console.error(`Failed to create session after ${maxAttempts} attempts`);
+      return false;
+    } finally {
+      // Release lock regardless of outcome
+      sessionCreationInProgress = false;
+      sessionCreationPromise = null;
+    }
+  })();
   
-  return false;
+  return await sessionCreationPromise;
+}
+
+/**
+ * Create a new pending review session on the backend and return its submissionId
+ * This creates a review with complete: false so backend marks it as "pending" 
+ */
+function createPendingSession(websiteUrl = '') {
+  return new Promise(resolve => {
+    sendWithRetry({
+      type: 'api',
+      url: `${BACKEND_BASE}/submit-review`,
+      method: 'POST',
+      body: { 
+        formData: {}, 
+        metadata: { 
+          websiteUrl,
+          startedAt: new Date().toISOString()
+        },
+        complete: false  // This will make backend set status to "pending"
+      }
+    }, resp => {
+      const id = resp?.data?.submissionId;
+      if (!id) console.warn('createPendingSession: failed', resp);
+      resolve(id || null);
+    });
+  });
 }
 
 async function saveFormData() {
   try {
-    // Ensure we have a session before saving if needed
-    // Note: we don't need to block saving if session creation fails
-    // as the data can still be saved locally
-    await createSessionIfNeeded();
+    // Note: We no longer need createSessionIfNeeded() here since sessions are created 
+    // explicitly when the user clicks "Start Review". This prevents duplicate sessions.
     
     const page = getCurrentPageIndex();
     const data = serializePageForm();
@@ -984,9 +1131,41 @@ async function saveFormData() {
       return { name, label: labelTxt };
     });
 
+    // Capture scroll position
+    const scrollPosition = {
+      top: window.scrollY || document.documentElement.scrollTop,
+      left: window.scrollX || document.documentElement.scrollLeft
+    };
+
+    // Capture focused element information
+    let focusInfo = null;
+    const activeElement = document.activeElement;
+    if (activeElement && activeElement !== document.body) {
+      // Store multiple identifiers for robust element recovery
+      focusInfo = {
+        id: activeElement.id,
+        name: activeElement.name,
+        tagName: activeElement.tagName,
+        type: activeElement.type,
+        value: activeElement.value, // For cursor position in text fields
+        selectionStart: activeElement.selectionStart,
+        selectionEnd: activeElement.selectionEnd,
+        // Generate CSS selector as fallback
+        selector: generateElementSelector(activeElement)
+      };
+    }
+
     const reqKeyName = reqKey(page);
+    const scrollKeyName = scrollPositionKey(page);
+    const focusKeyName = focusElementKey(page);
+    
     return new Promise(resolve => {
-      sSet({ [key]: data, [reqKeyName]: required }, () => {
+      sSet({ 
+        [key]: data, 
+        [reqKeyName]: required,
+        [scrollKeyName]: scrollPosition,
+        [focusKeyName]: focusInfo
+      }, () => {
         showSaveIndicator();
         resolve(true);
       });
@@ -1001,8 +1180,20 @@ async function saveFormData() {
 function loadFormData() {
   const page = getCurrentPageIndex();
   const key = pageKey(page);
-  sGet(key, res => {
-    if (res[key]) hydratePageForm(res[key]);
+  const scrollKey = scrollPositionKey(page);
+  const focusKey = focusElementKey(page);
+  
+  sGet([key, scrollKey, focusKey], res => {
+    // Restore form data first
+    if (res[key]) {
+      hydratePageForm(res[key]);
+    }
+    
+    // Restore scroll position and focus after a short delay
+    // to ensure DOM is fully rendered and form is hydrated
+    setTimeout(() => {
+      restorePageState(res[scrollKey], res[focusKey]);
+    }, 150);
   });
 }
 
@@ -1078,13 +1269,11 @@ async function finalizeSubmission() {
 
   // Ensure we have a session before trying to submit
   if (!currentSessionId) {
-    console.log('No session yet, creating one before submission');
-    const created = await createSessionIfNeeded();
-    if (!created || !currentSessionId) {
-      console.error('finalizeSubmission: Failed to create session!');
-      alert('Error: Could not create a session. Please check your connection and try again.');
-      return;
-    }
+    console.error('finalizeSubmission: No session ID found! This should not happen with explicit session creation.');
+    showLoading(false);
+    alert('Error: No review session found. Please start a new review from Page 1.');
+    window.location.href = chrome.runtime.getURL('pages/page1.html');
+    return;
   }
   showLoading(true, 'Preparing submission…', 10);
   
@@ -1099,14 +1288,55 @@ async function finalizeSubmission() {
   
   // Backend expects a flat object of answers, not grouped by page
   // Extract and merge all field values from each page into a single flat object
+  // Use page prefixes to avoid key collisions between pages
   const formData = {};
+  const pageMetadata = {};
+  
+  // Pre-compute field name collisions for better performance
+  const fieldCollisions = new Set();
+  const allFieldNames = new Set();
+  
+  // First pass: identify all field names and detect collisions
   for (const pageKey in allPages) {
     const pageData = allPages[pageKey];
-    // Copy each field from this page to our flat structure
     for (const fieldName in pageData) {
-      formData[fieldName] = pageData[fieldName];
+      if (allFieldNames.has(fieldName)) {
+        fieldCollisions.add(fieldName);
+      } else {
+        allFieldNames.add(fieldName);
+      }
     }
   }
+  
+  // Second pass: process data with collision information
+  for (const pageKey in allPages) {
+    const pageData = allPages[pageKey];
+    const pageNumber = pageKey.replace('page', '');
+    
+    // Store page metadata for analytics
+    if (Object.keys(pageData).length > 0) {
+      pageMetadata[`page${pageNumber}_completed`] = true;
+      pageMetadata[`page${pageNumber}_field_count`] = Object.keys(pageData).length;
+    }
+    
+    // Copy each field from this page to our flat structure
+    for (const fieldName in pageData) {
+      const fieldValue = pageData[fieldName];
+      
+      if (fieldCollisions.has(fieldName)) {
+        // Use page-prefixed key to avoid collision
+        const prefixedKey = `page${pageNumber}_${fieldName}`;
+        formData[prefixedKey] = fieldValue;
+        console.log(`Key collision detected for '${fieldName}', using prefixed key: ${prefixedKey}`);
+      } else {
+        // No collision, use original field name for backward compatibility
+        formData[fieldName] = fieldValue;
+      }
+    }
+  }
+  
+  // Add page completion metadata to formData
+  Object.assign(formData, pageMetadata);
   
   console.log('Gathered answers by page:', allPages);
   console.log('Flattened form data for submission:', formData);
@@ -1162,10 +1392,112 @@ async function finalizeSubmission() {
 
   if (!resp || resp.status < 200 || resp.status >= 300) {
     showLoading(false);
+    
+    // Parse backend error response for user-friendly messages
     let errorMsg = 'Submission failed during upload.';
-    console.error(errorMsg, resp);
-    alert(errorMsg);
-    if (!resp || resp.status >= 500) queueSubmission(reqMsg);
+    let shouldQueue = false;
+    
+    if (resp) {
+      console.error('Submission failed with response:', resp);
+      
+      // Handle specific HTTP status codes
+      switch (resp.status) {
+        case 401:
+          errorMsg = 'Your session has expired. Please log in again.';
+          // Redirect to login after showing error
+          setTimeout(() => {
+            window.location.replace(chrome.runtime.getURL('login.html'));
+          }, 2000);
+          break;
+          
+        case 403:
+          errorMsg = 'You do not have permission to submit this review.';
+          break;
+          
+        case 404:
+          errorMsg = 'Review session not found. Please start a new review.';
+          break;
+          
+        case 413:
+          errorMsg = 'Review data is too large. Please reduce the length of your responses.';
+          break;
+          
+        case 429:
+          errorMsg = 'Too many requests. Please wait a moment and try again.';
+          shouldQueue = true;
+          break;
+          
+        case 500:
+        case 502:
+        case 503:
+        case 504:
+          errorMsg = 'Server error. Your review will be saved and retried automatically.';
+          shouldQueue = true;
+          break;
+          
+        default:
+          // Try to extract error message from various response structures
+          let extractedMessage = null;
+          
+          try {
+            // Try different common response structures
+            if (resp.data) {
+              extractedMessage = resp.data.message || 
+                               resp.data.error || 
+                               resp.data.msg || 
+                               resp.data.errorMessage;
+            }
+            
+            // If no data property, try direct properties on response
+            if (!extractedMessage && resp.message) {
+              extractedMessage = resp.message;
+            }
+            
+            // If response is a string, use it directly
+            if (!extractedMessage && typeof resp === 'string') {
+              extractedMessage = resp;
+            }
+            
+            // If we have response text, try to parse it
+            if (!extractedMessage && resp.responseText) {
+              try {
+                const parsed = JSON.parse(resp.responseText);
+                extractedMessage = parsed.message || parsed.error;
+              } catch (parseError) {
+                // If JSON parsing fails, use the raw text if it's reasonable length
+                if (resp.responseText.length < 200) {
+                  extractedMessage = resp.responseText;
+                }
+              }
+            }
+          } catch (parseError) {
+            console.warn('Error parsing backend response:', parseError);
+          }
+          
+          if (extractedMessage) {
+            errorMsg = `Submission failed: ${extractedMessage}`;
+          } else {
+            errorMsg = `Submission failed with status ${resp.status}. Please try again.`;
+          }
+          
+          // Queue for retry if it's a server error or network issue
+          shouldQueue = resp.status >= 500;
+      }
+    } else {
+      console.error('Submission failed: No response received');
+      errorMsg = 'Network error. Your review will be saved and retried when connection is restored.';
+      shouldQueue = true;
+    }
+    
+    // Show user-friendly error message
+    showToast(errorMsg, 'error');
+    
+    // Queue for offline retry if appropriate
+    if (shouldQueue) {
+      queueSubmission(reqMsg);
+      console.log('Submission queued for retry due to network/server error');
+    }
+    
     return; // abort further processing
   }
 
@@ -1208,57 +1540,9 @@ function initPageSpecificFunctionality() {
   const validatePage = () => (form ? form.checkValidity() : true);
   const pageIndex = getCurrentPageIndex(); // Get page index once
   
-  // Add listener for first interaction with form to create session
-  if (form) {
-    const createSessionOnFirstInteraction = async function(e) {
-      try {
-        // Remove this event listener to ensure it only runs once
-        form.removeEventListener('input', createSessionOnFirstInteraction);
-        
-        // Show subtle indicator that we're creating a session
-        const saveIndicator = document.querySelector('.save-indicator');
-        if (saveIndicator) {
-          saveIndicator.textContent = 'Starting session...';
-          saveIndicator.classList.add('active');
-        }
-        
-        // Try to create a session if we don't have one yet
-        const result = await createSessionIfNeeded();
-        
-        // Update indicator
-        if (saveIndicator) {
-          saveIndicator.textContent = result ? 'Connected' : 'Offline mode';
-          setTimeout(() => {
-            saveIndicator.classList.remove('active');
-          }, 2000);
-        }
-      } catch (error) {
-        console.error('Error in form interaction handler:', error);
-      }
-    };
-    
-    // Check if we need to add the listener - using cached key if possible
-    const checkAndAddListener = () => {
-      sGet([noSessionKey()], res => {
-        if (res[noSessionKey()]) {
-          // Add listener for all common form interaction events
-          form.addEventListener('input', createSessionOnFirstInteraction);
-          form.addEventListener('change', createSessionOnFirstInteraction);
-          // For accessibility, also capture keyboard events on focusable elements
-          const interactiveElements = form.querySelectorAll('input, select, textarea, button');
-          interactiveElements.forEach(el => {
-            el.addEventListener('keydown', e => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                createSessionOnFirstInteraction(e);
-              }
-            });
-          });
-        }
-      });
-    };
-    
-    checkAndAddListener();
-  }
+  // Note: Session creation now happens when user clicks "Start Review" from page 1
+  // This eliminates the need for form interaction listeners to create sessions
+  // Sessions are created proactively when user commits to starting the review
 
   const updateNextState = () => {
     const nextBtnRef = document.getElementById('next-button');
@@ -1308,7 +1592,139 @@ function initPageSpecificFunctionality() {
       console.error('Could not find #submit-feedback button on page 8!');
     }
   } else if (nextButton) {
-    // For pages 1 through 7
+    // For pages 2 through 7 (page 1 has its own Start Review button)
+    nextButton.style.visibility = 'visible';
+    nextButton.addEventListener('click', async e => {
+      const currentPageIndex = getCurrentPageIndex(); // Re-get in handler in case of dynamic changes
+      console.log(`Next button clicked on page: ${currentPageIndex}`);
+
+      if (!validatePage()) {
+        console.log('Form validation failed. Reporting validity.');
+        if (form) form.reportValidity();
+        return;
+      }
+      e.preventDefault();
+      saveFormData(); // Save current page data first
+
+      const nextPage = currentPageIndex + 1;
+      console.log(`Navigating to page: ${nextPage}`);
+      window.location.href = buildPageUrl(nextPage);
+    });
+  }
+
+  // Handle Start Review button on page 1 (popup.html)
+  const startReviewButton = document.getElementById('start-review-button');
+  if (startReviewButton && pageIndex === 1) {
+    startReviewButton.addEventListener('click', async e => {
+      e.preventDefault();
+      console.log('Start Review button clicked - creating session and navigating to page 2');
+      
+      // Show loading indicator
+      startReviewButton.disabled = true;
+      startReviewButton.textContent = 'Starting Review...';
+      
+      try {
+        // Create session immediately when user commits to starting the review
+        const sessionCreated = await createSessionAndMarkPending();
+        
+        if (sessionCreated) {
+          console.log(`Review session started successfully: ${currentSessionId}`);
+          // Navigate to first question page
+          window.location.href = buildPageUrl(2);
+        } else {
+          // Session creation failed, but allow offline mode
+          console.warn('Session creation failed, proceeding in offline mode');
+          showToast('Could not connect to server. Review will be saved locally until connection is restored.', 'warning');
+          // Still navigate to page 2 for offline mode
+          window.location.href = buildPageUrl(2);
+        }
+      } catch (error) {
+        console.error('Error starting review:', error);
+        startReviewButton.disabled = false;
+        startReviewButton.textContent = 'Start Review';
+        showToast('Error starting review. Please try again.', 'error');
+      }
+    });
+  }
+
+  // Handle Page 1 navigation - ensure session creation when leaving Page 1
+  if (pageIndex === 1) {
+    // Intercept bottom navigation clicks when on Page 1
+    const bottomNavLinks = document.querySelectorAll('.bottom-nav a');
+    bottomNavLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      const targetPage = href.includes('page') ? 
+        parseInt(href.match(/page(\d+)\.html/)?.[1]) : 
+        (href.includes('popup.html') ? 1 : null);
+      
+      // Only intercept navigation to pages 2-8 (not back to page 1)
+      if (targetPage && targetPage > 1) {
+        link.addEventListener('click', async e => {
+          e.preventDefault();
+          console.log(`Bottom navigation clicked from Page 1 to Page ${targetPage} - ensuring session exists`);
+          
+          // Create session if it doesn't exist
+          if (!currentSessionId) {
+            console.log('Creating session via bottom navigation from Page 1');
+            try {
+              const sessionCreated = await createSessionAndMarkPending();
+              if (sessionCreated) {
+                console.log(`Session created successfully: ${currentSessionId}`);
+              } else {
+                console.warn('Session creation failed, proceeding in offline mode');
+                showToast('Could not connect to server. Review will be saved locally until connection is restored.', 'warning');
+              }
+            } catch (error) {
+              console.error('Error creating session from navigation:', error);
+              showToast('Error starting review. Continuing in offline mode.', 'warning');
+            }
+          }
+          
+          // Navigate to target page
+          window.location.href = href;
+        });
+      }
+    });
+
+    // Handle Next button on Page 1 to also create session
+    if (nextButton) {
+      // Remove any existing listeners by cloning the button (clean slate approach)
+      const newNextButton = nextButton.cloneNode(true);
+      nextButton.parentNode.replaceChild(newNextButton, nextButton);
+      
+      newNextButton.addEventListener('click', async e => {
+        e.preventDefault();
+        console.log('Next button clicked on Page 1 - creating session and navigating to page 2');
+        
+        // Show loading indicator
+        newNextButton.disabled = true;
+        newNextButton.textContent = 'Starting...';
+        
+        try {
+          // Create session immediately when user commits to starting the review
+          const sessionCreated = await createSessionAndMarkPending();
+          
+          if (sessionCreated) {
+            console.log(`Review session started successfully: ${currentSessionId}`);
+            // Navigate to first question page
+            window.location.href = buildPageUrl(2);
+          } else {
+            // Session creation failed, but allow offline mode
+            console.warn('Session creation failed, proceeding in offline mode');
+            showToast('Could not connect to server. Review will be saved locally until connection is restored.', 'warning');
+            // Still navigate to page 2 for offline mode
+            window.location.href = buildPageUrl(2);
+          }
+        } catch (error) {
+          console.error('Error starting review:', error);
+          newNextButton.disabled = false;
+          newNextButton.textContent = 'Next';
+          showToast('Error starting review. Please try again.', 'error');
+        }
+      });
+    }
+  } else if (nextButton) {
+    // For pages 2 through 7 (original Next button logic)
     nextButton.style.visibility = 'visible';
     nextButton.addEventListener('click', async e => {
       const currentPageIndex = getCurrentPageIndex(); // Re-get in handler in case of dynamic changes
@@ -1560,8 +1976,17 @@ async function flushPending() {
     const pending = items[pendingKey()];
     if (!pending) return;
     
-    // Only create a session if we actually have pending items to flush
-    const sessionNeeded = await createSessionIfNeeded();
+    // Check if we have a current session to flush to, restore from storage if needed
+    if (!currentSessionId) {
+      const sessionData = await new Promise(resolve => sGet([sessionIdKey()], resolve));
+      if (sessionData[sessionIdKey()]) {
+        currentSessionId = sessionData[sessionIdKey()];
+        console.log('flushPending: Restored session ID from storage');
+      } else {
+        console.warn('flushPending: No session ID available for flushing pending data');
+        return false;
+      }
+    }
     
     showToast('Attempting to send queued submission…');
     return new Promise(resolve => {
@@ -1594,6 +2019,8 @@ function sessionIdKey()    { return `${currentOrigin}_${SESSION_KEY}`; }
 function noSessionKey()    { return `${currentOrigin}_${NO_SESSION_KEY}`; }
 function siteUrlKey()      { return `${currentOrigin}_${SITE_URL_KEY}`; }
 function reqKey(n)         { return `${currentOrigin}_req_${n}`; }
+function scrollPositionKey(n) { return `${currentOrigin}_scroll_${n}`; }
+function focusElementKey(n)   { return `${currentOrigin}_focus_${n}`; }
 function sGet(keys, cb)    { storageArea.get(keys, cb); }
 function sSet(items, cb)   { storageArea.set(items, cb); }
 function sRemove(keys, cb) { storageArea.remove(keys, cb); }
@@ -1629,6 +2056,227 @@ function debounce(fn, ms) {
   };
 }
 
+/**
+ * Generate a robust CSS selector for an element
+ * Uses multiple strategies for reliable element identification
+ */
+function generateElementSelector(element) {
+  if (!element || element === document.body) return null;
+  
+  // Priority 1: Use ID if available and unique
+  if (element.id) {
+    const byId = document.querySelectorAll(`#${element.id}`);
+    if (byId.length === 1) return `#${element.id}`;
+  }
+  
+  // Priority 2: Use name attribute for form elements
+  if (element.name) {
+    const byName = document.querySelectorAll(`[name="${element.name}"]`);
+    if (byName.length === 1) return `[name="${element.name}"]`;
+    // If multiple elements with same name, add type/tag to be more specific
+    if (element.type) {
+      const byNameAndType = document.querySelectorAll(`[name="${element.name}"][type="${element.type}"]`);
+      if (byNameAndType.length === 1) return `[name="${element.name}"][type="${element.type}"]`;
+    }
+  }
+  
+  // Priority 3: Build path using element structure
+  const path = [];
+  let current = element;
+  
+  while (current && current !== document.body) {
+    let selector = current.tagName.toLowerCase();
+    
+    // Add type for input elements
+    if (current.type && current.tagName === 'INPUT') {
+      selector += `[type="${current.type}"]`;
+    }
+    
+    // Add index if there are siblings of same type
+    const siblings = Array.from(current.parentNode?.children || [])
+      .filter(sibling => {
+        if (sibling.tagName !== current.tagName) return false;
+        if (current.type && sibling.type !== current.type) return false;
+        return true;
+      });
+    
+    if (siblings.length > 1) {
+      const index = siblings.indexOf(current);
+      selector += `:nth-of-type(${index + 1})`;
+    }
+    
+    path.unshift(selector);
+    current = current.parentElement;
+    
+    // Limit path depth to avoid overly long selectors
+    if (path.length > 5) break;
+  }
+  
+  return path.join(' > ');
+}
+
+/**
+ * Restore page state including scroll position and focus
+ */
+function restorePageState(scrollPosition, focusInfo) {
+  try {
+    // Restore scroll position
+    if (scrollPosition && typeof scrollPosition === 'object') {
+      const { top = 0, left = 0 } = scrollPosition;
+      
+      // Use requestAnimationFrame for smooth restoration
+      requestAnimationFrame(() => {
+        window.scrollTo({
+          top: top,
+          left: left,
+          behavior: 'auto' // Instant for state restoration
+        });
+      });
+    }
+    
+    // Restore focus
+    if (focusInfo && typeof focusInfo === 'object') {
+      requestAnimationFrame(() => {
+        const element = findElementToFocus(focusInfo);
+        if (element) {
+          element.focus();
+          
+          // Restore cursor position for text inputs
+          if (element.setSelectionRange && 
+              typeof focusInfo.selectionStart === 'number' && 
+              typeof focusInfo.selectionEnd === 'number') {
+            try {
+              element.setSelectionRange(focusInfo.selectionStart, focusInfo.selectionEnd);
+            } catch (e) {
+              // Silently fail if selection range can't be set
+              console.debug('Could not restore selection range:', e);
+            }
+          }
+        }
+      });
+    }
+  } catch (error) {
+    console.debug('Non-critical error restoring page state:', error);
+  }
+}
+
+/**
+ * Find element to focus using multiple identification strategies
+ */
+function findElementToFocus(focusInfo) {
+  if (!focusInfo) return null;
+  
+  // Strategy 1: Find by ID (most reliable)
+  if (focusInfo.id) {
+    const byId = document.getElementById(focusInfo.id);
+    if (byId) return byId;
+  }
+  
+  // Strategy 2: Find by name and type (for form elements)
+  if (focusInfo.name) {
+    let selector = `[name="${focusInfo.name}"]`;
+    if (focusInfo.type) {
+      selector += `[type="${focusInfo.type}"]`;
+    }
+    const byName = document.querySelector(selector);
+    if (byName) return byName;
+  }
+  
+  // Strategy 3: Use stored CSS selector
+  if (focusInfo.selector) {
+    try {
+      const bySelector = document.querySelector(focusInfo.selector);
+      if (bySelector) return bySelector;
+    } catch (e) {
+      console.debug('Invalid selector stored:', focusInfo.selector);
+    }
+  }
+  
+  // Strategy 4: Fallback - find by tag name and approximate value match
+  if (focusInfo.tagName && focusInfo.value) {
+    const elements = document.querySelectorAll(focusInfo.tagName.toLowerCase());
+    for (const el of elements) {
+      if (el.value === focusInfo.value || 
+          (el.placeholder && el.placeholder.includes(focusInfo.value))) {
+        return el;
+      }
+    }
+  }
+  
+  return null;
+}
+
+/**
+ * Initialize state capture for popup close events
+ */
+function initStateCapture() {
+  // Capture state before popup closes (when user clicks outside or presses Escape)
+  // Note: We use a debounced save to avoid excessive storage writes
+  const captureCurrentState = debounce(() => {
+    saveFormData().catch(err => console.debug('Error saving state on close:', err));
+  }, 300);
+
+  // Capture on visibility change (popup being hidden)
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      captureCurrentState();
+    }
+  });
+
+  // Capture on beforeunload (page navigation/close)
+  window.addEventListener('beforeunload', () => {
+    // Use synchronous storage for critical save before close
+    try {
+      const page = getCurrentPageIndex();
+      const data = serializePageForm();
+      const scrollPosition = {
+        top: window.scrollY || document.documentElement.scrollTop,
+        left: window.scrollX || document.documentElement.scrollLeft
+      };
+      
+      let focusInfo = null;
+      const activeElement = document.activeElement;
+      if (activeElement && activeElement !== document.body) {
+        focusInfo = {
+          id: activeElement.id,
+          name: activeElement.name,
+          tagName: activeElement.tagName,
+          type: activeElement.type,
+          value: activeElement.value,
+          selectionStart: activeElement.selectionStart,
+          selectionEnd: activeElement.selectionEnd,
+          selector: generateElementSelector(activeElement)
+        };
+      }
+      
+      // Save synchronously for immediate persistence
+      const storageData = {
+        [pageKey(page)]: data,
+        [scrollPositionKey(page)]: scrollPosition,
+        [focusElementKey(page)]: focusInfo
+      };
+      
+      if (chrome.storage && chrome.storage.local && chrome.storage.local.set) {
+        chrome.storage.local.set(storageData);
+      }
+    } catch (error) {
+      console.debug('Error in beforeunload save:', error);
+    }
+  });
+
+  // Capture on focus/blur changes for robust focus tracking
+  let lastFocusTime = 0;
+  document.addEventListener('focusin', debounce(() => {
+    lastFocusTime = Date.now();
+    // Save state after short delay to capture new focus
+    setTimeout(() => {
+      if (Date.now() - lastFocusTime >= 1000) { // Only save if focus has been stable for 1s
+        saveFormData().catch(err => console.debug('Error saving focus state:', err));
+      }
+    }, 1200);
+  }, 500));
+}
+
 // ------------- sendMessage with retry (0.5s,1s) ----------------------
 function sendWithRetry(msg, cb, attempt = 1) {
   chrome.runtime.sendMessage(msg, resp => {
@@ -1645,6 +2293,15 @@ function sendWithRetry(msg, cb, attempt = 1) {
 // ---------------- REVIEW COMPLETENESS CHECK -------------------------
 function validateReviewCompleteness(allPages, reqSchemas) {
   const missingDetail = {};
+  
+  // Define known checkbox groups that should have at least one selection
+  const checkboxGroups = {
+    'input_method': 'How you access websites',
+    'content_access': 'Content access preferences', 
+    'navigation_pref': 'Navigation preferences',
+    'challenges': 'Accessibility challenges'
+  };
+  
   for (let i = 1; i <= TOTAL_PAGES; i++) {
     const pageId = 'page' + i;
     const pageData = allPages[pageId] || {};
@@ -1653,19 +2310,53 @@ function validateReviewCompleteness(allPages, reqSchemas) {
     if (requiredFields.length) {
       requiredFields.forEach(({ name, label }) => {
         const val = pageData[name];
-        const isFilled = (typeof val === 'boolean') ? val : (val != null && String(val).trim() !== '');
+        let isFilled = false;
+        
+        // Enhanced validation for different field types
+        if (Array.isArray(val)) {
+          // Checkbox group or multi-select - check if array has values
+          isFilled = val.length > 0;
+        } else if (typeof val === 'boolean') {
+          // Single checkbox - check if true
+          isFilled = val;
+        } else if (typeof val === 'string') {
+          // Text input, textarea, select - check if not empty
+          isFilled = val.trim() !== '';
+        } else {
+          // Other types - check if not null/undefined
+          isFilled = val != null && String(val).trim() !== '';
+        }
+        
         if (!isFilled) {
           if (!missingDetail[i]) missingDetail[i] = [];
           missingDetail[i].push(label || name);
         }
       });
     }
+    
+    // Additional validation for known checkbox groups (even if not marked required)
+    // This ensures critical accessibility data is collected
+    Object.entries(checkboxGroups).forEach(([groupName, groupLabel]) => {
+      const groupValue = pageData[groupName];
+      const hasGroupData = Array.isArray(groupValue) ? groupValue.length > 0 : !!groupValue;
+      
+      // Only validate if this page actually contains this checkbox group
+      // Check if the group field exists in the page data (indicating user visited this section)
+      const pageContainsGroup = pageData.hasOwnProperty(groupName);
+      
+      if (pageContainsGroup && !hasGroupData) {
+        if (!missingDetail[i]) missingDetail[i] = [];
+        missingDetail[i].push(groupLabel);
+        console.log(`Validation: Missing checkbox group '${groupName}' on page ${i}`);
+      }
+    });
 
     // if page has required fields but user never visited (no data captured), mark all as missing
     if (requiredFields.length && Object.keys(pageData).length === 0) {
       missingDetail[i] = requiredFields.map(f => f.label || f.name);
     }
   }
+  
   return missingDetail; // {3: ['Site name', 'Category'], 5:['…']}
 }
 

@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkbox Serialization Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .form-group { margin: 10px 0; }
+        .checkbox-container { display: block; margin: 5px 0; }
+        .results { background: #f5f5f5; padding: 10px; margin: 10px 0; }
+        .error { color: red; }
+        .success { color: green; }
+        button { margin: 5px; padding: 8px 16px; }
+    </style>
+</head>
+<body>
+    <h1>Checkbox Group Serialization Test</h1>
+    
+    <div class="test-section">
+        <h2>Test Form (Mimics Page 2 Structure)</h2>
+        <form id="test-form">
+            <!-- Input Methods Checkbox Group -->
+            <div class="form-group">
+                <h3>1. How do you access websites? *</h3>
+                <label class="checkbox-container">
+                    <input type="checkbox" name="input_method" value="keyboard_mouse" id="input_keyboard_mouse">
+                    Keyboard/mouse (regular computer setup)
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" name="input_method" value="touch" id="input_touch">
+                    Touch (touchscreen, touchpad, mobile devices)
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" name="input_method" value="voice" id="input_voice">
+                    Voice commands
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" name="input_method" value="alternative" id="input_alternative">
+                    Alternative input (eye tracking, head pointer, etc.)
+                </label>
+            </div>
+
+            <!-- Content Access Checkbox Group -->
+            <div class="form-group">
+                <h3>2. Content Access Preferences</h3>
+                <label class="checkbox-container">
+                    <input type="checkbox" name="content_access" value="visual" id="content_visual">
+                    Visual content
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" name="content_access" value="audio" id="content_audio">
+                    Audio content
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" name="content_access" value="enlarged" id="content_enlarged">
+                    Enlarged text
+                </label>
+            </div>
+
+            <!-- Single Checkbox Test -->
+            <div class="form-group">
+                <label class="checkbox-container">
+                    <input type="checkbox" name="single_checkbox" value="yes" id="single_checkbox">
+                    Single checkbox test
+                </label>
+            </div>
+
+            <!-- Radio Button Test -->
+            <div class="form-group">
+                <h3>3. Device Type</h3>
+                <label>
+                    <input type="radio" name="device_type" value="desktop" id="device_desktop">
+                    Desktop
+                </label>
+                <label>
+                    <input type="radio" name="device_type" value="mobile" id="device_mobile">
+                    Mobile
+                </label>
+            </div>
+
+            <!-- Multi-select Test -->
+            <div class="form-group">
+                <label for="multi_select">Multi-select test:</label>
+                <select name="multi_select" id="multi_select" multiple size="4">
+                    <option value="option1">Option 1</option>
+                    <option value="option2">Option 2</option>
+                    <option value="option3">Option 3</option>
+                    <option value="option4">Option 4</option>
+                </select>
+            </div>
+
+            <!-- Text Input Test -->
+            <div class="form-group">
+                <label for="text_input">Text input:</label>
+                <input type="text" name="text_input" id="text_input" placeholder="Enter some text">
+            </div>
+
+            <!-- Textarea Test -->
+            <div class="form-group">
+                <label for="textarea_input">Textarea:</label>
+                <textarea name="textarea_input" id="textarea_input" rows="3" placeholder="Enter some text"></textarea>
+            </div>
+            
+            <!-- Edge Case Tests -->
+            <div class="form-group">
+                <h3>4. Edge Case Tests</h3>
+                
+                <!-- Checkbox without value attribute -->
+                <label class="checkbox-container">
+                    <input type="checkbox" name="no_value_checkbox" id="no_value_checkbox">
+                    Checkbox without value attribute
+                </label>
+                
+                <!-- Checkbox with empty value -->
+                <label class="checkbox-container">
+                    <input type="checkbox" name="empty_value_checkbox" value="" id="empty_value_checkbox">
+                    Checkbox with empty value
+                </label>
+                
+                <!-- Input without name (should be ignored) -->
+                <label>
+                    <input type="text" id="no_name_input" placeholder="Input without name attribute">
+                    Input without name (should be ignored)
+                </label>
+            </div>
+        </form>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Controls</h2>
+        <button onclick="runSerializationTest()">Test Serialization</button>
+        <button onclick="runHydrationTest()">Test Hydration</button>
+        <button onclick="runEdgeCaseTests()">Test Edge Cases</button>
+        <button onclick="runCollisionTest()">Test Collision Detection</button>
+        <button onclick="runValidationTest()">Test Validation</button>
+        <button onclick="clearForm()">Clear Form</button>
+        <button onclick="selectTestData()">Select Test Data</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Results</h2>
+        <div id="results" class="results"></div>
+    </div>
+
+    <script>
+        // Copy the improved serialization functions from popup.js
+        function serializePageForm() {
+            const data = {};
+            const formElems = document.querySelectorAll('input, select, textarea');
+            
+            formElems.forEach(el => {
+                // Only use name attribute, ignore elements without proper names
+                const key = el.name;
+                if (!key || key.trim() === '') return;
+                
+                if (el.type === 'checkbox') {
+                    if (el.checked) {
+                        // Get checkbox value, fallback to 'on' only if no value attribute (standard HTML behavior)
+                        const checkboxValue = el.hasAttribute('value') ? el.value : 'on';
+                        
+                        // Handle checkbox groups by collecting values into arrays
+                        if (data[key]) {
+                            // Convert single value to array if needed
+                            if (!Array.isArray(data[key])) {
+                                data[key] = [data[key]];
+                            }
+                            data[key].push(checkboxValue);
+                        } else {
+                            // First checked checkbox for this name
+                            data[key] = checkboxValue;
+                        }
+                    }
+                    // Note: Unchecked checkboxes are ignored (don't set to false)
+                    // This preserves the existing behavior for single checkboxes
+                } else if (el.type === 'radio') {
+                    if (el.checked) data[key] = el.value;
+                } else if (el.type === 'select-multiple') {
+                    // Handle multi-select elements
+                    const selectedValues = Array.from(el.selectedOptions).map(opt => opt.value);
+                    if (selectedValues.length > 0) {
+                        data[key] = selectedValues;
+                    }
+                } else {
+                    // Handle regular inputs, textareas, and single selects
+                    data[key] = el.value;
+                }
+            });
+            
+            return data;
+        }
+
+        function hydratePageForm(values = {}) {
+            Object.entries(values).forEach(([k, v]) => {
+                try {
+                    // Handle arrays (checkbox groups or multi-select elements)
+                    if (Array.isArray(v)) {
+                        // First, check if this is a multi-select element
+                        const multiSelectEl = document.querySelector(`[name="${k}"]`);
+                        if (multiSelectEl && multiSelectEl.tagName === 'SELECT' && multiSelectEl.multiple) {
+                            // Handle multi-select elements
+                            Array.from(multiSelectEl.options).forEach(option => {
+                                option.selected = v.includes(option.value);
+                            });
+                        } else {
+                            // This is a checkbox group - check all checkboxes with matching values
+                            v.forEach(value => {
+                                // Handle both explicit values and 'on' for checkboxes without value attributes
+                                let selector;
+                                if (value === 'on') {
+                                    // For checkboxes without value attribute, find by name only
+                                    selector = `[name="${k}"][type="checkbox"]:not([value]), [name="${k}"][value="on"]`;
+                                } else {
+                                    selector = `[name="${k}"][value="${value}"]`;
+                                }
+                                
+                                const checkbox = document.querySelector(selector);
+                                if (checkbox && checkbox.type === 'checkbox') {
+                                    checkbox.checked = true;
+                                }
+                            });
+                        }
+                    } else {
+                        // Handle individual form elements
+                        const el = document.querySelector(`[name="${k}"]`) || document.getElementById(k);
+                        if (!el) {
+                            console.warn(`Form element not found for key: ${k}`);
+                            return;
+                        }
+                        
+                        if (el.type === 'checkbox') {
+                            // Single checkbox or first checkbox in a group
+                            if (typeof v === 'string') {
+                                // This is a single value from a checkbox group
+                                let checkbox;
+                                if (v === 'on') {
+                                    // Handle checkboxes without value attribute
+                                    checkbox = document.querySelector(`[name="${k}"][type="checkbox"]:not([value]), [name="${k}"][value="on"]`);
+                                } else {
+                                    checkbox = document.querySelector(`[name="${k}"][value="${v}"]`);
+                                }
+                                
+                                if (checkbox) {
+                                    checkbox.checked = true;
+                                } else {
+                                    // Fallback for single checkboxes - check the first one found
+                                    el.checked = !!v;
+                                }
+                            } else {
+                                // Boolean value for single checkbox
+                                el.checked = !!v;
+                            }
+                        } else if (el.type === 'radio') {
+                            const radio = document.querySelector(`[name="${k}"][value="${v}"]`);
+                            if (radio) {
+                                radio.checked = true;
+                            } else {
+                                console.warn(`Radio button not found for ${k} with value ${v}`);
+                            }
+                        } else if (el.type === 'select-multiple') {
+                            // Handle multi-select elements
+                            if (Array.isArray(v)) {
+                                Array.from(el.options).forEach(option => {
+                                    option.selected = v.includes(option.value);
+                                });
+                            } else {
+                                console.warn(`Multi-select ${k} expected array but got:`, typeof v);
+                            }
+                        } else {
+                            // Regular input, textarea, or select
+                            el.value = v || '';
+                        }
+                    }
+                } catch (error) {
+                    console.error(`Error hydrating form field ${k}:`, error);
+                }
+            });
+        }
+
+        // Test functions
+        function runSerializationTest() {
+            const results = document.getElementById('results');
+            const data = serializePageForm();
+            
+            let html = '<h3>Serialization Test Results</h3>';
+            html += '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            
+            // Validate results
+            const errors = [];
+            const warnings = [];
+            
+            // Check checkbox groups
+            if (data.input_method) {
+                if (Array.isArray(data.input_method)) {
+                    html += '<p class="success">✅ input_method correctly serialized as array</p>';
+                } else {
+                    html += '<p class="success">✅ input_method serialized as single value (expected for one selection)</p>';
+                }
+            }
+            
+            if (data.content_access) {
+                if (Array.isArray(data.content_access)) {
+                    html += '<p class="success">✅ content_access correctly serialized as array</p>';
+                } else {
+                    html += '<p class="success">✅ content_access serialized as single value (expected for one selection)</p>';
+                }
+            }
+            
+            // Check single checkbox
+            if (data.single_checkbox !== undefined) {
+                if (typeof data.single_checkbox === 'string') {
+                    html += '<p class="success">✅ single_checkbox correctly serialized as string value</p>';
+                } else {
+                    warnings.push('single_checkbox should be a string value when checked');
+                }
+            }
+            
+            // Check radio button
+            if (data.device_type) {
+                if (typeof data.device_type === 'string') {
+                    html += '<p class="success">✅ device_type correctly serialized as string</p>';
+                } else {
+                    errors.push('device_type should be a string');
+                }
+            }
+            
+            // Check multi-select
+            if (data.multi_select) {
+                if (Array.isArray(data.multi_select)) {
+                    html += '<p class="success">✅ multi_select correctly serialized as array</p>';
+                } else {
+                    errors.push('multi_select should be an array');
+                }
+            }
+            
+            if (errors.length > 0) {
+                html += '<h4 class="error">Errors:</h4>';
+                errors.forEach(error => html += `<p class="error">❌ ${error}</p>`);
+            }
+            
+            if (warnings.length > 0) {
+                html += '<h4>Warnings:</h4>';
+                warnings.forEach(warning => html += `<p style="color: orange;">⚠️ ${warning}</p>`);
+            }
+            
+            results.innerHTML = html;
+        }
+
+        function runHydrationTest() {
+            const results = document.getElementById('results');
+            
+            // Test data with various formats
+            const testData = {
+                input_method: ['keyboard_mouse', 'touch'],
+                content_access: 'visual',
+                single_checkbox: 'yes',
+                device_type: 'desktop',
+                multi_select: ['option1', 'option3'],
+                text_input: 'Test text',
+                textarea_input: 'Test textarea content'
+            };
+            
+            // Clear form first
+            clearForm();
+            
+            // Hydrate with test data
+            hydratePageForm(testData);
+            
+            // Verify hydration worked
+            const serializedAfterHydration = serializePageForm();
+            
+            let html = '<h3>Hydration Test Results</h3>';
+            html += '<h4>Original Test Data:</h4>';
+            html += '<pre>' + JSON.stringify(testData, null, 2) + '</pre>';
+            html += '<h4>Data After Hydration:</h4>';
+            html += '<pre>' + JSON.stringify(serializedAfterHydration, null, 2) + '</pre>';
+            
+            // Compare results
+            const matches = JSON.stringify(testData) === JSON.stringify(serializedAfterHydration);
+            if (matches) {
+                html += '<p class="success">✅ Hydration test passed - data matches perfectly</p>';
+            } else {
+                html += '<p class="error">❌ Hydration test failed - data mismatch</p>';
+            }
+            
+            results.innerHTML = html;
+        }
+
+        function clearForm() {
+            document.getElementById('test-form').reset();
+        }
+
+        function selectTestData() {
+            // Select some checkboxes and other inputs for testing
+            document.getElementById('input_keyboard_mouse').checked = true;
+            document.getElementById('input_touch').checked = true;
+            document.getElementById('content_visual').checked = true;
+            document.getElementById('content_audio').checked = true;
+            document.getElementById('single_checkbox').checked = true;
+            document.getElementById('device_desktop').checked = true;
+            document.getElementById('multi_select').options[0].selected = true;
+            document.getElementById('multi_select').options[2].selected = true;
+            document.getElementById('text_input').value = 'Sample text';
+            document.getElementById('textarea_input').value = 'Sample textarea content';
+            // Edge case checkboxes
+            document.getElementById('no_value_checkbox').checked = true;
+            document.getElementById('empty_value_checkbox').checked = true;
+        }
+        
+        function runEdgeCaseTests() {
+            const results = document.getElementById('results');
+            
+            // Clear and set up edge case data
+            clearForm();
+            document.getElementById('no_value_checkbox').checked = true;
+            document.getElementById('empty_value_checkbox').checked = true;
+            document.getElementById('no_name_input').value = 'This should be ignored';
+            
+            const data = serializePageForm();
+            
+            let html = '<h3>Edge Case Test Results</h3>';
+            html += '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            
+            // Test results
+            const tests = [];
+            
+            // Test checkbox without value
+            if (data.no_value_checkbox === 'on') {
+                tests.push('✅ Checkbox without value correctly serialized as "on"');
+            } else {
+                tests.push('❌ Checkbox without value should serialize as "on"');
+            }
+            
+            // Test checkbox with empty value
+            if (data.empty_value_checkbox === 'on') {
+                tests.push('✅ Checkbox with empty value correctly fallback to "on"');
+            } else if (data.empty_value_checkbox === '') {
+                tests.push('⚠️ Checkbox with empty value serialized as empty string (acceptable)');
+            } else {
+                tests.push('❌ Checkbox with empty value not handled correctly');
+            }
+            
+            // Test input without name is ignored
+            if (!data.hasOwnProperty('no_name_input') && !data.hasOwnProperty('')) {
+                tests.push('✅ Input without name correctly ignored');
+            } else {
+                tests.push('❌ Input without name should be ignored');
+            }
+            
+            html += '<h4>Test Results:</h4>';
+            tests.forEach(test => html += `<p>${test}</p>`);
+            
+            results.innerHTML = html;
+        }
+        
+        function runCollisionTest() {
+            const results = document.getElementById('results');
+            
+            // Simulate collision detection logic from popup.js
+            const simulateCollisionDetection = (allPages) => {
+                const fieldCollisions = new Set();
+                const allFieldNames = new Set();
+                
+                // First pass: identify collisions
+                for (const pageKey in allPages) {
+                    const pageData = allPages[pageKey];
+                    for (const fieldName in pageData) {
+                        if (allFieldNames.has(fieldName)) {
+                            fieldCollisions.add(fieldName);
+                        } else {
+                            allFieldNames.add(fieldName);
+                        }
+                    }
+                }
+                
+                // Second pass: process data
+                const formData = {};
+                for (const pageKey in allPages) {
+                    const pageData = allPages[pageKey];
+                    const pageNumber = pageKey.replace('page', '');
+                    
+                    for (const fieldName in pageData) {
+                        const fieldValue = pageData[fieldName];
+                        
+                        if (fieldCollisions.has(fieldName)) {
+                            const prefixedKey = `page${pageNumber}_${fieldName}`;
+                            formData[prefixedKey] = fieldValue;
+                        } else {
+                            formData[fieldName] = fieldValue;
+                        }
+                    }
+                }
+                
+                return { formData, collisions: Array.from(fieldCollisions) };
+            };
+            
+            // Test data with collisions
+            const testPages = {
+                page1: {
+                    name: 'John',
+                    email: 'john@example.com',
+                    common_field: 'page1_value'
+                },
+                page2: {
+                    age: 25,
+                    common_field: 'page2_value',
+                    input_method: ['keyboard_mouse', 'touch']
+                },
+                page3: {
+                    address: '123 Main St',
+                    common_field: 'page3_value'
+                }
+            };
+            
+            const result = simulateCollisionDetection(testPages);
+            
+            let html = '<h3>Collision Detection Test Results</h3>';
+            html += '<h4>Original Pages:</h4>';
+            html += '<pre>' + JSON.stringify(testPages, null, 2) + '</pre>';
+            html += '<h4>Processed Data:</h4>';
+            html += '<pre>' + JSON.stringify(result.formData, null, 2) + '</pre>';
+            html += '<h4>Detected Collisions:</h4>';
+            html += '<pre>' + JSON.stringify(result.collisions, null, 2) + '</pre>';
+            
+            // Validate results
+            const tests = [];
+            
+            if (result.collisions.includes('common_field')) {
+                tests.push('✅ Collision correctly detected for "common_field"');
+            } else {
+                tests.push('❌ Should detect collision for "common_field"');
+            }
+            
+            if (result.formData.hasOwnProperty('page1_common_field') && 
+                result.formData.hasOwnProperty('page2_common_field') && 
+                result.formData.hasOwnProperty('page3_common_field')) {
+                tests.push('✅ Colliding fields correctly prefixed');
+            } else {
+                tests.push('❌ Colliding fields should be prefixed');
+            }
+            
+            if (result.formData.name === 'John' && result.formData.age === 25) {
+                tests.push('✅ Non-colliding fields preserved without prefix');
+            } else {
+                tests.push('❌ Non-colliding fields should be preserved');
+            }
+            
+            html += '<h4>Test Results:</h4>';
+            tests.forEach(test => html += `<p>${test}</p>`);
+            
+            results.innerHTML = html;
+        }
+        
+        function runValidationTest() {
+            const results = document.getElementById('results');
+            
+            // Simulate validation logic
+            const validateData = (data) => {
+                const errors = [];
+                const warnings = [];
+                
+                // Check checkbox groups
+                const checkboxGroups = {
+                    'input_method': 'How you access websites',
+                    'content_access': 'Content access preferences'
+                };
+                
+                Object.entries(checkboxGroups).forEach(([groupName, groupLabel]) => {
+                    const groupValue = data[groupName];
+                    const hasGroupData = Array.isArray(groupValue) ? groupValue.length > 0 : !!groupValue;
+                    
+                    if (data.hasOwnProperty(groupName) && !hasGroupData) {
+                        errors.push(`Missing selection for: ${groupLabel}`);
+                    }
+                });
+                
+                // Check required text fields
+                if (!data.text_input || data.text_input.trim() === '') {
+                    warnings.push('Text input is empty');
+                }
+                
+                return { errors, warnings };
+            };
+            
+            // Test with current form data
+            const currentData = serializePageForm();
+            const validation = validateData(currentData);
+            
+            let html = '<h3>Validation Test Results</h3>';
+            html += '<h4>Current Form Data:</h4>';
+            html += '<pre>' + JSON.stringify(currentData, null, 2) + '</pre>';
+            
+            if (validation.errors.length > 0) {
+                html += '<h4 class="error">Validation Errors:</h4>';
+                validation.errors.forEach(error => html += `<p class="error">❌ ${error}</p>`);
+            } else {
+                html += '<p class="success">✅ No validation errors found</p>';
+            }
+            
+            if (validation.warnings.length > 0) {
+                html += '<h4>Validation Warnings:</h4>';
+                validation.warnings.forEach(warning => html += `<p style="color: orange;">⚠️ ${warning}</p>`);
+            }
+            
+            results.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
