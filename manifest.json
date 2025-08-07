@@ -24,14 +24,6 @@
         "chromeos": "Alt+Shift+A"
       },
       "description": "Open MyVision Accessibility Tester"
-    },
-    "toggle_extension": {
-      "suggested_key": {
-        "default": "Alt+Shift+A",
-        "mac": "Alt+Shift+A", 
-        "chromeos": "Alt+Shift+A"
-      },
-      "description": "Toggle MyVision Accessibility Tester popup"
     }
   },
   "permissions": [

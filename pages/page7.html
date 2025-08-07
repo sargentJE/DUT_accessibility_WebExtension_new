@@ -52,7 +52,7 @@
                         <div class="card-content">
                             <div class="form-group">
                                 <label for="navigation_rating">Website Navigation (menus, links, finding content)</label>
-                                <select id="navigation_rating" name="navigation_rating" required>
+                                <select id="navigation_rating" name="navigation_rating" required aria-required="true">
                                     <option value="" disabled selected>Please select</option>
                                     <option value="1">Very Poor - Couldn't complete basic navigation tasks</option>
                                     <option value="2">Poor - Completed tasks with significant difficulty</option>
@@ -64,7 +64,7 @@
                             
                             <div class="form-group">
                                 <label for="content_rating">Content Accessibility (readability, structure, media)</label>
-                                <select id="content_rating" name="content_rating" required>
+                                <select id="content_rating" name="content_rating" required aria-required="true">
                                     <option value="" disabled selected>Please select</option>
                                     <option value="1">Very Poor - Content unusable with my disability</option>
                                     <option value="2">Poor - Content difficult to use/understand</option>
@@ -76,7 +76,7 @@
                             
                             <div class="form-group">
                                 <label for="interaction_rating">Interactive Elements (forms, buttons, controls)</label>
-                                <select id="interaction_rating" name="interaction_rating" required>
+                                <select id="interaction_rating" name="interaction_rating" required aria-required="true">
                                     <option value="" disabled selected>Please select</option>
                                     <option value="1">Very Poor - Couldn't use essential functions</option>
                                     <option value="2">Poor - Used with significant effort/assistance</option>
@@ -88,7 +88,7 @@
                             
                             <div class="form-group">
                                 <label for="help_rating">Help &amp; Support Resources</label>
-                                <select id="help_rating" name="help_rating" required>
+                                <select id="help_rating" name="help_rating" required aria-required="true">
                                     <option value="" disabled selected>Please select</option>
                                     <option value="1">Very Poor - Couldn't access help with my disability</option>
                                     <option value="2">Poor - Limited help options for my needs</option>
@@ -100,7 +100,7 @@
                             
                             <div class="form-group">
                                 <label for="overall_rating">Overall Accessibility Rating</label>
-                                <select id="overall_rating" name="overall_rating" required>
+                                <select id="overall_rating" name="overall_rating" required aria-required="true">
                                     <option value="" disabled selected>Please select</option>
                                     <option value="1">Very Poor - Unusable with my disability</option>
                                     <option value="2">Poor - Usable only with significant effort</option>
@@ -118,8 +118,8 @@
                         </div>
                         <div class="card-content">
                             <div class="form-group">
-                                <label for="overall_accessibility">Overall accessibility score for users with needs similar to yours: *</label>
-                                <select id="overall_accessibility" name="overall_accessibility" required>
+                                <label for="overall_accessibility">Overall accessibility score for users with needs similar to yours: <span aria-label="required">*</span></label>
+                                <select id="overall_accessibility" name="overall_accessibility" required aria-required="true">
                                     <option value="">Select one…</option>
                                     <option value="excellent">Excellent (fully usable, no significant barriers)</option>
                                     <option value="good">Good (usable with minor barriers that don't prevent task completion)</option>
@@ -185,14 +185,14 @@
         <!-- Bottom Menu Bar (Tab Navigation) -->
         <nav class="bottom-nav" aria-label="Main Navigation">
             <ul>
-                <li><a href="../popup.html">1</a></li>
-                <li><a href="page2.html">2</a></li>
-                <li><a href="page3.html">3</a></li>
-                <li><a href="page4.html">4</a></li>
-                <li><a href="page5.html">5</a></li>
-                <li><a href="page6.html">6</a></li>
-                <li><a href="page7.html" class="active" aria-current="page">7</a></li>
-                <li><a href="page8.html">8</a></li>
+                <li><a href="../popup.html" aria-label="Step 1: Introduction">1</a></li>
+                <li><a href="page2.html" aria-label="Step 2: Your Web-Use Profile">2</a></li>
+                <li><a href="page3.html" aria-label="Step 3: Test Site Navigation">3</a></li>
+                <li><a href="page4.html" aria-label="Step 4: Content & Reading Experience">4</a></li>
+                <li><a href="page5.html" aria-label="Step 5: Forms & Data Entry">5</a></li>
+                <li><a href="page6.html" aria-label="Step 6: Media & Documents">6</a></li>
+                <li><a href="page7.html" class="active" aria-current="page" aria-label="Step 7: Help & Support Features">7</a></li>
+                <li><a href="page8.html" aria-label="Step 8: Summary & Review">8</a></li>
             </ul>
         </nav>
     </div>

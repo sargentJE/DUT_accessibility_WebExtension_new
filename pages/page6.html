@@ -68,8 +68,8 @@
                             <p><strong>Tip:</strong> Screen-reader users can search headings (H) or landmarks (R). Help links should be reachable from any page. Check if there are dedicated accessibility help sections.</p>
                             
                             <div class="form-group">
-                                <label for="help_resources_ease">How easy was it? *</label>
-                                <select id="help_resources_ease" name="help_resources_ease" required>
+                                <label for="help_resources_ease">How easy was it? <span aria-label="required">*</span></label>
+                                <select id="help_resources_ease" name="help_resources_ease" required aria-required="true">
                                     <option value="">Select one…</option>
                                     <option value="very_easy">Very easy</option>
                                     <option value="somewhat_easy">Somewhat easy</option>
@@ -107,8 +107,8 @@
                             <p>Users with different disabilities need appropriate contact methods that work with their specific needs.</p>
                             
                             <div class="form-group">
-                                <label for="support_options_adequacy">How adequate were the options? *</label>
-                                <select id="support_options_adequacy" name="support_options_adequacy" required>
+                                <label for="support_options_adequacy">How adequate were the options? <span aria-label="required">*</span></label>
+                                <select id="support_options_adequacy" name="support_options_adequacy" required aria-required="true">
                                     <option value="">Select one…</option>
                                     <option value="very_adequate">Very adequate</option>
                                     <option value="somewhat_adequate">Somewhat adequate</option>
@@ -146,8 +146,8 @@
                             <p>Clear structure, plain language, and proper heading hierarchy are essential.</p>
                             
                             <div class="form-group">
-                                <label for="faq_clarity">How clear were the articles? *</label>
-                                <select id="faq_clarity" name="faq_clarity" required>
+                                <label for="faq_clarity">How clear were the articles? <span aria-label="required">*</span></label>
+                                <select id="faq_clarity" name="faq_clarity" required aria-required="true">
                                     <option value="">Select one…</option>
                                     <option value="very_clear">Very clear</option>
                                     <option value="somewhat_clear">Somewhat clear</option>
@@ -178,8 +178,8 @@
                             <p><strong>Why this matters:</strong> Support request forms and processes must be accessible to all users. Many support channels inadvertently create barriers with inaccessible forms, time limits, or CAPTCHA challenges.</p>
                             
                             <div class="form-group">
-                                <label for="support_process_accessibility">How accessible was the process? *</label>
-                                <select id="support_process_accessibility" name="support_process_accessibility" required>
+                                <label for="support_process_accessibility">How accessible was the process? <span aria-label="required">*</span></label>
+                                <select id="support_process_accessibility" name="support_process_accessibility" required aria-required="true">
                                     <option value="">Select one…</option>
                                     <option value="very_accessible">Very accessible</option>
                                     <option value="somewhat_accessible">Somewhat accessible</option>
@@ -225,14 +225,14 @@
         <!-- Bottom Menu Bar (Tab Navigation) -->
         <nav class="bottom-nav" aria-label="Main Navigation">
             <ul>
-                <li><a href="../popup.html">1</a></li>
-                <li><a href="page2.html">2</a></li>
-                <li><a href="page3.html">3</a></li>
-                <li><a href="page4.html">4</a></li>
-                <li><a href="page5.html">5</a></li>
-                <li><a href="page6.html" class="active" aria-current="page">6</a></li>
-                <li><a href="page7.html">7</a></li>
-                <li><a href="page8.html">8</a></li>
+                <li><a href="../popup.html" aria-label="Step 1: Introduction">1</a></li>
+                <li><a href="page2.html" aria-label="Step 2: Your Web-Use Profile">2</a></li>
+                <li><a href="page3.html" aria-label="Step 3: Test Site Navigation">3</a></li>
+                <li><a href="page4.html" aria-label="Step 4: Content & Reading Experience">4</a></li>
+                <li><a href="page5.html" aria-label="Step 5: Forms & Data Entry">5</a></li>
+                <li><a href="page6.html" class="active" aria-current="page" aria-label="Step 6: Media & Documents">6</a></li>
+                <li><a href="page7.html" aria-label="Step 7: Help & Support Features">7</a></li>
+                <li><a href="page8.html" aria-label="Step 8: Summary & Review">8</a></li>
             </ul>
         </nav>
     </div>

@@ -2010,8 +2010,8 @@ async function flushPending() {
 window.addEventListener('online', flushPending);
 
 // ---------- Tab-scoped storage abstraction ---------------------------
-// Use chrome.storage.session when available (MV3). Fallback to local.
-const storageArea = (chrome.storage && chrome.storage.session) ? chrome.storage.session : chrome.storage.local;
+// Use chrome.storage.local for persistent storage across browser sessions
+const storageArea = chrome.storage.local;
 let TAB_PREFIX = '';
 function pageKey(n)        { return `${currentOrigin}_page_${n}`; }
 function lastPageKey()     { return `${currentOrigin}_${LAST_PAGE_KEY}`; }

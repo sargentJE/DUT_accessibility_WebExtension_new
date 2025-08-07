@@ -68,8 +68,8 @@
                             <p><strong>Tip:</strong> Can you tell what each field is for? Can you complete the form using only your preferred method (keyboard, screen reader, etc.)? Is the <strong>focus order</strong> logical (moving through fields in a sensible sequence)?</p>
                             
                             <div class="form-group">
-                                <label for="form_usability">How easy was it? *</label>
-                                <select id="form_usability" name="form_usability" required>
+                                <label for="form_usability">How easy was it? <span aria-label="required">*</span></label>
+                                <select id="form_usability" name="form_usability" required aria-required="true">
                                     <option value="">Select one…</option>
                                     <option value="very_easy">Very easy</option>
                                     <option value="somewhat_easy">Somewhat easy</option>
@@ -102,8 +102,8 @@
                             <p><strong>Tip:</strong> Look in headers, footers, profile settings, or dedicated accessibility menus. Can you operate these controls with keyboard only? Do the changes persist between pages?</p>
                             
                             <div class="form-group">
-                                <label for="customization_quality">How well did it work? *</label>
-                                <select id="customization_quality" name="customization_quality" required>
+                                <label for="customization_quality">How well did it work? <span aria-label="required">*</span></label>
+                                <select id="customization_quality" name="customization_quality" required aria-required="true">
                                     <option value="">Select one…</option>
                                     <option value="very_well">Very well</option>
                                     <option value="somewhat_well">Somewhat well</option>
@@ -136,8 +136,8 @@
                             <p><strong>Tip:</strong> Evaluate if error messages clearly explain: what went wrong, why it matters, and how to fix it. Are errors announced to screen readers? Can you navigate directly to the field with the error?</p>
                             
                             <div class="form-group">
-                                <label for="error_message_clarity">How clear were the error messages? *</label>
-                                <select id="error_message_clarity" name="error_message_clarity" required>
+                                <label for="error_message_clarity">How clear were the error messages? <span aria-label="required">*</span></label>
+                                <select id="error_message_clarity" name="error_message_clarity" required aria-required="true">
                                     <option value="">Select one…</option>
                                     <option value="very_clear">Very clear</option>
                                     <option value="somewhat_clear">Somewhat clear</option>
@@ -170,8 +170,8 @@
                             <p><strong>Tip:</strong> Feedback should be immediate, visible, and understandable without relying solely on color. Is it announced to screen readers? Does it persist long enough to read? Is it clearly associated with your action?</p>
                             
                             <div class="form-group">
-                                <label for="feedback_clarity">How clear was the feedback? *</label>
-                                <select id="feedback_clarity" name="feedback_clarity" required>
+                                <label for="feedback_clarity">How clear was the feedback? <span aria-label="required">*</span></label>
+                                <select id="feedback_clarity" name="feedback_clarity" required aria-required="true">
                                     <option value="">Select one…</option>
                                     <option value="very_clear">Very clear</option>
                                     <option value="somewhat_clear">Somewhat clear</option>
@@ -202,8 +202,8 @@
                             </ul>
                             
                             <div class="form-group">
-                                <label for="keyboard_navigation">Could you use only the keyboard to complete tasks? *</label>
-                                <select id="keyboard_navigation" name="keyboard_navigation" required>
+                                <label for="keyboard_navigation">Could you use only the keyboard to complete tasks? <span aria-label="required">*</span></label>
+                                <select id="keyboard_navigation" name="keyboard_navigation" required aria-required="true">
                                     <option value="">Select one…</option>
                                     <option value="yes_fully">Yes, fully</option>
                                     <option value="yes_partially">Yes, partially</option>
@@ -231,14 +231,14 @@
         <!-- Bottom Menu Bar (Tab Navigation) -->
         <nav class="bottom-nav" aria-label="Main Navigation">
             <ul>
-                <li><a href="../popup.html">1</a></li>
-                <li><a href="page2.html">2</a></li>
-                <li><a href="page3.html">3</a></li>
-                <li><a href="page4.html">4</a></li>
-                <li><a href="page5.html" class="active" aria-current="page">5</a></li>
-                <li><a href="page6.html">6</a></li>
-                <li><a href="page7.html">7</a></li>
-                <li><a href="page8.html">8</a></li>
+                <li><a href="../popup.html" aria-label="Step 1: Introduction">1</a></li>
+                <li><a href="page2.html" aria-label="Step 2: Your Web-Use Profile">2</a></li>
+                <li><a href="page3.html" aria-label="Step 3: Test Site Navigation">3</a></li>
+                <li><a href="page4.html" aria-label="Step 4: Content & Reading Experience">4</a></li>
+                <li><a href="page5.html" class="active" aria-current="page" aria-label="Step 5: Forms & Data Entry">5</a></li>
+                <li><a href="page6.html" aria-label="Step 6: Media & Documents">6</a></li>
+                <li><a href="page7.html" aria-label="Step 7: Help & Support Features">7</a></li>
+                <li><a href="page8.html" aria-label="Step 8: Summary & Review">8</a></li>
             </ul>
         </nav>
     </div>

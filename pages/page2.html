@@ -52,14 +52,15 @@
                         <div class="card-content">
                             <p><em>Select every option that you regularly rely on to interact with websites.</em></p>
                             
-                            <h4>Input Methods:</h4>
-                            <div class="form-group">
-                                <label class="checkbox-container">
-                                    Keyboard/mouse (regular computer setup)
-                                    <input type="checkbox" name="input_method" value="keyboard_mouse">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </div>
+                            <fieldset>
+                                <legend><h4>Input Methods:</h4></legend>
+                                <div class="form-group">
+                                    <label class="checkbox-container">
+                                        Keyboard/mouse (regular computer setup)
+                                        <input type="checkbox" name="input_method" value="keyboard_mouse">
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
                             <div class="form-group">
                                 <label class="checkbox-container">
                                     Touch (touchscreen, touchpad, mobile devices)
@@ -81,23 +82,25 @@
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
-                            <div class="form-group">
-                                <label class="checkbox-container">
-                                    Switch controls (single button or limited controls)
-                                    <input type="checkbox" name="input_method" value="switch">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </div>
+                                <div class="form-group">
+                                    <label class="checkbox-container">
+                                        Switch controls (single button or limited controls)
+                                        <input type="checkbox" name="input_method" value="switch">
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                            </fieldset>
                             
                             <div class="form-group">
                                 <label for="alternative_improvements">If you use an alternative input method to the ones listed, please Specify </label>
                                 <textarea id="alternative_improvements" name="alternative_improvements" rows="3"></textarea>
                             </div>
                             
-                            <h4>How do you get information from websites?</h4>
-                            <p><em>Select all that apply to how you read or understand website content.</em></p>
-                            
-                            <div class="form-group">
+                            <fieldset>
+                                <legend><h4>How do you get information from websites?</h4></legend>
+                                <p><em>Select all that apply to how you read or understand website content.</em></p>
+                                
+                                <div class="form-group">
                                 <label class="checkbox-container">
                                     Visual (reading text, seeing images)
                                     <input type="checkbox" name="content_access" value="visual">
@@ -131,14 +134,16 @@
                                     <input type="checkbox" name="content_access" value="high_contrast">
                                     <span class="checkmark"></span>
                                 </label>
-                            </div>
+                                </div>
+                            </fieldset>
                             
                             <div class="form-group">
                                 <label for="content_improvements">What specific content presentation improvements do you find useful on a website?</label>
                                 <textarea id="content_improvements" name="content_improvements" rows="3"></textarea>
                             </div>
                             
-                            <h4>How do you move around websites?</h4>
+                            <fieldset>
+                                <legend><h4>How do you move around websites?</h4></legend>
                             <p><em>Select all navigation methods you regularly use.</em></p>
                             
                             <div class="form-group">
@@ -168,7 +173,8 @@
                                     <input type="checkbox" name="navigation_pref" value="shortcuts">
                                     <span class="checkmark"></span>
                                 </label>
-                            </div>
+                                </div>
+                            </fieldset>
                             
                             <div class="form-group">
                                 <label for="navigation_improvements">What specific navigation improvements would make websites easier for you to use?</label>
@@ -206,9 +212,11 @@
                             <h3 class="card-title">4. What barriers do you frequently encounter online? * <span class="text-primary">(Most important)</span></h3>
                         </div>
                         <div class="card-content">
-                            <p><em>Select every barrier you encounter frequently.</em></p>
-                            
-                            <div class="form-group">
+                            <fieldset>
+                                <legend class="visually-hidden">Barriers you frequently encounter</legend>
+                                <p><em>Select every barrier you encounter frequently.</em></p>
+                                
+                                <div class="form-group">
                                 <label class="checkbox-container">
                                     Time limits (session timeouts, limited-time forms/activities)
                                     <input type="checkbox" name="challenges" value="time_limits">
@@ -270,7 +278,8 @@
                                     <input type="checkbox" name="challenges" value="compatibility">
                                     <span class="checkmark"></span>
                                 </label>
-                            </div>
+                                </div>
+                            </fieldset>
                             
                             <div class="form-group">
                                 <label for="challenge_improvements">For each selected barrier, please suggest a specific improvement that would help:</label>
@@ -306,8 +315,8 @@
                                 <input type="text" id="os" name="os" placeholder="e.g., Windows 11, macOS Ventura, iOS 17, Android 14">
                             </div>
                             
-                            <div class="form-group">
-                                <label>Device Type:</label>
+                            <fieldset class="form-group">
+                                <legend>Device Type:</legend>
                                 <div class="d-flex gap-2">
                                     <label class="radio-container mr-3">
                                         Desktop
@@ -330,7 +339,7 @@
                                         <span class="radio-mark"></span>
                                     </label>
                                 </div>
-                            </div>
+                            </fieldset>
                         </div>
                     </div>
                 </form>
@@ -340,14 +349,14 @@
         <!-- Bottom Menu Bar (Tab Navigation) -->
         <nav class="bottom-nav" aria-label="Main Navigation">
             <ul>
-                <li><a href="../popup.html">1</a></li>
-                <li><a href="page2.html" class="active" aria-current="page">2</a></li>
-                <li><a href="page3.html">3</a></li>
-                <li><a href="page4.html">4</a></li>
-                <li><a href="page5.html">5</a></li>
-                <li><a href="page6.html">6</a></li>
-                <li><a href="page7.html">7</a></li>
-                <li><a href="page8.html">8</a></li>
+                <li><a href="../popup.html" aria-label="Step 1: Introduction">1</a></li>
+                <li><a href="page2.html" class="active" aria-current="page" aria-label="Step 2: Your Web-Use Profile">2</a></li>
+                <li><a href="page3.html" aria-label="Step 3: Test Site Navigation">3</a></li>
+                <li><a href="page4.html" aria-label="Step 4: Content & Reading Experience">4</a></li>
+                <li><a href="page5.html" aria-label="Step 5: Forms & Data Entry">5</a></li>
+                <li><a href="page6.html" aria-label="Step 6: Media & Documents">6</a></li>
+                <li><a href="page7.html" aria-label="Step 7: Help & Support Features">7</a></li>
+                <li><a href="page8.html" aria-label="Step 8: Summary & Review">8</a></li>
             </ul>
         </nav>
     </div>
