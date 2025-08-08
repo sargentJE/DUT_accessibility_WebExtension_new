@@ -14,6 +14,37 @@
 
 // ----------------------------- PLATFORM DETECTION & SHORTCUTS ----------------------------
 
+// ----------------------------- LIGHTWEIGHT PERF LOGGER (DEBUG) ---------------------------
+const Perf = (() => {
+  const rows = [];
+  const marks = new Map();
+  const api = {
+    enable: false,
+    start(phase) {
+      if (!this.enable) return;
+      marks.set(phase, performance.now());
+    },
+    end(phase) {
+      if (!this.enable) return;
+      const start = marks.get(phase);
+      const ms = start != null ? performance.now() - start : 0;
+      rows.push({ phase, ms: Math.round(ms) });
+    },
+    report(title = 'Popup init') {
+      if (!this.enable || !rows.length) return;
+      const out = rows.slice(); // clone to avoid live reference showing as empty after clear
+      try { console.group(`Perf: ${title}`); } catch (_) {}
+      try { console.table(out); } catch (_) { console.log(out); }
+      try { console.groupEnd(); } catch (_) {}
+      setTimeout(() => { rows.length = 0; marks.clear(); }, 0);
+    }
+  };
+  // Immediate opt-in via URL hash for devs
+  // Enable by default so logs print without needing the hash or console pasting
+  api.enable = true;
+  return api;
+})();
+
 /**
  * Platform detection utility for cross-platform keyboard shortcuts
  */
@@ -313,6 +344,14 @@ const ICONS = {
 // Only run popup initialization in top-level popup (not in modals)
 if (window.self === window.top) {
   document.addEventListener('DOMContentLoaded', initExtension);
+  // Announce page context for SRs by focusing main heading
+  document.addEventListener('DOMContentLoaded', () => {
+    const heading = document.querySelector('.section-title');
+    if (heading) {
+      heading.setAttribute('tabindex', '-1');
+      try { heading.focus({ preventScroll: true }); } catch (_) { heading.focus(); }
+    }
+  });
   
   // Activate popup scroll containment immediately
   document.body.classList.add('popup-active');
@@ -326,8 +365,20 @@ if (window.self === window.top) {
 
 async function initExtension() {
   try {
-    // Apply any stored theme and font size settings
-    await loadThemeSettings();
+    Perf.start('total');
+    Perf.start('overlay');
+    // Create UI scaffolding and show immediate loading state (non-blocking UX)
+    createDynamicUI();
+    showLoading(true, 'Initializing…');
+    // Update loading message if init takes longer
+    const slowInitTimer = setTimeout(() => showLoading(true, 'Initializing… still working'), 2000);
+    const verySlowInitTimer = setTimeout(() => showLoading(true, 'Preparing your workspace…'), 5000);
+    Perf.end('overlay');
+
+    // Apply any stored theme and font size settings without blocking init
+    Perf.start('theme');
+    const themeTask = loadThemeSettings().catch(() => {});
+    Promise.resolve(themeTask).finally(() => Perf.end('theme'));
     
     // Load any existing session ID from storage for robustness
     const sessionData = await new Promise(resolve => sGet([sessionIdKey()], resolve));
@@ -436,17 +487,41 @@ async function initExtension() {
       sSet({ [lastPageKey()]: current });
     }
 
-    await injectSharedToolbar();
+    // Inject toolbar in parallel while we finish other lightweight checks
+    const toolbarPromise = injectSharedToolbar().catch(() => {});
+    // Ensure toolbar exists before enhancing navigation; if it failed, inject synchronously
+    try {
+      Perf.start('toolbar');
+      await toolbarPromise;
+      Perf.end('toolbar');
+    } catch (_) {}
     enhanceTopNavigation();
+    // Dynamic UI was already created at the start; ensure components exist
     createDynamicUI();
     createDarkModeToggle();
     createFontSizeToggle();
+    Perf.start('heading');
     focusPageHeading();
+    Perf.end('heading');
+    Perf.start('pageInit');
     initPageSpecificFunctionality();
+    Perf.end('pageInit');
+    Perf.start('shortcuts');
     initKeyboardShortcuts();
     updateMainPageKeyboardShortcuts();
+    Perf.end('shortcuts');
+    Perf.start('state');
     initStateCapture();
+    Perf.end('state');
+    Perf.start('flushPending');
     flushPending();
+    Perf.end('flushPending');
+
+    // Finish: hide loading overlay
+    clearTimeout(slowInitTimer); clearTimeout(verySlowInitTimer);
+    showLoading(false);
+    Perf.end('total');
+    Perf.report('Popup init');
   } catch (error) {
     console.error('Error initializing extension:', error);
     showToast('Error initializing extension. Please try again.', 'error');
@@ -594,22 +669,7 @@ function enhanceTopNavigation() {
 
 // ------------------ DYNAMIC UI ELEMENTS -----------------------------
 function createDynamicUI() {
-  // Progress bar
-  if (!document.querySelector('.progress-container')) {
-    const barContainer = document.createElement('div');
-    barContainer.className = 'progress-container';
-    const bar = document.createElement('div');
-    bar.className = 'progress-bar';
-    bar.setAttribute('role', 'progressbar');
-    bar.setAttribute('aria-valuemin', '0');
-    bar.setAttribute('aria-valuemax', '100');
-    const label = document.createElement('span');
-    label.id = 'progress-label';
-    label.className = 'progress-label';
-    barContainer.append(bar, label);
-    const topNav = document.querySelector('.top-nav');
-    topNav.after(barContainer);
-  }
+  // Progress bar is owned by toolbar.html; do not create here to avoid duplicates
 
   // Loading overlay
   if (!document.getElementById('loading-overlay')) {
@@ -624,7 +684,9 @@ function createDynamicUI() {
   if (!document.getElementById('message-container')) {
     const msg = document.createElement('div');
     msg.id = 'message-container';
-    msg.textContent = 'Saved';
+    msg.setAttribute('role', 'status');
+    msg.setAttribute('aria-live', 'polite');
+    msg.textContent = '';
     document.body.appendChild(msg);
   }
 
@@ -1186,7 +1248,8 @@ function loadFormData() {
   sGet([key, scrollKey, focusKey], res => {
     // Restore form data first
     if (res[key]) {
-      hydratePageForm(res[key]);
+      // Hydration might be heavy on large pages: defer to next frame
+      requestAnimationFrame(() => hydratePageForm(res[key]));
     }
     
     // Restore scroll position and focus after a short delay
@@ -1526,8 +1589,17 @@ async function finalizeSubmission() {
 
 // Promise wrapper around sendWithRetry to allow async/await
 function sendApi(msg) {
-  return new Promise(res => {
-    sendWithRetry(msg, resp => res(resp));
+  return new Promise(resolve => {
+    // Time-box network wait to avoid blocking UI; caller can check undefined
+    let finished = false;
+    const timeout = setTimeout(() => {
+      if (!finished) resolve(undefined);
+    }, 4000);
+    sendWithRetry(msg, resp => {
+      finished = true;
+      clearTimeout(timeout);
+      resolve(resp);
+    });
   });
 }
 
@@ -1794,6 +1866,8 @@ function openModal(page) {
   // Create modal container
   const modal = document.createElement('div');
   modal.className = 'popup-modal';
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-modal', 'true');
 
   // Close button
   const closeBtn = document.createElement('button');
@@ -1805,6 +1879,8 @@ function openModal(page) {
   // iFrame that hosts the page (settings.html etc.)
   const iframe = document.createElement('iframe');
   iframe.src = chrome.runtime.getURL(page);
+  // Help SRs announce embedded content context
+  iframe.title = page.includes('settings') ? 'Settings' : (page.includes('help') || page.includes('about')) ? 'Help' : 'Dialog content';
   Object.assign(iframe.style, { 
     flex: '1 1 auto', 
     width: '100%', 
