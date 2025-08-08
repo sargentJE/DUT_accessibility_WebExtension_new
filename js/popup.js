@@ -546,25 +546,65 @@ chrome.runtime.onMessage.addListener(msg => {
 function injectSharedToolbar() {
   return new Promise(res => {
     if (document.querySelector('.top-nav')) return res();
-    fetch(chrome.runtime.getURL('toolbar.html'))
-      .then(r => r.text())
-      .then(html => {
-        const t = document.createElement('template');
-        t.innerHTML = html.trim();
-        const header = t.content.firstElementChild;
-        // Fix logo src if placeholder
-        const logoEl = header.querySelector('img.logo');
-        if (logoEl) {
-          logoEl.src = chrome.runtime.getURL('icons/myvision-logo.png');
-          logoEl.alt = 'MyVision logo';
-        }
-        const h1 = header.querySelector('#page-title-placeholder');
-        if (h1) h1.textContent = document.title.split('-')[0].trim();
-        const container = document.querySelector('.popup-container') || document.body;
-        container.prepend(header);
-        res();
-      })
-      .catch(err => { console.error(err); res(); });
+    try {
+      // Build toolbar structure equivalent to toolbar.html
+      const header = document.createElement('header');
+      header.className = 'top-nav';
+
+      // Top row: brand + buttons
+      const navTop = document.createElement('div');
+      navTop.className = 'nav-top';
+
+      const brand = document.createElement('div');
+      brand.className = 'brand d-flex align-items-center';
+      const logo = document.createElement('img');
+      logo.className = 'logo';
+      logo.alt = 'MyVision logo';
+      logo.src = chrome.runtime.getURL('icons/myvision-logo.png');
+      brand.appendChild(logo);
+
+      const navButtons = document.createElement('nav');
+      navButtons.className = 'nav-buttons toolbar-actions';
+      navButtons.setAttribute('role', 'toolbar');
+      navButtons.setAttribute('aria-label', 'Page controls');
+
+      navTop.append(brand, navButtons);
+
+      // Progress strip
+      const progressContainer = document.createElement('div');
+      progressContainer.className = 'progress-container';
+      progressContainer.setAttribute('aria-label', 'Progress');
+      const progressBar = document.createElement('div');
+      progressBar.className = 'progress-bar';
+      progressBar.setAttribute('role', 'progressbar');
+      progressBar.setAttribute('aria-valuemin', '0');
+      progressBar.setAttribute('aria-valuemax', '100');
+      progressBar.setAttribute('aria-label', 'Form progress');
+      const progressLabel = document.createElement('span');
+      progressLabel.id = 'progress-label';
+      progressLabel.className = 'visually-hidden';
+      progressLabel.setAttribute('aria-live', 'polite');
+      progressLabel.textContent = '0%';
+      progressContainer.append(progressBar, progressLabel);
+
+      // Bottom row: title
+      const navBottom = document.createElement('div');
+      navBottom.className = 'nav-bottom text-center';
+      const title = document.createElement('h1');
+      title.id = 'page-title-placeholder';
+      title.className = 'page-title mb-0';
+      title.textContent = document.title.split('-')[0].trim();
+      navBottom.appendChild(title);
+
+      header.append(navTop, progressContainer, navBottom);
+
+      const container = document.querySelector('.popup-container') || document.body;
+      container.prepend(header);
+      res();
+    } catch (err) {
+      console.error(err);
+      res();
+    }
   });
 }
 
