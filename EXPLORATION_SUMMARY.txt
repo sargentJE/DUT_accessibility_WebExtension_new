@@ -1,0 +1,557 @@
+================================================================================
+ACCESSIBILITY WEB EXTENSION - BACKEND DATA SCHEMA EXPLORATION REPORT
+================================================================================
+Date: 2025-11-20
+Repository: DUT_accessibility_WebExtension_new
+Status: Complete
+
+================================================================================
+DOCUMENTS CREATED
+================================================================================
+
+1. BACKEND_DATA_SCHEMA_COMPREHENSIVE.md (622 lines, 21KB)
+   - Complete technical documentation
+   - All field mappings by page
+   - Data serialization logic with code examples
+   - Complete request/response examples
+   - File locations and function references
+   - Architecture notes and design patterns
+
+2. API_QUICK_REFERENCE.md (311 lines, 10KB)
+   - Quick lookup guide for developers
+   - Field reference by type
+   - HTTP endpoints and status codes
+   - Data flow diagram
+   - Minimal example payload
+   - File location quick map
+
+3. Original DATA_SCHEMA.md (already exists, 320 lines)
+   - High-level overview
+   - Key improvements documented
+   - Backward compatibility notes
+
+================================================================================
+KEY FINDINGS
+================================================================================
+
+BACKEND API ENDPOINTS:
+  POST   /api/submit-review          -> Creates session, returns submissionId
+  PUT    /api/reviews/{sessionId}    -> Submits complete review data
+  POST   /api/auth/login              -> User authentication
+
+BASE URL:
+  https://web-production-d801.up.railway.app/api
+
+AUTHENTICATION:
+  - JWT Bearer token stored in chrome.storage.local
+  - Token key: 'token'
+  - Header: Authorization: Bearer {token}
+  - Token obtained from login form at /login.html
+
+================================================================================
+DATA STRUCTURE OVERVIEW
+================================================================================
+
+REQUEST PAYLOAD (PUT /api/reviews/{sessionId}):
+{
+  "formData": {
+    // 60-90 fields total
+    // Flattened single-level object (not nested by page)
+    // Includes page completion metadata
+  },
+  "metadata": {
+    "websiteUrl": "string",
+    "submittedAt": "ISO-8601 timestamp",
+    "reviewVersion": "1.0.2",
+    "userAgent": "string"
+  },
+  "complete": true
+}
+
+TOTAL FIELDS PER SUBMISSION: 80-90 fields
+  - Page 2: 16 fields (4 checkbox groups + 9 text + 2 device/os + 1 radio)
+  - Page 3: 9 fields (4 select + 5 textarea)
+  - Page 4: 11 fields (4 select + 7 textarea)
+  - Page 5: 9 fields (4 select + 5 textarea)
+  - Page 6: 9 fields (4 select + 5 textarea)
+  - Page 7: 10 fields (6 select + 4 textarea)
+  - Metadata: 4 fields
+  - Page completion: 12 fields (6 pages x 2)
+
+================================================================================
+DATA TYPES & SERIALIZATION
+================================================================================
+
+CHECKBOX GROUPS (Arrays of strings):
+  - input_method: ["keyboard_mouse", "touch", "voice", "alternative", "switch"]
+  - content_access: ["visual", "audio", "enlarged", "simplified", "high_contrast"]
+  - navigation_pref: ["keyboard", "sequential", "search", "shortcuts"]
+  - challenges: ["time_limits", "complex_navigation", "inconsistent_layouts",
+                 "multimedia", "small_text", "poor_contrast", "unclear_instructions",
+                 "distractions", "compatibility"]
+
+RADIO BUTTONS (Single string value):
+  - device_type: "desktop" | "laptop" | "tablet" | "smartphone"
+
+SELECT DROPDOWNS (Single string value):
+  - Ease ratings: "very_easy" | "somewhat_easy" | "hard" | "could_not_do"
+  - Quality ratings: "very_clear" | "mostly_clear" | "hard_to_follow" | "could_not_understand"
+  - Overall ratings (numeric): "1" | "2" | "3" | "4" | "5"
+  - Accessibility assessment: "excellent" | "good" | "moderate" | "poor" | "not_accessible"
+
+TEXT/TEXTAREA FIELDS (String values):
+  - 30+ fields for user feedback, descriptions, and suggestions
+  - Can contain multi-line text
+  - Examples: assistive_tech, browser, os, form_barriers, priority_improvements, etc.
+
+================================================================================
+FORM PAGES MAPPED
+================================================================================
+
+Page 1: Introduction & Instructions
+  - Status: Informational only
+  - Fields: 0 (no form data collected)
+
+Page 2: User Profile & Accessibility Needs
+  - Fields: 16
+  - Contains: Checkbox groups, text fields, device/OS selection
+  - Key data: Input methods, content access preferences, accessibility challenges
+
+Page 3: Navigation Tasks
+  - Fields: 9
+  - Contains: 4 task ease ratings + 5 barrier descriptions
+  - Key data: Navigation accessibility feedback
+
+Page 4: Content Quality  
+  - Fields: 11
+  - Contains: Clarity, updates, documents, structure assessments
+  - Key data: Content accessibility issues
+
+Page 5: Interactive Elements
+  - Fields: 9
+  - Contains: Form usability, customization, errors, feedback ratings
+  - Key data: Form and button accessibility
+
+Page 6: Help & Support
+  - Fields: 9
+  - Contains: Help discovery, contact options, FAQ clarity, support process
+  - Key data: Support resource accessibility
+
+Page 7: Overall Experience
+  - Fields: 10
+  - Contains: 5 rating scales + overall assessment + strengths/barriers/feedback
+  - Key data: Comprehensive accessibility overview
+
+Page 8: Summary & Review
+  - Status: Submission confirmation page
+  - Fields: 0 (triggers finalizeSubmission() function)
+
+================================================================================
+DATA PROCESSING PIPELINE
+================================================================================
+
+STEP 1: FORM SERIALIZATION
+  Function: serializePageForm() [/js/popup.js:980]
+  - Collects all form elements on current page
+  - Handles checkboxes as arrays
+  - Returns flat object per page
+
+STEP 2: STORAGE
+  Location: chrome.storage.sync
+  Keys: ${origin}_page{N} for each page
+  Auto-save: Triggered on form change (debounced)
+
+STEP 3: SESSION CREATION
+  Function: createSessionIfNeeded() [/js/popup.js:1124]
+  - POST /api/submit-review
+  - Receives submissionId
+  - Stored in chrome.storage.sync
+
+STEP 4: DATA GATHERING
+  Functions: 
+    - gatherAllPages() [/js/popup.js:1341]
+    - gatherRequiredSchemas() [/js/popup.js:1352]
+  - Collects all page data from storage
+  - Retrieves validation requirements
+
+STEP 5: COLLISION DETECTION & FLATTENING
+  Function: finalizeSubmission() [/js/popup.js:1364]
+  - Two-pass algorithm:
+    1st pass: Identify field name collisions across pages
+    2nd pass: Apply page prefix (page{N}_) only to colliding fields
+  - Non-colliding fields keep original names (backward compatibility)
+  - Adds page completion metadata
+
+STEP 6: VALIDATION
+  Function: validateReviewCompleteness() [/js/popup.js:2410]
+  - Checks required fields per page
+  - Validates checkbox groups have selections
+  - Reports missing fields to user
+
+STEP 7: SUBMISSION
+  Endpoint: PUT /api/reviews/{sessionId}
+  - Sends flattened formData + metadata + complete flag
+  - Includes JWT Bearer token in Authorization header
+  - Handles various HTTP status codes (401, 404, 413, 429, 5xx)
+
+STEP 8: CLEANUP
+  On success:
+  - Clear all stored form data
+  - Clear session ID
+  - Clear website URL
+  - Save submission receipt
+  - Navigate to page 1
+
+================================================================================
+KEY COLLISION HANDLING
+================================================================================
+
+Problem: Same field name on multiple pages would overwrite
+
+Solution: Two-pass pre-computation
+  1st pass: Build set of all field names, identify collisions
+  2nd pass: Apply page prefix ONLY to colliding fields
+
+Example:
+  Without collision: main_features_ease (only on page 3)
+  With collision: contact_info_ease (might appear on multiple pages)
+    -> page3_contact_info_ease, page4_contact_info_ease, etc.
+
+Backward Compatibility:
+  - Non-colliding fields keep original names
+  - Existing API contracts maintained
+  - Previous data formats still supported
+
+================================================================================
+FILE LOCATIONS - COMPLETE REFERENCE
+================================================================================
+
+CORE IMPLEMENTATION:
+  /js/popup.js (103KB)
+    - serializePageForm() [980] - Form data collection
+    - hydratePageForm() [1024] - Form data restoration
+    - createSessionIfNeeded() [1124] - Session creation
+    - gatherAllPages() [1341] - Collect all page data
+    - gatherRequiredSchemas() [1352] - Get validation rules
+    - finalizeSubmission() [1364] - Main submission logic
+    - validateReviewCompleteness() [2410] - Validation logic
+    - sendApi() [1631] - API wrapper
+    - Constants [310-330] - Config values
+
+  /js/background.js (4.6KB)
+    - doFetch() [70] - Fetch implementation with auth & retries
+    - fetchAndRespond() [100] - Response handler
+    - Queue management for offline sync
+    - Retry-After header handling
+
+  /js/auth.js (2.7KB)
+    - Login form handling
+    - Token management UI
+
+  /js/token.js (1.1KB)
+    - getToken() - Retrieve JWT token
+    - saveToken() - Store JWT token
+    - clearToken() - Remove JWT token
+
+  /js/settings.js (2.7KB)
+    - Backend URL configuration
+    - Extension settings management
+
+FORM PAGES:
+  /pages/page1.html - Introduction (no fields)
+  /pages/page2.html - User Profile (16 fields)
+  /pages/page3.html - Navigation Tasks (9 fields)
+  /pages/page4.html - Content Quality (11 fields)
+  /pages/page5.html - Interactive Elements (9 fields)
+  /pages/page6.html - Help & Support (9 fields)
+  /pages/page7.html - Overall Experience (10 fields)
+  /pages/page8.html - Submission Confirmation
+
+STYLING:
+  /css/popup.css - Main styles
+  /css/review-modal.css - Modal styles
+
+CONFIGURATION:
+  /manifest.json - Extension manifest (v1.0.2)
+    - Host permissions: https://web-production-d801.up.railway.app/api/*
+    - Service worker: js/background.js
+    - Action popup: popup.html
+
+DOCUMENTATION (Created):
+  /BACKEND_DATA_SCHEMA_COMPREHENSIVE.md - Detailed technical docs
+  /API_QUICK_REFERENCE.md - Developer quick reference
+  /DATA_SCHEMA.md - Original schema documentation
+
+================================================================================
+STORAGE STRUCTURE
+================================================================================
+
+CHROME STORAGE - SYNC (across browsers):
+  ${currentOrigin}_page{N}: Object of form data for page N
+  ${currentOrigin}_req_{N}: Array of required field objects for page N
+  ${currentOrigin}_session_id: Session/submission ID string
+  ${currentOrigin}_site_url: Website URL being reviewed
+  ${currentOrigin}_last_page: Last visited page number
+  ${currentOrigin}_receipt: Submission confirmation timestamp
+
+CHROME STORAGE - LOCAL (device-specific):
+  token: JWT authentication token
+  syncQueue: Array of failed requests for offline retry
+  backendUrl: Backend base URL (configurable)
+
+Key Pattern:
+  - Origin-scoped: Allows multiple concurrent reviews
+  - Persistent: Survives browser restart
+  - Encrypted: Protected by Chrome's storage encryption
+
+================================================================================
+ERROR HANDLING & RESILIENCE
+================================================================================
+
+HTTP STATUS CODES HANDLED:
+  200-299: Success - submission complete
+  401/403: Auth expired - redirect to login page
+  404: Session not found - prompt new review
+  413: Payload too large - reduce response length
+  429: Rate limited - retry with Retry-After delay (up to 3 attempts)
+  500-504: Server error - queue for offline retry
+
+OFFLINE SUPPORT:
+  - Failed requests stored in syncQueue
+  - Persisted to chrome.storage.local
+  - Automatically retried when connection restored
+  - Flushes on 'online' event
+
+VALIDATION CHAIN:
+  1. Form-level: HTML5 required/validation attributes
+  2. Page-level: checkValidity() on form submission
+  3. Checkpoint: Validate page before navigation
+  4. Final: validateReviewCompleteness() before server submit
+
+USER FEEDBACK:
+  - Toast notifications (success/error messages)
+  - Detailed error messages for HTTP status codes
+  - Loading overlays and progress indicators
+  - Auto-save indicators
+
+================================================================================
+CONSTANTS & CONFIGURATION
+================================================================================
+
+Extension Configuration (/js/popup.js):
+  TOTAL_PAGES: 8
+  BACKEND_BASE: 'https://web-production-d801.up.railway.app/api'
+  EXT_VERSION: '1.0.2' (from manifest.json)
+
+Backend Configuration:
+  Base URL: https://web-production-d801.up.railway.app
+  API Path: /api
+  Can be overridden via settings
+
+Manifest Configuration (/manifest.json):
+  Version: 1.0.2
+  Manifest Version: 3
+  Default shortcut: Alt+Shift+A
+
+================================================================================
+EXAMPLE COMPLETE SUBMISSION
+================================================================================
+
+Minimal valid submission (~35 fields):
+
+POST /api/reviews/{sessionId}
+Content-Type: application/json
+Authorization: Bearer {JWT_TOKEN}
+
+{
+  "formData": {
+    "input_method": ["keyboard_mouse"],
+    "content_access": ["visual"],
+    "navigation_pref": ["keyboard"],
+    "challenges": ["small_text"],
+    "device_type": "desktop",
+    "browser": "Chrome 123",
+    "os": "Windows 11",
+    "main_features_ease": "somewhat_easy",
+    "main_features_barriers": "Focus indicators not visible",
+    "contact_info_ease": "very_easy",
+    "help_resources_ease": "hard",
+    "return_homepage_ease": "easy",
+    "content_clarity": "mostly_clear",
+    "clarity_barriers": "Technical jargon unclear",
+    "updates_ease": "hard",
+    "documents_ease": "somewhat_easy",
+    "structure_quality": "mostly_well",
+    "form_usability": "hard",
+    "form_barriers": "Error messages not announced",
+    "customization_quality": "somewhat_well",
+    "error_message_clarity": "somewhat_clear",
+    "feedback_clarity": "very_clear",
+    "support_options_adequacy": "limited",
+    "faq_clarity": "somewhat_clear",
+    "support_process_accessibility": "hard",
+    "navigation_rating": "3",
+    "content_rating": "4",
+    "interaction_rating": "2",
+    "help_rating": "3",
+    "overall_rating": "3",
+    "overall_accessibility": "moderate",
+    "accessibility_strengths": "Good keyboard support",
+    "positive_features": "Clear structure",
+    "priority_improvements": "Fix form accessibility",
+    "page2_completed": true,
+    "page2_field_count": 7,
+    "page3_completed": true,
+    "page3_field_count": 4
+  },
+  "metadata": {
+    "websiteUrl": "https://example.com",
+    "submittedAt": "2025-07-01T09:49:27.000Z",
+    "reviewVersion": "1.0.2",
+    "userAgent": "Mozilla/5.0..."
+  },
+  "complete": true
+}
+
+HTTP 200 Response:
+{
+  // Success acknowledgment
+}
+
+================================================================================
+ARCHITECTURE HIGHLIGHTS
+================================================================================
+
+1. SEPARATION OF CONCERNS:
+   - UI/Forms: HTML pages + popup.js
+   - Storage: Chrome storage API with origin scoping
+   - Networking: Background script (avoids CORS issues)
+   - Authentication: Dedicated token.js module
+
+2. OFFLINE-FIRST DESIGN:
+   - Auto-save to local storage
+   - Queue failed requests
+   - Retry on connection restore
+   - No data loss
+
+3. SECURITY MEASURES:
+   - JWT Bearer authentication
+   - CORS-safe background fetch
+   - Token stored securely
+   - Origin-scoped data
+
+4. USER EXPERIENCE:
+   - Auto-save prevents data loss
+   - Form state persistence across browser restarts
+   - Progress tracking per page
+   - Comprehensive error messages
+   - Keyboard shortcuts support
+
+5. SCALABILITY:
+   - O(n) collision detection (not O(n²))
+   - Origin-scoped data allows concurrent reviews
+   - Idempotent session creation
+   - Efficient array handling for checkbox groups
+
+================================================================================
+VALIDATION RULES
+================================================================================
+
+REQUIRED FIELDS (Per page):
+  Page 2: All checkbox groups (input_method, content_access, navigation_pref, challenges)
+  Page 3: All navigation ease ratings
+  Page 4: All content quality ratings
+  Page 5: All interactive element ratings
+  Page 6: All help/support ratings
+  Page 7: All experience ratings
+
+FIELD TYPE VALIDATION:
+  Checkbox groups: Must have at least 1 selection if present
+  Radio buttons: Must have selection if visible
+  Select dropdowns: Must have non-empty value
+  Text fields: Can be empty (optional in most cases)
+
+FORM-LEVEL VALIDATION:
+  HTML5 required attribute where applicable
+  Custom validation in validateReviewCompleteness()
+  User-friendly error messages
+
+================================================================================
+DEPLOYMENT & RUNTIME
+================================================================================
+
+RUNTIME ENVIRONMENT:
+  - Chrome MV3 (Manifest V3) Extension
+  - Background Service Worker (not persistent)
+  - Content Scripts: None (comment: "removed to keep lightweight")
+  - Pop-up UI: HTML pages dynamically styled
+
+EXECUTION FLOW:
+  1. Extension icon clicked or Alt+Shift+A pressed
+  2. popup.html loads (main entry point)
+  3. JavaScript initialization:
+     - Load user settings (theme, font size, backend URL)
+     - Restore session if exists
+     - Load last visited page
+     - Initialize form with saved data
+  4. User navigates pages (1-8)
+  5. Forms auto-save on change
+  6. Submit triggers finalizeSubmission()
+  7. Data sent via background.js to backend
+  8. Cleanup and navigation to page 1
+
+MEMORY FOOTPRINT:
+  - popup.js: 103KB (minified recommended for production)
+  - background.js: 4.6KB
+  - Total JS: ~115KB uncompressed
+
+================================================================================
+QUALITY ASSURANCE
+================================================================================
+
+Testing Coverage:
+  - Unit tests: test-serialization.html (comprehensive)
+  - Manual testing: TESTING_GUIDE.md
+  - Accessibility: ACCESSIBILITY_FIXES_IMPLEMENTED.md
+  - Session persistence: SESSION_PERSISTENCE_FIX.md
+
+Known Improvements:
+  - Checkbox group handling (robust)
+  - Multi-select support (added)
+  - Collision detection (optimized)
+  - Error handling (comprehensive)
+  - Performance (optimized)
+
+Documentation:
+  - CODE COMMENTS: Detailed inline documentation
+  - README.md: High-level overview
+  - DATA_SCHEMA.md: Original schema
+  - API_QUICK_REFERENCE.md: Quick lookup
+  - BACKEND_DATA_SCHEMA_COMPREHENSIVE.md: Complete reference
+
+================================================================================
+CONCLUSION
+================================================================================
+
+This web extension implements a comprehensive accessibility testing and feedback
+system. The backend data schema is well-designed with:
+
+- Clear separation of concerns
+- Robust error handling
+- Offline support with queue persistence
+- Flexible data structure with collision handling
+- Comprehensive field mapping (80-90 fields)
+- Strong authentication via JWT tokens
+- Origin-scoped data for concurrent reviews
+
+The data is sent to backend in a flattened JSON structure with metadata,
+allowing the backend to easily ingest, validate, and process accessibility
+feedback from users with various disabilities.
+
+Key files for backend integration:
+  - BACKEND_DATA_SCHEMA_COMPREHENSIVE.md (complete reference)
+  - API_QUICK_REFERENCE.md (quick lookup)
+  - /js/popup.js (implementation details)
+  - /js/background.js (network layer)
+
+================================================================================
